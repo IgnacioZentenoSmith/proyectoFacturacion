@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use View;
 use App\User;
 
 use Illuminate\Http\Request;
@@ -66,8 +67,9 @@ class UsersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
-    {
-        //
+    {   
+        $usuario = User::where('id', $id)->first();
+        return view('users.edit', compact('usuario'));
     }
 
     /**
@@ -79,7 +81,16 @@ class UsersController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->role = $request->role;
+        if ($user->isDirty()) {
+            $user->save();
+            return redirect('users.index')->with('success', 'Usuario editado exitosamente');
+        } else {
+            return redirect('users.index');
+        }
     }
 
     /**
@@ -90,6 +101,8 @@ class UsersController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::find($id);
+        $user->delete();
+        return redirect('users')->with('success', 'Usuario eliminado exitosamente');
     }
 }

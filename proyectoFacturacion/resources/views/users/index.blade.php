@@ -26,6 +26,7 @@
             <th scope="col" data-field="ID" data-sortable="true">ID</th>
             <th scope="col" data-field="Nombre" data-sortable="true">Nombre</th>
             <th scope="col" data-field="Email" data-sortable="true">Email</th>
+            <th scope="col" data-field="Role" data-sortable="true">Rol</th>
             <th scope="col" data-field="Password" data-sortable="true">Password</th>
             <th scope="col" data-field="Token" data-sortable="true">Token</th>
             <th scope="col" data-field="Accion" data-sortable="true">Accion</th>
@@ -37,11 +38,17 @@
           <td>{{$usuario['id']}}</td>
           <td>{{$usuario['name']}}</td>
           <td>{{$usuario['email']}}</td>
+          <td>{{$usuario['role']}}</td>
           <td>{{$usuario['password']}}</td>
           <td>{{$usuario['remember_token']}}</td>
           <td>
-            <a class="btn btn-secondary" href="" role="button">Editar</a>
+            <a class="btn btn-secondary" href="{{ route('users.edit', $usuario['id']) }}" role="button">Editar</a>
+            <form style="display: inline-block;"
+              action="{{ route('users.destroy', $usuario['id']) }}" method="post">
+              @csrf
+              @method('DELETE')
             <button class="btn btn-danger" type="submit">Eliminar</button>
+            </form>
           </td>
         </tr>
         @endforeach
