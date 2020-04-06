@@ -7,22 +7,33 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/bootstrap-table.min.css') }}" rel="stylesheet">
+  	<!-- CSS STYLES -->
+	<link href='https://fonts.googleapis.com/css?family=Titillium+Web' rel='stylesheet' type='text/css'>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<!-- Font Awesome CSS -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="{{ asset('js/bootstrap-table.min.js') }}" defer></script>
-    <script src="{{ asset('js/bootstrap-table-es-CL.min.js') }}" defer></script>
-    <script src="{{ asset('js/bootstrap-table-export.min.js') }}" defer></script>
-    <script src="{{ asset('js/jspdf.min.js') }}" defer></script>
-    <script src="{{ asset('js/jspdf.plugin.autotable.min.js') }}" defer></script>
-    <script src="{{ asset('js/tableExport.min.js') }}" defer></script>
+	<!-- JS -->
+	<!-- Font Awesome JS -->
+	<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+	<!-- jQuery JS -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<!-- Popper JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+	<!-- Bootstrap JS -->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+	<!-- Bootstrap Tables-->
+	<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css">
+	<script src="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.js"></script>
+	<!-- Bootstrap Tables Export Extension -->
+	<script src="https://unpkg.com/bootstrap-table@1.15.5/dist/extensions/export/bootstrap-table-export.min.js"></script>
+	<!-- JS Exports plugin Bootstrap Tables-->
+	<script src="https://unpkg.com/tableexport.jquery.plugin/tableExport.min.js"></script>
+	<script src="https://unpkg.com/tableexport.jquery.plugin/libs/jsPDF/jspdf.min.js"></script>
+	<script src="https://unpkg.com/tableexport.jquery.plugin/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
 
     
 </head>
@@ -30,35 +41,67 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow">
             <div class="container-fluid">
-                <a class="navbar-brand">
-                    Proyecto facturaciones
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                <ul class="navbar-nav mr-auto text-center">
+                    <a class="navbar-brand">
+                        Proyecto facturaciones
+                    </a>
+                </ul>   
+                <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <div class="collapse navbar-collapse" id="navbarSupportedContent"> -->
                     <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav m-auto">
+                    <ul class="navbar-nav m-auto text-center">
                     @guest
                     @else
                         <li class="nav-item mx-2 {{ (request()->is('/')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('home.index')}}">Home</a>
+                            <a class="nav-link" href="{{route('home.index')}}">
+                                <span style="font-size: 1.5em;">
+                                    <i class="fas fa-home"></i>
+                                </span><br>
+                                Home
+                            </a>
                         </li>
                         <li class="nav-item mx-2 {{ (request()->is('admin')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('admin.index')}}">Admin</a>
+                            <a class="nav-link" href="{{route('admin.index')}}">
+                                <span style="font-size: 1.5em;">
+                                    <i class="fas fa-shield-alt"></i>
+                                </span><br>
+                                Admin
+                            </a>
                         </li>
                         <li class="nav-item mx-2 {{ (request()->is('users')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('users.index')}}">Usuarios</a>
+                            <a class="nav-link" href="{{route('users.index')}}">
+                                <span style="font-size: 1.5em;">
+                                    <i class="fas fa-users"></i>
+                                </span><br>
+                                Usuarios
+                            </a>
                         </li>
                         <li class="nav-item mx-2 {{ (request()->is('clients')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('clients.index')}}">Clientes</a>
+                            <a class="nav-link" href="{{route('clients.index')}}">
+                                <span style="font-size: 1.5em;">
+                                    <i class="fas fa-user-tie"></i>
+                                </span><br>
+                                Clientes 
+                            </a>
                         </li>
                         <li class="nav-item mx-2 {{ (request()->is('contracts')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('contracts.index')}}">Contratos</a>
+                            <a class="nav-link" href="{{route('contracts.index')}}">
+                                <span style="font-size: 1.5em;">
+                                    <i class="fas fa-handshake"></i>
+                                </span><br>
+                                Contratos
+                            </a>
                         </li>
                         <li class="nav-item mx-2 {{ (request()->is('billings')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('billings.index')}}">Facturas</a>
+                            <a class="nav-link" href="{{route('billings.index')}}">
+                                <span style="font-size: 1.5em;">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </span><br>
+                                Facturas
+                            </a>
                         </li>
    
 
@@ -70,7 +113,7 @@
                         <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }} <i class="fas fa-sign-in-alt"></i></a>
                             </li>
                             @if (Route::has('register'))
                                 <li class="nav-item">
@@ -80,14 +123,14 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }} <span class="caret"></span>
+                                <i class="fas fa-user"></i> {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
+                                        <i class="fas fa-sign-out-alt"></i> {{ __('Logout') }} 
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -97,7 +140,6 @@
                             </li>
                         @endguest
                     </ul>
-                </div>
             </div>
         </nav>
 
