@@ -16,4 +16,9 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('/', 'HomeController@index')->name('home');
+Route::get('/', 'HomeController@index')->name('home.index');
+Route::get('/admin', 'AdminController@index')->name('admin.index')->middleware('auth');
+Route::get('/users', 'UsersController@index')->name('users.index')->middleware('auth');
+Route::get('/contracts', 'ContractsController@index')->name('contracts.index')->middleware('auth');
+Route::get('/billings', 'BillingsController@index')->name('billings.index')->middleware('auth');
+Route::get('/clients', 'ClientsController@index')->name('clients.index')->middleware('auth');

@@ -19,8 +19,8 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
-            <div class="container">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow">
+            <div class="container-fluid">
                 <a class="navbar-brand">
                     Proyecto facturaciones
                 </a>
@@ -30,8 +30,30 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto">
+                    <ul class="navbar-nav m-auto">
+                    @guest
+                    @else
+                        <li class="nav-item mx-2 {{ (request()->is('/')) ? 'active' : '' }}">
+                            <a class="nav-link" href="{{route('home.index')}}">Home</a>
+                        </li>
+                        <li class="nav-item mx-2 {{ (request()->is('admin')) ? 'active' : '' }}">
+                            <a class="nav-link" href="{{route('admin.index')}}">Admin</a>
+                        </li>
+                        <li class="nav-item mx-2 {{ (request()->is('users')) ? 'active' : '' }}">
+                            <a class="nav-link" href="{{route('users.index')}}">Usuarios</a>
+                        </li>
+                        <li class="nav-item mx-2 {{ (request()->is('clients')) ? 'active' : '' }}">
+                            <a class="nav-link" href="{{route('clients.index')}}">Clientes</a>
+                        </li>
+                        <li class="nav-item mx-2 {{ (request()->is('contracts')) ? 'active' : '' }}">
+                            <a class="nav-link" href="{{route('contracts.index')}}">Contratos</a>
+                        </li>
+                        <li class="nav-item mx-2 {{ (request()->is('billings')) ? 'active' : '' }}">
+                            <a class="nav-link" href="{{route('billings.index')}}">Facturas</a>
+                        </li>
+   
 
+                    @endguest
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -71,7 +93,13 @@
         </nav>
 
         <main class="py-4">
-            @yield('content')
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        @yield('content')
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
     <footer id="sticky-footer" class="text-white fixed-bottom bg-dark">
