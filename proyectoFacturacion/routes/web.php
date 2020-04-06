@@ -13,6 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Auth::routes();
+Route::get('/home', 'HomeController@index')->name('home.index');
+Route::get('/', 'HomeController@index')->name('home.index');
+Route::get('/admin', 'AdminController@index')->name('admin.index')->middleware('auth');
+
+Route::get('/contracts', 'ContractsController@index')->name('contracts.index')->middleware('auth');
+Route::get('/billings', 'BillingsController@index')->name('billings.index')->middleware('auth');
+Route::get('/clients', 'ClientsController@index')->name('clients.index')->middleware('auth');
+// Ruta de CRUD Listado Inscripcion
+
+Route::resource('users', 'UsersController')->middleware('auth');
+
