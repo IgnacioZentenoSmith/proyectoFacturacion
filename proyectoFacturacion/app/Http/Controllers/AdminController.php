@@ -28,7 +28,8 @@ class AdminController extends Controller
         $usuarios = User::all();
         $permisos = Permission::all();
         $acciones = Action::all();
-        return view('admin.index', compact('usuarios', 'permisos', 'acciones'));
+        $testJoin = Action::join('permissions', 'actions.idActions', '=', 'permissions.idActions')->select('actions.idActions', 'actions.actionName', 'permissions.idUser')->get();
+        return view('admin.index', compact('usuarios', 'permisos', 'acciones', 'testJoin'));
     }
     public function roles()
     {
@@ -41,12 +42,8 @@ class AdminController extends Controller
     public function ajaxUpdateUserActions(Request $request) {
         
         $permisosRequest = $request->data;
-        $permissions = Permission::all();
-        if ($permissions) {
-            foreach ($permissions as $permission) {
-                $permission->id->delete();
-            }
-        }
+        Permission::whereNotNull('idPermissions')->delete();
+
         foreach ($permisosRequest as $permisos) {
             if ($permisos) {
                 $action = Action::where('actionName', $permisos['accion'])->first();
@@ -59,7 +56,7 @@ class AdminController extends Controller
         }
         $response = array(
             'status' => 'success',
-            'msg' => $permisos,
+            'msg' => $permisosRequest,
         );
         return response()->json($response);
     }

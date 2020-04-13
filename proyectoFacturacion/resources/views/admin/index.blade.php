@@ -1,7 +1,6 @@
 @extends('admin.layout')
 @section('adminContent')
 
-
 <div class="table-responsive">
     <table id="tablaAdministracionUsers" class="table table-hover w-auto text-nowrap" data-show-export="true" data-pagination="true"
         data-click-to-select="true" data-show-columns="true" data-sortable="true" data-search="true"
@@ -25,7 +24,12 @@
                 @foreach($acciones as $accion)
                 <td>
                   <div class="pretty p-switch p-fill">
-                    <input type="checkbox" name="{{$usuario['id']}}" value="{{$accion['actionName']}}"/>
+                  @foreach($permisos as $permiso)
+                    @if($permiso['idUser'] == $usuario['id'] && $permiso['idActions'] == $accion['idActions']) 
+                      <input type="checkbox" name="{{$usuario['id']}}" value="{{$accion['actionName']}}" checked/>
+                    @endif
+                  @endforeach
+                  <input type="checkbox" name="{{$usuario['id']}}" value="{{$accion['actionName']}}"/>
                     <div class="state p-success">
                         <label>{{$accion['actionName']}}</label>
                     </div>
@@ -75,5 +79,6 @@
         });
         return selected;
     }
+    
 </script>
 @endsection
