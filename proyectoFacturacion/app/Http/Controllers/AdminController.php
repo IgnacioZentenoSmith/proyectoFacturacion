@@ -26,7 +26,47 @@ class AdminController extends Controller
     public function index()
     {
         $usuarios = User::all();
-        return view('admin.index', compact('usuarios'));
+        $permisos = Permission::all();
+        $acciones = Action::all();
+        return view('admin.index', compact('usuarios', 'permisos', 'acciones'));
+    }
+    public function roles()
+    {
+        $usuarios = User::all();
+        $permisos = Permission::all();
+        $acciones = Action::all();
+        return view('admin.roles', compact('usuarios', 'permisos', 'acciones'));
+    }
+
+    public function ajaxUpdateUserActions(Request $request) {
+        
+        $permisosRequest = $request->data;
+        $permissions = Permission::all();
+        if ($permissions) {
+            foreach ($permissions as $permission) {
+                $permission->id->delete();
+            }
+        }
+        foreach ($permisosRequest as $permisos) {
+            if ($permisos) {
+                $action = Action::where('actionName', $permisos['accion'])->first();
+                $permission = new Permission([
+                    'idUser'=>$permisos['idUser'],
+                    'idActions'=>$action->idActions
+                ]);
+                $permission->save();
+            }
+        }
+        $response = array(
+            'status' => 'success',
+            'msg' => $permisos,
+        );
+        return response()->json($response);
+    }
+
+    public function ajaxUpdateRoleActions(Request $request) {
+        $input = $request->all();
+        return response()->json(['success'=>'Got Simple Ajax Request.']);
     }
 
     /**

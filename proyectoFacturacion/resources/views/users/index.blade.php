@@ -40,11 +40,6 @@
     </table>
 </div>
 
-   <div class="ckbx-style-8">
-    <input type="checkbox" id="ckbx-style-8-1" value="0" name="ckbx-style-8">
-    <label for="ckbx-style-8-1"></label>
-  </div>
-
 <script>
     //Inicializa la tabla "detalles" del dashboard
 

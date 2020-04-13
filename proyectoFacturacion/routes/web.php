@@ -17,12 +17,17 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home.index');
 Route::get('/', 'HomeController@index')->name('home.index');
-Route::get('/admin', 'AdminController@index')->name('admin.index')->middleware('auth');
+
 
 Route::get('/contracts', 'ContractsController@index')->name('contracts.index')->middleware('auth');
 Route::get('/billings', 'BillingsController@index')->name('billings.index')->middleware('auth');
 Route::get('/clients', 'ClientsController@index')->name('clients.index')->middleware('auth');
-// Ruta de CRUD Listado Inscripcion
-
+// USERS ROUTES (RESOURCE CRUD)
 Route::resource('users', 'UsersController')->middleware('auth');
+// ADMIN ROUTES
+Route::get('/admin/roles', 'AdminController@roles')->name('admin.roles')->middleware('auth');
+Route::get('/admin', 'AdminController@index')->name('admin.index')->middleware('auth');
+// ADMIN AJAX ROUTES
+Route::post('/admin/ajax/userUpdate', 'AdminController@ajaxUpdateUserActions')->middleware('auth');
+Route::post('/admin/ajax/roleUpdate', 'AdminController@ajaxUpdateRoleActions')->middleware('auth');
 

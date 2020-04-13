@@ -21,14 +21,4 @@
 
   </div>
 </div>
-
-<script>
-//Inicializa la tabla "detalles" del dashboard
-
-$('#tablaDetalle').bootstrapTable({
-    pageSize: 25,
-    exportDataType: 'all',
-});
-
-</script>
 @endsection
