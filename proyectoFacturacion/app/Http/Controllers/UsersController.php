@@ -35,7 +35,7 @@ class UsersController extends Controller
      */
     public function create()
     {
-        //
+        return view('users.create');
     }
 
     /**
@@ -87,9 +87,9 @@ class UsersController extends Controller
         $user->role = $request->role;
         if ($user->isDirty()) {
             $user->save();
-            return redirect('users.index')->with('success', 'Usuario editado exitosamente');
+            return redirect('users')->with('success', 'Usuario editado exitosamente');
         } else {
-            return redirect('users.index');
+            return redirect('users');
         }
     }
 
