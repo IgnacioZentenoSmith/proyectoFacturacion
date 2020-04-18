@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
+
 use Illuminate\Http\Request;
 
 class ClientsController extends Controller
@@ -22,7 +24,10 @@ class ClientsController extends Controller
      */
     public function index()
     {
-        return view('clients.index');
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+        return view('clients.index', compact('authPermisos'));
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
+
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,8 +25,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $userId = Auth::id();
+        $userId = Auth::user()->id;
         $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
         return view('home.index', compact('authPermisos'));
     }
 }

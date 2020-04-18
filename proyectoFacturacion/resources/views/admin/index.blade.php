@@ -30,16 +30,22 @@
                 @endif
                 <td>{{$usuario['email_verified_at']}}</td>
                 <td>
+                @if(in_array(6, $authPermisos))
                     <a class="btn btn-secondary" href="{{ route('admin.edit', $usuario['id']) }}"
                     role="button">Editar</a>
+                @endif
+                @if(in_array(7, $authPermisos))
                     <a class="btn btn-warning" href="{{ route('admin.editPermisos', $usuario['id']) }}"
                     role="button">Permisos</a>
+                @endif
+                @if(in_array(8, $authPermisos))
                     <form style="display: inline-block;" action="{{ route('admin.destroy', $usuario['id']) }}"
                         method="post">
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-danger" type="submit">Eliminar</button>
                     </form>
+                @endif
                 </td>
             </tr>
             @endforeach

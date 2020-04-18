@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
+
 use Illuminate\Http\Request;
 
 class ContractsController extends Controller
@@ -22,7 +24,10 @@ class ContractsController extends Controller
      */
     public function index()
     {
-        return view('contracts.index');
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+        return view('contracts.index', compact('authPermisos'));
     }
 
     /**

@@ -7,9 +7,11 @@
       <li class="nav-item">
         <a class="nav-link {{ (request()->is('admin')) ? 'active' : '' }}" href="{{route('admin.index')}}">Lista de usuarios</a>
       </li>
+    @if(in_array(5, $authPermisos)) 
       <li class="nav-item">
         <a class="nav-link {{ (request()->is('admin/create')) ? 'active' : '' }}" href="{{route('admin.create')}}">Crear usuario</a>
       </li>
+    @endif
     </ul>
   </div>
 
