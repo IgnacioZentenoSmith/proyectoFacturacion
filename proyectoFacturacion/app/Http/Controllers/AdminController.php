@@ -119,7 +119,7 @@ class AdminController extends Controller
                 continue;
             }
             $newPermission = new Permission([
-                'id' => $accion['id'],
+                'idActions' => $accion['id'],
                 'idUser' => $user['id']
             ]);
             $newPermission->save();
@@ -180,7 +180,7 @@ class AdminController extends Controller
         $permisosUsuario = $permisos->pluck('idActions')->toArray();
 
         $acciones = Action::all();
-        return view('admin.editPermisos', compact('usuario', 'acciones', 'permisosUsuario', 'permisos'))->with('info', 'Editando al usuario: ' . $usuario['name'] . '.');
+        return view('admin.editPermisos', compact('usuario', 'acciones', 'permisosUsuario'))->with('info', 'Editando al usuario: ' . $usuario['name'] . '.');
     }
 
     public function updatePermisos(Request $request, $id)
