@@ -55,48 +55,56 @@
                     <ul class="navbar-nav m-auto text-center">
                     @guest
                     @else
-                        <li class="nav-item mx-2 {{ (request()->is('/')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('home.index')}}">
-                                <span style="font-size: 1.5em;">
-                                    <i class="fas fa-home"></i>
-                                </span><br>
-                                Home
-                            </a>
-                        </li>
-                        <li class="nav-item mx-2 {{ (request()->is('admin')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('admin.index')}}">
-                                <span style="font-size: 1.5em;">
-                                    <i class="fas fa-shield-alt"></i>
-                                </span><br>
-                                Admin
-                            </a>
-                        </li>
-                        <li class="nav-item mx-2 {{ (request()->is('clients')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('clients.index')}}">
-                                <span style="font-size: 1.5em;">
-                                    <i class="fas fa-user-tie"></i>
-                                </span><br>
-                                Clientes 
-                            </a>
-                        </li>
-                        <li class="nav-item mx-2 {{ (request()->is('contracts')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('contracts.index')}}">
-                                <span style="font-size: 1.5em;">
-                                    <i class="fas fa-handshake"></i>
-                                </span><br>
-                                Contratos
-                            </a>
-                        </li>
-                        <li class="nav-item mx-2 {{ (request()->is('billings')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('billings.index')}}">
-                                <span style="font-size: 1.5em;">
-                                    <i class="fas fa-dollar-sign"></i>
-                                </span><br>
-                                Facturas
-                            </a>
-                        </li>
+                    
+                            <li class="nav-item mx-2 {{ (request()->is('/')) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{route('home.index')}}">
+                                    <span style="font-size: 1.5em;">
+                                        <i class="fas fa-home"></i>
+                                    </span><br>
+                                    Home
+                                </a>
+                            </li>
+                        @if(in_array(1, $authPermisos))
+                            <li class="nav-item mx-2 {{ (request()->is('admin')) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{route('admin.index')}}">
+                                    <span style="font-size: 1.5em;">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </span><br>
+                                    Admin
+                                </a>
+                            </li>
+                        @endif
+                        @if(in_array(2, $authPermisos))
+                            <li class="nav-item mx-2 {{ (request()->is('clients')) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{route('clients.index')}}">
+                                    <span style="font-size: 1.5em;">
+                                        <i class="fas fa-user-tie"></i>
+                                    </span><br>
+                                    Clientes 
+                                </a>
+                            </li>
+                        @endif
+                        @if(in_array(3, $authPermisos))
+                            <li class="nav-item mx-2 {{ (request()->is('contracts')) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{route('contracts.index')}}">
+                                    <span style="font-size: 1.5em;">
+                                        <i class="fas fa-handshake"></i>
+                                    </span><br>
+                                    Contratos
+                                </a>
+                            </li>
+                        @endif
+                        @if(in_array(4, $authPermisos))
+                            <li class="nav-item mx-2 {{ (request()->is('billings')) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{route('billings.index')}}">
+                                    <span style="font-size: 1.5em;">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </span><br>
+                                    Facturas
+                                </a>
+                            </li>
+                        @endif
    
-
                     @endguest
                     </ul>
 

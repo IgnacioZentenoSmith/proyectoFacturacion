@@ -5,6 +5,8 @@ use App\User;
 use App\Permission;
 use App\Action;
 
+use Auth;
+
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -27,8 +29,11 @@ class AdminController extends Controller
      */
     public function index()
     {
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
         $usuarios = User::all();
-        return view('admin.index', compact('usuarios'));
+        return view('admin.index', compact('usuarios', 'authPermisos'));
     }
     /*
     public function ajaxUpdateUserActions(Request $request) {
@@ -66,7 +71,10 @@ class AdminController extends Controller
      */
     public function create()
     {
-        return view('admin.create');
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+        return view('admin.create', compact('authPermisos'));
     }
 
     /**
@@ -147,8 +155,11 @@ class AdminController extends Controller
      */
     public function edit($id)
     {
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
         $usuario = User::where('id', $id)->first();
-        return view('admin.edit', compact('usuario'));
+        return view('admin.edit', compact('usuario', 'authPermisos'));
     }
 
     /**
@@ -175,12 +186,16 @@ class AdminController extends Controller
 
     public function editPermisos($id)
     {
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+
         $usuario = User::where('id', $id)->first();
         $permisos = Permission::where('idUser', $id)->get();
         $permisosUsuario = $permisos->pluck('idActions')->toArray();
 
         $acciones = Action::all();
-        return view('admin.editPermisos', compact('usuario', 'acciones', 'permisosUsuario'))->with('info', 'Editando al usuario: ' . $usuario['name'] . '.');
+        return view('admin.editPermisos', compact('usuario', 'acciones', 'permisosUsuario', 'authPermisos'))->with('info', 'Editando al usuario: ' . $usuario['name'] . '.');
     }
 
     public function updatePermisos(Request $request, $id)

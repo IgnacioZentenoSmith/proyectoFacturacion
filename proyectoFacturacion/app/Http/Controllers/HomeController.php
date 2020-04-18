@@ -23,6 +23,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home.index');
+        $userId = Auth::id();
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        return view('home.index', compact('authPermisos'));
     }
 }
