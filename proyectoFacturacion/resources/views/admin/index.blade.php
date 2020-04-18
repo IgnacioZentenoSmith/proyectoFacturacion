@@ -11,7 +11,9 @@
                 <th scope="col" data-field="Nombre" data-sortable="true">Nombre</th>
                 <th scope="col" data-field="Email" data-sortable="true">Email</th>
                 <th scope="col" data-field="Role" data-sortable="true">Rol</th>
-                <th scope="col" data-field="Accion" data-sortable="true">Accion</th>
+                <th scope="col" data-field="isVerified" data-sortable="true">Email verificado</th>
+                <th scope="col" data-field="Verified" data-sortable="true">Fecha verificación</th>
+                <th scope="col" data-field="Accion" data-sortable="true">Acción</th>
             </tr>
         </thead>
         <tbody>
@@ -21,6 +23,12 @@
                 <td>{{$usuario['name']}}</td>
                 <td>{{$usuario['email']}}</td>
                 <td>{{$usuario['role']}}</td>
+                @if ($usuario['email_verified_at'])
+                    <td class="bg-success text-center">Si</td>
+                @else
+                    <td class="bg-info text-center">No</td>
+                @endif
+                <td>{{$usuario['email_verified_at']}}</td>
                 <td>
                     <a class="btn btn-secondary" href="{{ route('admin.edit', $usuario['id']) }}"
                     role="button">Editar</a>

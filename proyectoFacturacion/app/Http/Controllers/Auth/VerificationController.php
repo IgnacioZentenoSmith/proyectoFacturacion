@@ -2,31 +2,77 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\User;
+
 use App\Http\Controllers\Controller;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\VerifiesEmails;
+use Illuminate\Http\Request;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Support\Facades\Hash;
 
 class VerificationController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Email Verification Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller is responsible for handling email verification for any
-    | user that recently registered with the application. Emails may also
-    | be re-sent if the user didn't receive the original email message.
-    |
-    */
-
     use VerifiesEmails;
 
     /**
-     * Where to redirect users after verification.
+     * Show the email verification notice.
      *
-     * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    public function show()
+    {
+        //
+    }
+
+    /**
+     * Mark the authenticated user's email address as verified.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function verify(Request $request)
+    {
+        $usuario = $request->user();
+        // ->route('id') gets route user id and getKey() gets current user id() 
+        // do not forget that you must send Authorization header to get the user from the request
+        if ($request->route('id') == $usuario->getKey() &&
+            $usuario->markEmailAsVerified()) {
+            event(new Verified($usuario));
+        }
+        return view('emails.verify', compact('usuario'))->with('success', 'Email verificado exitosamente!');
+        //return redirect($this->redirectPath());
+    }
+
+    public function setPassword(Request $request, $id) 
+    {
+        $request->validate(
+            ['password'=>'required', 'string', 'min:8', 'confirmed']
+        );
+
+        $user = User::find($id);
+        $user->password = Hash::make($request->password);
+
+        $user->save();
+        return view('home.index')->with('success', 'Contraseña establecida correctamente.');
+    }
+
+    /**
+     * Resend the email verification notification.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function resend(Request $request)
+    {
+        if ($request->user()->hasVerifiedEmail()) {
+            return response()->json('Usuario ya ha verificado su email!', 422);
+//            return redirect($this->redirectPath());
+        }
+
+        $request->user()->sendEmailVerificationNotification();
+
+        return response()->json('Se ha re enviado la confirmación de email!');
+//        return back()->with('resent', true);
+    }
 
     /**
      * Create a new controller instance.

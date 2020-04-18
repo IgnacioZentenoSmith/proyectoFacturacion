@@ -15,7 +15,13 @@ use Illuminate\Support\Facades\Route;
 
 
 Auth::routes();
-Auth::routes(['verify' => true]);
+
+// Email Verification Routes...
+Route::get('email/verify', 'Auth\VerificationController@show')->name('verification.notice');
+Route::get('email/verify/{id}', 'Auth\VerificationController@verify')->name('verification.verify');
+Route::get('email/resend', 'Auth\VerificationController@resend')->name('verification.resend');
+Route::put('email/{id}/setPassword', 'Auth\VerificationController@setPassword')->name('email.setPassword')->middleware('auth');
+
 Route::get('/home', 'HomeController@index')->name('home.index');
 Route::get('/', 'HomeController@index')->name('home.index');
 

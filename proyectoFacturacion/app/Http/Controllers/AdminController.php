@@ -80,7 +80,6 @@ class AdminController extends Controller
         $request->validate(
             ['name'=>'required', 'string', 'max:255'],
             ['email'=>'required', 'string', 'email', 'max:255', 'unique:users'],
-            ['password'=>'required', 'string', 'min:8', 'confirmed'],
             ['role'=>'required', 'string']
         );
         $acciones = Action::all();
@@ -88,7 +87,7 @@ class AdminController extends Controller
         $newUser = new User([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($request->email),
             'role' => $request->role
         ]);
         $newUser->save();
@@ -162,9 +161,9 @@ class AdminController extends Controller
 
         if ($user->isDirty()) {
             $user->save();
-            return redirect('users')->with('success', 'Usuario editado exitosamente.');
+            return redirect('admin')->with('success', 'Usuario editado exitosamente.');
         } else {
-            return redirect('users')->with('error', 'Ha ocurrido un error.');
+            return redirect('admin')->with('error', 'Ha ocurrido un error.');
         }
     }
 
