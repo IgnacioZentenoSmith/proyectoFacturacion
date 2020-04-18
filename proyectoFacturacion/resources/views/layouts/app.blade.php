@@ -65,7 +65,7 @@
                                 </a>
                             </li>
                         @if(in_array(1, $authPermisos))
-                            <li class="nav-item mx-2 {{ (request()->is('admin')) ? 'active' : '' }}">
+                            <li class="nav-item mx-2 {{ (request()->is('admin*')) ? 'active' : '' }}">
                                 <a class="nav-link" href="{{route('admin.index')}}">
                                     <span style="font-size: 1.5em;">
                                         <i class="fas fa-shield-alt"></i>
@@ -75,7 +75,7 @@
                             </li>
                         @endif
                         @if(in_array(2, $authPermisos))
-                            <li class="nav-item mx-2 {{ (request()->is('clients')) ? 'active' : '' }}">
+                            <li class="nav-item mx-2 {{ (request()->is('clients*')) ? 'active' : '' }}">
                                 <a class="nav-link" href="{{route('clients.index')}}">
                                     <span style="font-size: 1.5em;">
                                         <i class="fas fa-user-tie"></i>
@@ -85,7 +85,7 @@
                             </li>
                         @endif
                         @if(in_array(3, $authPermisos))
-                            <li class="nav-item mx-2 {{ (request()->is('contracts')) ? 'active' : '' }}">
+                            <li class="nav-item mx-2 {{ (request()->is('contracts*')) ? 'active' : '' }}">
                                 <a class="nav-link" href="{{route('contracts.index')}}">
                                     <span style="font-size: 1.5em;">
                                         <i class="fas fa-handshake"></i>
@@ -95,7 +95,7 @@
                             </li>
                         @endif
                         @if(in_array(4, $authPermisos))
-                            <li class="nav-item mx-2 {{ (request()->is('billings')) ? 'active' : '' }}">
+                            <li class="nav-item mx-2 {{ (request()->is('billings*')) ? 'active' : '' }}">
                                 <a class="nav-link" href="{{route('billings.index')}}">
                                     <span style="font-size: 1.5em;">
                                         <i class="fas fa-dollar-sign"></i>
