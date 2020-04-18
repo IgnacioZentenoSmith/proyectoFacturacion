@@ -12,7 +12,6 @@
                 <th scope="col" data-field="Nombre" data-sortable="true">Nombre</th>
                 <th scope="col" data-field="Email" data-sortable="true">Email</th>
                 <th scope="col" data-field="Role" data-sortable="true">Rol</th>
-                <th scope="col" data-field="Token" data-sortable="true">Token</th>
                 <th scope="col" data-field="Accion" data-sortable="true">Accion</th>
             </tr>
         </thead>
@@ -23,10 +22,11 @@
                 <td>{{$usuario['name']}}</td>
                 <td>{{$usuario['email']}}</td>
                 <td>{{$usuario['role']}}</td>
-                <td>{{$usuario['remember_token']}}</td>
                 <td>
                     <a class="btn btn-secondary" href="{{ route('users.edit', $usuario['id']) }}"
                         role="button">Editar</a>
+                        <a class="btn btn-warning" href="{{ route('users.editPermisos', $usuario['id']) }}"
+                        role="button">Permisos</a>
                     <form style="display: inline-block;" action="{{ route('users.destroy', $usuario['id']) }}"
                         method="post">
                         @csrf
@@ -42,11 +42,9 @@
 
 <script>
     //Inicializa la tabla "detalles" del dashboard
-
     $('#tablaDetalle').bootstrapTable({
         pageSize: 25,
         exportDataType: 'all',
     });
-
 </script>
 @endsection

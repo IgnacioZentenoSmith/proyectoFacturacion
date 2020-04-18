@@ -5,10 +5,10 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item">
-        <a class="nav-link {{ (request()->is('admin')) ? 'active' : '' }}" href="{{route('admin.index')}}">Permisos usuarios</a>
+        <a class="nav-link {{ (request()->is('admin')) ? 'active' : '' }}" href="{{route('admin.index')}}">Lista de usuarios</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {{ (request()->is('admin/roles')) ? 'active' : '' }}" href="{{route('admin.roles')}}">Permisos roles</a>
+        <a class="nav-link {{ (request()->is('admin/create')) ? 'active' : '' }}" href="{{route('admin.create')}}">Crear usuario</a>
       </li>
     </ul>
   </div>

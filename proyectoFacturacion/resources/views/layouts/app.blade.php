@@ -38,8 +38,8 @@
     
 </head>
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow">
+    <div id="app" class="d-flex flex-column">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow d-flex align-items-start">
             <div class="container-fluid">
                 <ul class="navbar-nav mr-auto text-center">
                     <a class="navbar-brand">
@@ -142,19 +142,19 @@
                     </ul>
             </div>
         </nav>
+        @include('flashMessages')
 
-        <main class="py-4">
-
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        @yield('content')
-                    </div>
+    <main class="py-4 my-4 d-flex align-items-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    @yield('content')
                 </div>
             </div>
-        </main>
-    </div>
-    <footer id="sticky-footer" class="text-white fixed-bottom bg-dark">
+        </div>
+    </main>
+
+    <footer class="text-white d-flex align-items-end bg-dark mt-auto">
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
@@ -181,17 +181,22 @@
                     <div class="col-sm-3 mt-2">
                         <div class="row">
                             <div class="col-sm-6">&nbsp;</div>
-                            <div class="col-sm-6">
-                                <p class="mb-1"><img src="{{asset('img/footer/').'/'.'mail.svg'}}" alt=""> Mail de contacto:</p>
-                                <p class="mt-0">&nbsp;&nbsp;&nbsp;&nbsp;izenteno@planok.com</p>
+                                <div class="col-sm-6">
+                                    <p class="mb-1"><img src="{{asset('img/footer/').'/'.'mail.svg'}}" alt=""> Mail de contacto:</p>
+                                    <p class="mt-0">&nbsp;&nbsp;&nbsp;&nbsp;izenteno@planok.com</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</footer>
-
+    </footer>
+</div>
+<style>
+#app {
+    min-height: 100vh;
+}
+</style>
 </body>
 </html>

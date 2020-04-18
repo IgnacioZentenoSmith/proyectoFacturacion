@@ -5,6 +5,8 @@ use App\User;
 use App\Permission;
 use App\Action;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -26,19 +28,9 @@ class AdminController extends Controller
     public function index()
     {
         $usuarios = User::all();
-        $permisos = Permission::all();
-        $acciones = Action::all();
-        $testJoin = Action::join('permissions', 'actions.idActions', '=', 'permissions.idActions')->select('actions.idActions', 'actions.actionName', 'permissions.idUser')->get();
-        return view('admin.index', compact('usuarios', 'permisos', 'acciones', 'testJoin'));
+        return view('admin.index', compact('usuarios'));
     }
-    public function roles()
-    {
-        $usuarios = User::all();
-        $permisos = Permission::all();
-        $acciones = Action::all();
-        return view('admin.roles', compact('usuarios', 'permisos', 'acciones'));
-    }
-
+    /*
     public function ajaxUpdateUserActions(Request $request) {
         
         $permisosRequest = $request->data;
@@ -65,6 +57,7 @@ class AdminController extends Controller
         $input = $request->all();
         return response()->json(['success'=>'Got Simple Ajax Request.']);
     }
+    */
 
     /**
      * Show the form for creating a new resource.
@@ -73,7 +66,7 @@ class AdminController extends Controller
      */
     public function create()
     {
-        //
+        return view('admin.create');
     }
 
     /**
@@ -84,7 +77,50 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate(
+            ['name'=>'required', 'string', 'max:255'],
+            ['email'=>'required', 'string', 'email', 'max:255', 'unique:users'],
+            ['password'=>'required', 'string', 'min:8', 'confirmed'],
+            ['role'=>'required', 'string']
+        );
+        $acciones = Action::all();
+        
+        $newUser = new User([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role
+        ]);
+        $newUser->save();
+        $newUser->sendEmailVerificationNotification();
+
+        $user = User::where('email', $request->email)->first();
+        /*
+            ACCIONES
+            1 -> administracion
+            3 -> clientes
+            4 -> contratos
+            5 -> facturas
+
+            Vendedor -> 3 , 4
+            Ejecutivo -> 3, 4, 5
+            Administrador -> 1, 3, 4, 5
+        */
+        foreach ($acciones as $accion) {
+            if ($request->role == 'Vendedor' && ($accion['idActions'] ==  1 || $accion['idActions'] ==  5)) {
+                continue;
+            }
+            if ($request->role == 'Ejecutivo' && $accion['idActions'] ==  1) {
+                continue;
+            }
+            $newPermission = new Permission([
+                'idActions' => $accion['idActions'],
+                'idUser' => $user['id']
+            ]);
+            $newPermission->save();
+        }
+
+        return redirect('admin')->with('success', 'Usuario agregado exitosamente.');
     }
 
     /**
@@ -106,7 +142,8 @@ class AdminController extends Controller
      */
     public function edit($id)
     {
-        //
+        $usuario = User::where('id', $id)->first();
+        return view('admin.edit', compact('usuario'));
     }
 
     /**
@@ -118,7 +155,58 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $user = User::find($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->role = $request->role;
+
+        if ($user->isDirty()) {
+            $user->save();
+            return redirect('users')->with('success', 'Usuario editado exitosamente.');
+        } else {
+            return redirect('users')->with('error', 'Ha ocurrido un error.');
+        }
+    }
+
+    public function editPermisos($id)
+    {
+        $usuario = User::where('id', $id)->first();
+        $permisos = Permission::where('idUser', $id)->get();
+        $permisosUsuario = $permisos->pluck('idActions')->toArray();
+
+        $acciones = Action::all();
+        return view('admin.editPermisos', compact('usuario', 'acciones', 'permisosUsuario', 'permisos'))->with('info', 'Editando al usuario: ' . $usuario['name'] . '.');
+    }
+
+    public function updatePermisos(Request $request, $id)
+    {
+        $acciones = $request->acciones;
+        /*
+        Model -> Permissions
+        Action id -> idActions
+        User id -> idUser
+        */
+        if (count($acciones) > 0) {
+            //Eliminar todos los permisos y agregar los nuevos
+            $permisos = Permission::where('idUser', $id)->get();
+            foreach ($permisos as $permiso) {
+                $permiso->delete();
+            }
+            foreach ($acciones as $accion) {
+                $newPermission = new Permission([
+                    'idActions' => $accion,
+                    'idUser' => $id
+                ]);
+                $newPermission->save();
+            }
+            return redirect('admin')->with('success', 'Permisos del usuario modificadas correctamente.');
+        } else {
+            $permisos = Permission::where('idUser', $id)->get();
+            foreach ($permisos as $permiso) {
+                $permiso->delete();
+                return redirect('admin')->with('success', 'Permisos del usuario eliminadas correctamente.');
+            }
+        }
     }
 
     /**
@@ -129,6 +217,8 @@ class AdminController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::find($id);
+        $user->delete();
+        return redirect('admin')->with('success', 'Usuario eliminado exitosamente');
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Auth::routes();
+Auth::routes(['verify' => true]);
 Route::get('/home', 'HomeController@index')->name('home.index');
 Route::get('/', 'HomeController@index')->name('home.index');
 
@@ -25,9 +26,8 @@ Route::get('/clients', 'ClientsController@index')->name('clients.index')->middle
 // USERS ROUTES (RESOURCE CRUD)
 Route::resource('users', 'UsersController')->middleware('auth');
 // ADMIN ROUTES
-Route::get('/admin/roles', 'AdminController@roles')->name('admin.roles')->middleware('auth');
-Route::get('/admin', 'AdminController@index')->name('admin.index')->middleware('auth');
-// ADMIN AJAX ROUTES
-Route::post('/admin/ajax/userUpdate', 'AdminController@ajaxUpdateUserActions')->middleware('auth');
-Route::post('/admin/ajax/roleUpdate', 'AdminController@ajaxUpdateRoleActions')->middleware('auth');
+Route::resource('admin', 'AdminController')->middleware('auth');
+Route::get('/admin/{id}/editPermisos', 'AdminController@editPermisos')->name('admin.editPermisos')->middleware('auth');
+Route::put('/admin/{id}/updatePermisos', 'AdminController@updatePermisos')->name('admin.updatePermisos')->middleware('auth');
+
 
