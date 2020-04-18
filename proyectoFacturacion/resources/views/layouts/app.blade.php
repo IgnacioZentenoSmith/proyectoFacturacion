@@ -71,14 +71,6 @@
                                 Admin
                             </a>
                         </li>
-                        <li class="nav-item mx-2 {{ (request()->is('users')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('users.index')}}">
-                                <span style="font-size: 1.5em;">
-                                    <i class="fas fa-users"></i>
-                                </span><br>
-                                Usuarios
-                            </a>
-                        </li>
                         <li class="nav-item mx-2 {{ (request()->is('clients')) ? 'active' : '' }}">
                             <a class="nav-link" href="{{route('clients.index')}}">
                                 <span style="font-size: 1.5em;">
