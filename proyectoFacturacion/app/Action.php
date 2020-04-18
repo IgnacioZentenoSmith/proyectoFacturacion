@@ -7,16 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Action extends Model
 {
     protected $table = 'actions';
-	protected $primaryKey = 'idActions';
+	protected $primaryKey = 'id';
 
     protected $fillable = [
-		'actionName',
+        'actionName',
+        'actionParentId',
+        'actionType',
     ];
     
 
 
 	public function permissions()
     {
-        return $this->hasMany('App\Permission', 'idActions', 'idActions');
+        return $this->hasMany('App\Permission', 'idActions', 'id');
     }
 }

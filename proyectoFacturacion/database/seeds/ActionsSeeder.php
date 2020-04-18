@@ -12,11 +12,14 @@ class ActionsSeeder extends Seeder
     public function run()
     {
       DB::table('actions')->insert([
-		['actionName'=>'Administración'],
-		['actionName'=>'Usuarios'],
-		['actionName'=>'Clientes'],
-		['actionName'=>'Contratos'],
-		['actionName'=>'Facturas']
+		['actionName'=>'Administracion', 'actionParentId'=>null, 'actionType'=>'Menu'],
+		['actionName'=>'Clientes', 'actionParentId'=>null, 'actionType'=>'Menu'],
+		['actionName'=>'Contratos', 'actionParentId'=>null, 'actionType'=>'Menu'],
+        ['actionName'=>'Facturas', 'actionParentId'=>null, 'actionType'=>'Menu'],
+        ['actionName'=>'Administracion_create', 'actionParentId'=>1, 'actionType'=>'Programa'],
+        ['actionName'=>'Administracion_edit', 'actionParentId'=>1, 'actionType'=>'Programa'],
+        ['actionName'=>'Administracion_editPermisos', 'actionParentId'=>1, 'actionType'=>'Programa'],
+        ['actionName'=>'Administracion_delete', 'actionParentId'=>1, 'actionType'=>'Programa'],   
 	]);
     }
 }

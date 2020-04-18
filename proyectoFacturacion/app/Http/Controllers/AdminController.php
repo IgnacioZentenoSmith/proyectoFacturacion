@@ -96,24 +96,30 @@ class AdminController extends Controller
         $user = User::where('email', $request->email)->first();
         /*
             ACCIONES
-            1 -> administracion
-            3 -> clientes
-            4 -> contratos
-            5 -> facturas
+            1 -> Administracion     Menu
+            2 -> Clientes           Menu
+            3 -> Contratos          Menu
+            4 -> Facturas           Menu
 
-            Vendedor -> 3 , 4
-            Ejecutivo -> 3, 4, 5
-            Administrador -> 1, 3, 4, 5
+            5 -> Administracion_create           Programa       1
+            6 -> Administracion_edit             Programa       1
+            7 -> Administracion_editPermisos     Programa       1
+            8 -> Administracion_delete           Programa       1
+
+
+            Vendedor -> 2 , 3
+            Ejecutivo -> 2, 3, 4
+            Administrador -> 1, 2, 3, 4, 5, 6, 7, 8
         */
         foreach ($acciones as $accion) {
-            if ($request->role == 'Vendedor' && ($accion['idActions'] ==  1 || $accion['idActions'] ==  5)) {
+            if ($request->role == 'Vendedor' && ($accion['id'] !=  2 && $accion['id'] !=  3)) {
                 continue;
             }
-            if ($request->role == 'Ejecutivo' && $accion['idActions'] ==  1) {
+            if ($request->role == 'Ejecutivo' && ($accion['id'] !=  2 && $accion['id'] !=  3 && $accion['id'] !=  4)) {
                 continue;
             }
             $newPermission = new Permission([
-                'idActions' => $accion['idActions'],
+                'id' => $accion['id'],
                 'idUser' => $user['id']
             ]);
             $newPermission->save();

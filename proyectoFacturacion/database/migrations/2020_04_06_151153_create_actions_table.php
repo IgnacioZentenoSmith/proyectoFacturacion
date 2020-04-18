@@ -14,11 +14,12 @@ class CreateActionsTable extends Migration
     public function up()
     {
         Schema::create('actions', function (Blueprint $table) {
-            $table->increments('idActions');
+            $table->id();
             $table->string('actionName', 200);
+            $table->integer('actionParentId')->nullable()->unsigned();
+            $table->string('actionType', 20);
             $table->timestamps();
 
-            $table->unique("idActions");
         });
     }
 
