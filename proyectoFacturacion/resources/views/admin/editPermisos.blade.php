@@ -36,7 +36,7 @@
                         <div class="pretty p-switch p-fill">
                           <input type="checkbox" name="acciones[]" value="{{$accion['id']}}" class="form-check" 
                           @if (in_array($accion['id'], $permisosUsuario)) checked @endif 
-                          @if (Auth::user()->id == $usuario['id']) disabled @endif/>
+                          @if (Auth::user()->id == $usuario['id'])  @endif/>
                           <div class="state p-success">
                             <label>{{$accion['actionName']}}</label>
                           </div>
