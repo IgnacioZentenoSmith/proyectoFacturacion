@@ -96,7 +96,8 @@ class AdminController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->email),
-            'role' => $request->role
+            'role' => $request->role,
+            'status' => 'Activo'
         ]);
         $newUser->save();
         $newUser->sendEmailVerificationNotification();
@@ -228,6 +229,23 @@ class AdminController extends Controller
             }
         }
     }
+
+
+    public function changeStatus($id)
+    {
+        $user = User::find($id);
+        if ($user->status == 'Activo') {
+            $user->status = 'Inactivo';
+        }
+        elseif ($user->status == 'Inactivo' || $user->status == '') {
+            $user->status = 'Activo';
+        } else {
+            return redirect('admin')->with('danger', 'Ha ocurrido un error.');
+        }
+        $user->save();
+        return redirect('admin')->with('success', 'Status del usuario modificado correctamente.');
+    }
+
 
     /**
      * Remove the specified resource from storage.

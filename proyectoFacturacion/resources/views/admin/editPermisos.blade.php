@@ -10,7 +10,7 @@
         <div class="col-auto">
         @if (Auth::user()->id == $usuario['id'])
           <div class="alert alert-warning" role="alert">
-            No puede editar sus propios permisos.
+            No puede editar su propio permiso de editar permisos.
           </div>
         @endif
 
@@ -36,7 +36,7 @@
                         <div class="pretty p-switch p-fill">
                           <input type="checkbox" name="acciones[]" value="{{$accion['id']}}" class="form-check" 
                           @if (in_array($accion['id'], $permisosUsuario)) checked @endif 
-                          @if (Auth::user()->id == $usuario['id'])  @endif/>
+                          @if (Auth::user()->id == $usuario['id'] && ($accion['id'] == 7 || $accion['id'] == 1)) disabled @endif/>
                           <div class="state p-success">
                             <label>{{$accion['actionName']}}</label>
                           </div>

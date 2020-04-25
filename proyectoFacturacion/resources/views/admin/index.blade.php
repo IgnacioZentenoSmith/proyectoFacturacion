@@ -11,6 +11,7 @@
                 <th scope="col" data-field="Nombre" data-sortable="true">Nombre</th>
                 <th scope="col" data-field="Email" data-sortable="true">Email</th>
                 <th scope="col" data-field="Role" data-sortable="true">Rol</th>
+                <th scope="col" data-field="Status" data-sortable="true">Status</th>
                 <th scope="col" data-field="isVerified" data-sortable="true">Email verificado</th>
                 <th scope="col" data-field="Verified" data-sortable="true">Fecha verificación</th>
                 <th scope="col" data-field="Accion" data-sortable="true">Acción</th>
@@ -23,10 +24,15 @@
                 <td>{{$usuario['name']}}</td>
                 <td>{{$usuario['email']}}</td>
                 <td>{{$usuario['role']}}</td>
-                @if ($usuario['email_verified_at'])
-                    <td class="bg-success text-center">Si</td>
+                @if ($usuario['status'] == 'Activo')
+                    <td class="bg-primary text-center text-white">Activo</td>
                 @else
-                    <td class="bg-info text-center">No</td>
+                    <td class="bg-secondary text-center text-white">Inactivo</td>
+                @endif
+                @if ($usuario['email_verified_at'])
+                    <td class="bg-success text-center text-white">Si</td>
+                @else
+                    <td class="bg-info text-center text-white">No</td>
                 @endif
                 <td>{{$usuario['email_verified_at']}}</td>
                 <td>
@@ -38,12 +44,24 @@
                     <a class="btn btn-warning" href="{{ route('admin.editPermisos', $usuario['id']) }}"
                     role="button">Permisos</a>
                 @endif
+                @if(in_array(9, $authPermisos))
+                    <form style="display: inline-block;" action="{{ route('admin.changeStatus', $usuario['id']) }}"
+                        method="post">
+                        @csrf
+                        @method('POST')
+                        <button class="btn btn-light" type="submit">
+                            @if ($usuario['status'] == 'Activo') Desactivar
+                            @else Activar
+                            @endif
+                        </button>
+                    </form>
+                @endif
                 @if(in_array(8, $authPermisos))
                     <form style="display: inline-block;" action="{{ route('admin.destroy', $usuario['id']) }}"
                         method="post">
                         @csrf
                         @method('DELETE')
-                        <button class="btn btn-danger" type="submit">Eliminar</button>
+                        <button class="btn btn-danger" type="submit">Eliminar(DEBUG)</button>
                     </form>
                 @endif
                 </td>
