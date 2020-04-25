@@ -7,8 +7,7 @@
             <div class="card">
                 <div class="card-header">{{ __('Establecer contraseña') }}</div>
 
-                  <h5 class="card-title mb-5">Editar permisos de usuario</h5>
-                    {{ __('Porfavor establezca su contraseña antes de continuar.') }}
+                    <p class="my-3">{{ __('Porfavor establezca su contraseña antes de continuar.') }}</p>
 
                     <form method="POST" action="{{route('email.setPassword', $usuario['id'])}}">
                       @csrf

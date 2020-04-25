@@ -26,7 +26,7 @@ class VerifyEmail extends VerifyEmailBase
         );
 
         return (new MailMessage)
-            ->subject('Email de confirmación de correo, equipo de facturaciones PlanOK.')
+            ->subject('Confirmación de correo, equipo facturaciones PlanOK.')
             ->markdown('emails.emailVerification', ['url' => $verifyUrl]);
         });
     }

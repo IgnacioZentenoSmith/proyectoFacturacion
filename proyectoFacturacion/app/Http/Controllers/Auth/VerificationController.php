@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\User;
+use Auth;
+use App\Permission;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\VerifiesEmails;
@@ -31,6 +33,10 @@ class VerificationController extends Controller
      */
     public function verify(Request $request)
     {
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+
         $usuario = $request->user();
         // ->route('id') gets route user id and getKey() gets current user id() 
         // do not forget that you must send Authorization header to get the user from the request
@@ -38,12 +44,16 @@ class VerificationController extends Controller
             $usuario->markEmailAsVerified()) {
             event(new Verified($usuario));
         }
-        return view('emails.verify', compact('usuario'))->with('success', 'Email verificado exitosamente!');
+        return view('emails.verify', compact('usuario', 'authPermisos'))->with('success', 'Email verificado exitosamente!');
         //return redirect($this->redirectPath());
     }
 
     public function setPassword(Request $request, $id) 
     {
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+
         $request->validate(
             ['password'=>'required', 'string', 'min:8', 'confirmed']
         );
@@ -52,7 +62,7 @@ class VerificationController extends Controller
         $user->password = Hash::make($request->password);
 
         $user->save();
-        return view('home.index')->with('success', 'Contraseña establecida correctamente.');
+        return view('home.index', compact('authPermisos'))->with('success', 'Contraseña establecida correctamente.');
     }
 
     /**
