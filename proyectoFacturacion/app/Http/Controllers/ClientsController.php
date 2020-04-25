@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Permission;
+use App\Client;
 use Auth;
 
 use Illuminate\Http\Request;
@@ -28,7 +29,8 @@ class ClientsController extends Controller
         $userId = Auth::user()->id;
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
-        return view('clients.index', compact('authPermisos'));
+        $clientes = Client::all();
+        return view('clients.index', compact('clientes', 'authPermisos'));
     }
 
     /**
@@ -38,7 +40,10 @@ class ClientsController extends Controller
      */
     public function create()
     {
-        //
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+        return view('clients.create', compact('authPermisos'));
     }
 
     /**

@@ -28,7 +28,7 @@ Route::get('/', 'HomeController@index')->name('home.index');
 
 Route::get('/contracts', 'ContractsController@index')->name('contracts.index')->middleware('auth');
 Route::get('/billings', 'BillingsController@index')->name('billings.index')->middleware('auth');
-Route::get('/clients', 'ClientsController@index')->name('clients.index')->middleware('auth');
+
 
 // ADMIN ROUTES (RESOURCE CRUD)
 Route::resource('admin', 'AdminController')->middleware('auth');
@@ -36,4 +36,6 @@ Route::get('/admin/{id}/editPermisos', 'AdminController@editPermisos')->name('ad
 Route::put('/admin/{id}/updatePermisos', 'AdminController@updatePermisos')->name('admin.updatePermisos')->middleware('auth');
 Route::post('/admin/{id}', 'AdminController@changeStatus')->name('admin.changeStatus')->middleware('auth');
 
+// CLIENT ROUTES (RESOURCE CRUD)
+Route::resource('clients', 'ClientsController')->middleware('auth');
 

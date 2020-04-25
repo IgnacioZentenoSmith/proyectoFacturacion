@@ -1,11 +1,53 @@
-@extends('layouts.app')
+@extends('clients.layout')
+@section('clientContent')
 
-@section('content')
-<div class="card shadow">
-  <h5 class="card-header">Clientes</h5>
-  <div class="card-body">
-    <h5 class="card-title">Objetivo</h5>
-    <p class="card-text">Modulo encargado de crear, eliminar y modificar clientes.</p>
-  </div>
+<div class="table-responsive">
+    <table id="tablaClients" class="table table-hover w-auto text-nowrap" data-show-export="true" data-pagination="true"
+        data-click-to-select="true" data-show-columns="true" data-sortable="true" data-search="true"
+        data-live-search="true" data-buttons-align="left" data-search-align="right" data-server-sort="false">
+        <thead>
+            <tr>
+                <th scope="col" data-field="ID" data-sortable="true">ID</th>
+                <th scope="col" data-field="Nombre" data-sortable="true">Nombre</th>
+                <th scope="col" data-field="Email" data-sortable="true">Razon social</th>
+                <th scope="col" data-field="Role" data-sortable="true">RUT</th>
+                <th scope="col" data-field="Status" data-sortable="true">Cliente padre</th>
+                <th scope="col" data-field="Accion" data-sortable="true">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($clientes as $cliente)
+            <tr>
+                <td>{{$cliente['id']}}</td>
+                <td>{{$cliente['clientName']}}</td>
+                <td>{{$cliente['clientRazonSocial']}}</td>
+                <td>{{$cliente['clientRUT']}}</td>
+                <td>{{$cliente['clientParentId']}}</td>
+                <td>
+                @if(in_array(6, $authPermisos))
+                    <a class="btn btn-secondary" href="{{ route('clients.edit', $cliente['id']) }}"
+                    role="button">Editar</a>
+                @endif
+                @if(in_array(8, $authPermisos))
+                    <form style="display: inline-block;" action="{{ route('clients.destroy', $cliente['id']) }}"
+                        method="post">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-danger" type="submit">Eliminar(DEBUG)</button>
+                    </form>
+                @endif
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
 </div>
+
+<script>
+    //Inicializa la tabla "detalles" del dashboard
+    $('#tablaClients').bootstrapTable({
+        pageSize: 25,
+        exportDataType: 'all',
+    });
+</script>
 @endsection
