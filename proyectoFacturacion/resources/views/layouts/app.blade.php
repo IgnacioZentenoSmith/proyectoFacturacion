@@ -148,7 +148,23 @@
         <div class="container">
             <div class="row">
                 <div class="col-12">
+
+                @guest
+                    <!-- NO ESTA DENTRO DEL SISTEMA -->
                     @yield('content')
+                @else 
+
+                    <!-- ESTA DENTRO DEL SISTEMA -->
+                    @if (Auth::user() && Auth::user()->status == 'Inactivo')
+                        <div class="alert alert-danger text-center shadow" role="alert">
+                            <p class="font-weight-bold">Usted es un usuario inactivo de nuestro sistema, contáctese con un administrador para que sea activado.</p>
+                        </div>
+                    @elseif (Auth::user() && Auth::user()->status == 'Activo')
+                        @yield('content')
+                    @endif
+
+                @endguest
+                
                 </div>
             </div>
         </div>
