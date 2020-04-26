@@ -19,7 +19,10 @@ class PermissionsSeeder extends Seeder
             ['idUser'=>'1', 'idActions'=>'5',], 
             ['idUser'=>'1', 'idActions'=>'6',], 
             ['idUser'=>'1', 'idActions'=>'7',], 
-            ['idUser'=>'1', 'idActions'=>'8',],  
+            ['idUser'=>'1', 'idActions'=>'8',],
+            ['idUser'=>'1', 'idActions'=>'9',],
+            ['idUser'=>'1', 'idActions'=>'10',],
+            ['idUser'=>'1', 'idActions'=>'11',],  
         ]);
     }
 }
