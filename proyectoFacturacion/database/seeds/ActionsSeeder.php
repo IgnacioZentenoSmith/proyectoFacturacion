@@ -19,7 +19,10 @@ class ActionsSeeder extends Seeder
         ['actionName'=>'Administracion_create', 'actionParentId'=>1, 'actionType'=>'Programa'],
         ['actionName'=>'Administracion_edit', 'actionParentId'=>1, 'actionType'=>'Programa'],
         ['actionName'=>'Administracion_editPermisos', 'actionParentId'=>1, 'actionType'=>'Programa'],
-        ['actionName'=>'Administracion_delete', 'actionParentId'=>1, 'actionType'=>'Programa'],   
+        ['actionName'=>'Administracion_delete', 'actionParentId'=>1, 'actionType'=>'Programa'], 
+        ['actionName'=>'Clientes_create', 'actionParentId'=>2, 'actionType'=>'Programa'], 
+        ['actionName'=>'Clientes_edit', 'actionParentId'=>2, 'actionType'=>'Programa'],
+        ['actionName'=>'Clientes_delete', 'actionParentId'=>2, 'actionType'=>'Programa'],    
 	]);
     }
 }
