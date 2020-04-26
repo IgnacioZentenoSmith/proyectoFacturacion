@@ -6,6 +6,7 @@ use App\Permission;
 use App\Client;
 use Auth;
 
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 
 class ClientsController extends Controller
@@ -43,7 +44,8 @@ class ClientsController extends Controller
         $userId = Auth::user()->id;
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
-        return view('clients.create', compact('authPermisos'));
+        $clientesPadre = Client::all();
+        return view('clients.create', compact('authPermisos', 'clientesPadre'));
     }
 
     /**
@@ -54,7 +56,29 @@ class ClientsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate(
+            ['clientName'=>'required', 'string', 'max:200'],
+            ['clientRazonSocial'=>'required', 'string', 'max:200'],
+            ['clientRUT'=> 'required', 'string', 'max:200', 'unique:clients'],
+            ['clientParentId' => 'required_if:hasParent,si','numeric','between:1,9999'],
+        );
+        if ($request->hasParent == 'no') {
+            $clientParentId = null;
+        }
+        else if ($request->hasParent == 'si') {
+            $clientParentId = $request->clientParentId;
+        }
+
+        
+        $newClient = new Client([
+            'clientName' => $request->clientName,
+            'clientRazonSocial' => $request->clientRazonSocial,
+            'clientRUT' => $request->clientRUT,
+            'clientParentId' => $clientParentId,
+        ]);
+        $newClient->save();
+
+        return redirect('clients')->with('success', 'Cliente agregado exitosamente.');
     }
 
     /**
@@ -76,7 +100,12 @@ class ClientsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+        $cliente = Client::where('id', $id)->first();
+        $clientesPadre = Client::all();
+        return view('clients.edit', compact('cliente', 'clientesPadre', 'authPermisos'));
     }
 
     /**
@@ -88,7 +117,31 @@ class ClientsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate(
+            ['clientName'=>'required', 'string', 'max:200'],
+            ['clientRazonSocial'=>'required', 'string', 'max:200'],
+            ['clientRUT'=> 'required', 'string', 'max:200', 'unique:clients'],
+            ['clientParentId' => 'required_if:hasParent,si','numeric','between:1,9999'],
+        );
+        if ($request->hasParent == 'no') {
+            $clientParentId = null;
+        }
+        else if ($request->hasParent == 'si') {
+            $clientParentId = $request->clientParentId;
+        }
+
+        $cliente = Client::find($id);
+        $cliente->clientName = $request->clientName;
+        $cliente->clientRazonSocial = $request->clientRazonSocial;
+        $cliente->clientRUT = $request->clientRUT;
+        $cliente->clientParentId = $clientParentId;
+
+        if ($cliente->isDirty()) {
+            $cliente->save();
+            return redirect('clients')->with('success', 'Cliente editado exitosamente.');
+        } else {
+            return redirect('clients')->with('error', 'Ha ocurrido un error.');
+        }
     }
 
     /**
@@ -99,6 +152,21 @@ class ClientsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $cliente = Client::find($id);
+        $clientsIDs = $this->getAllChildren($id);
+        $clientsIDs->push($cliente);
+        $clientsIDs = $clientsIDs->pluck('id');
+        Client::destroy($clientsIDs);
+        return redirect('clients')->with('success', 'Cliente/s eliminado/s exitosamente');
+    }
+
+    public function getAllChildren($id) {
+        $childrenClientIds = new Collection();
+        $childrens = Client::where('clientParentId',$id)->get();
+        foreach ($childrens as $children) {
+            $childrenClientIds->push($children);
+            $childrenClientIds = $childrenClientIds->merge($this->getAllChildren($children['id']));
+        }
+        return $childrenClientIds;
     }
 }
