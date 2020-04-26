@@ -26,11 +26,39 @@
     </div>
 
     <div class="form-group row">
-        <label for="clientParentId" class="col-md-4 col-form-label text-md-right">Cliente padre</label>
-        <div class="col-md-6">
-            <input id="razonSocial" type="text" class="form-control" name="clientParentId" required>
+        <label for="hasParent" class="col-md-4 col-form-label text-md-right">Tiene padre?</label>
+        <div class="col-md-6 form-check">
+            <div class="pretty p-switch">
+                <input type="radio" name="hasParent" checked value="no"
+                    onchange="document.getElementById('parentClient').style.visibility = 'hidden';" />
+                <div class="state p-success">
+                    <label>No</label>
+                </div>
+            </div>
+
+            <div class="pretty p-switch p-fill">
+                <input type="radio" name="hasParent" value="si"
+                    onchange="document.getElementById('parentClient').style.visibility = 'visible';" />
+                <div class="state p-success">
+                    <label>Si</label>
+                </div>
+            </div>
         </div>
     </div>
+
+    <div class="form-group row" id="parentClient" style="visibility:hidden">
+        <label for="clientParentId" class="col-md-4 col-form-label text-md-right">Cliente padre</label>
+
+        <div class="col-md-6">
+            <select class="form-control" id="clientParentId" name="clientParentId">
+                <option value="" selected>Ninguno seleccionado</option>
+                @foreach($clientesPadre as $clientePadre)
+                <option value="{{$clientePadre['id']}}">{{$clientePadre['clientName']}}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
 
     <div class="form-group row mb-0">
         <div class="col-md-6 offset-md-4">
