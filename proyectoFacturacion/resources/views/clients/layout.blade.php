@@ -7,7 +7,7 @@
       <li class="nav-item">
         <a class="nav-link {{ (request()->is('clients')) ? 'active' : '' }}" href="{{route('clients.index')}}">Lista de clientes</a>
       </li>
-    @if(in_array(5, $authPermisos)) 
+    @if(in_array(9, $authPermisos)) 
       <li class="nav-item">
         <a class="nav-link {{ (request()->is('clients/create')) ? 'active' : '' }}" href="{{route('clients.create')}}">Crear cliente</a>
       </li>
