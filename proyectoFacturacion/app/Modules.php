@@ -13,4 +13,8 @@ class Modules extends Model
         'moduleName',
         'moduleParentId',
     ];
+
+    public function contractConditions(){
+        return $this->hasMany('App\ContractConditions', 'id', 'idModule');
+      }
 }
