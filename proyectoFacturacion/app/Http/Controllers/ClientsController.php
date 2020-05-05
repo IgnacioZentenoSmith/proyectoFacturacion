@@ -140,7 +140,7 @@ class ClientsController extends Controller
             $cliente->save();
             return redirect('clients')->with('success', 'Cliente editado exitosamente.');
         } else {
-            return redirect('clients')->with('error', 'Ha ocurrido un error.');
+            return redirect('clients');
         }
     }
 
@@ -154,10 +154,13 @@ class ClientsController extends Controller
     {
         $cliente = Client::find($id);
         $clientsIDs = $this->getAllChildren($id);
-        $clientsIDs->push($cliente);
         $clientsIDs = $clientsIDs->pluck('id');
-        Client::destroy($clientsIDs);
-        return redirect('clients')->with('success', 'Cliente/s eliminado/s exitosamente');
+        if ($clientsIDs->count() > 0) {
+            return redirect('clients')->with('error', 'Clientes con hijos no pueden ser eliminados, por favor elimine sus hijos primero.');
+        } else {
+            $cliente->delete();;
+            return redirect('clients')->with('success', 'Cliente eliminado exitosamente');
+        }
     }
 
     public function getAllChildren($id) {
