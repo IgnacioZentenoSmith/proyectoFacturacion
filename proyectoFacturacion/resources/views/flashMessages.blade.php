@@ -30,11 +30,12 @@
 	</div>
 	@endif
 
-
 	@if ($errors->any())
-	<div class="alert alert-danger shadow-sm">
-		<button type="button" class="close" data-dismiss="alert">×</button>	
-		Please check the form below for errors
-	</div>
-	@endif
+    <div class="alert alert-danger shadow-sm">
+        @foreach ($errors->all() as $error)
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<strong>{{ $error }}</strong>	
+        @endforeach
+    </div>
+@endif
 </div>
