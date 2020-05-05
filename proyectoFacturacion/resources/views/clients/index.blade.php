@@ -54,6 +54,9 @@
         pageSize: 25,
         exportDataType: 'all',
     });
+    document.onsubmit=function(){
+           return confirm('¿Está seguro de esta operación? Esto es irreversible.');
+       }
 
 </script>
 @endsection
