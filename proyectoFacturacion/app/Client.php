@@ -15,5 +15,7 @@ class Client extends Model
         'clientRUT',
         'clientParentId',
     ];
-    
+    public function contractConditions(){
+        return $this->hasMany('App\ContractConditions', 'id', 'idClient');
+      }
 }
