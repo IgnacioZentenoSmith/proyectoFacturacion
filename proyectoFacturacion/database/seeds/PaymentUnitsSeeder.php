@@ -12,12 +12,12 @@ class PaymentUnitsSeeder extends Seeder
     public function run()
     {
         DB::table('payment_units')->insert([
-            ['payment_unitName'=>'Implementacion'],
-            ['payment_unitName'=>'Proyecto'],
-            ['payment_unitName'=>'Archivo'],
-            ['payment_unitName'=>'Licitacion'],
-            ['payment_unitName'=>'Descuento'],
-            ['payment_unitName'=>'Clausula'],
+            ['payment_units'=>'Implementacion'],
+            ['payment_units'=>'Proyecto'],
+            ['payment_units'=>'Archivo'],
+            ['payment_units'=>'Licitacion'],
+            ['payment_units'=>'Descuento'],
+            ['payment_units'=>'Clausula'],
   
         ]);
     }
