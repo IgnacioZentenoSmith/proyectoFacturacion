@@ -39,3 +39,29 @@ Route::post('/admin/{id}', 'AdminController@changeStatus')->name('admin.changeSt
 // CLIENT ROUTES (RESOURCE CRUD)
 Route::resource('clients', 'ClientsController')->middleware('auth');
 
+// PARAMETERIZATION ROUTES
+Route::get('/parameterization', 'ParameterizationController@index')->name('parameterization.index')->middleware('auth');
+// CRUD MODULES
+Route::get('/parameterization/modules', 'ParameterizationController@modulesIndex')->name('parameterization.modules')->middleware('auth');
+Route::get('/parameterization/modulesCreate', 'ParameterizationController@modulesCreate')->name('parameterization.modulesCreate')->middleware('auth');
+Route::post('/parameterization/modules', 'ParameterizationController@modulesStore')->name('parameterization.modulesStore')->middleware('auth');
+Route::get('/parameterization/{id}/modulesEdit', 'ParameterizationController@modulesEdit')->name('parameterization.modulesEdit')->middleware('auth');
+Route::put('/parameterization/{id}/modulesUpdate', 'ParameterizationController@modulesUpdate')->name('parameterization.modulesUpdate')->middleware('auth');
+Route::delete('/parameterization/{id}/destroy', 'ParameterizationController@modulesDestroy')->name('parameterization.modulesDestroy')->middleware('auth');
+// CRUD PAYMENTUNITS
+Route::get('/parameterization/paymentunits', 'ParameterizationController@paymentunitsIndex')->name('parameterization.paymentunits')->middleware('auth');
+Route::get('/parameterization/paymentunitsCreate', 'ParameterizationController@paymentunitsCreate')->name('parameterization.paymentunitsCreate')->middleware('auth');
+Route::post('/parameterization/paymentunits', 'ParameterizationController@paymentunitsStore')->name('parameterization.paymentunitsStore')->middleware('auth');
+Route::get('/parameterization/{id}/paymentunitsEdit', 'ParameterizationController@paymentunitsEdit')->name('parameterization.paymentunitsEdit')->middleware('auth');
+Route::put('/parameterization/{id}/paymentunitsUpdate', 'ParameterizationController@paymentunitsUpdate')->name('parameterization.paymentunitsUpdate')->middleware('auth');
+Route::delete('/parameterization/{id}/paymentunits', 'ParameterizationController@paymentunitsDestroy')->name('parameterization.paymentunitsDestroy')->middleware('auth');
+//CRUD CONTRACTS
+Route::resource('contracts', 'ContractsController')->middleware('auth');
+Route::get('/contracts/{id}/editContractStatus', 'ContractsController@editContractStatus')->name('contracts.editContractStatus')->middleware('auth');
+//CRUD CONDICIONES CONTRACTUALES
+Route::get('/contracts/{id}/conditions', 'ContractsController@conditionsIndex')->name('contracts.conditions')->middleware('auth');
+Route::get('/contracts/{id}/conditionsCreate', 'ContractsController@conditionsCreate')->name('contracts.conditionsCreate')->middleware('auth');
+Route::post('/contracts/{id}/conditions', 'ContractsController@conditionsStore')->name('contracts.conditionsStore')->middleware('auth');
+Route::get('/contracts/{id}/conditionsEdit', 'ContractsController@conditionsEdit')->name('contracts.conditionsEdit')->middleware('auth');
+Route::put('/contracts/{id}/conditionsUpdate', 'ContractsController@conditionsUpdate')->name('contracts.conditionsUpdate')->middleware('auth');
+Route::delete('/contracts/{id}/conditions', 'ContractsController@conditionsDestroy')->name('contracts.conditionsDestroy')->middleware('auth');
