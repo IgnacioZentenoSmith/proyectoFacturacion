@@ -10,6 +10,10 @@ class PaymentUnits extends Model
 	protected $primaryKey = 'id';
 
     protected $fillable = [
-        'payment_unitName',
+        'payment_units',
     ];
+
+    public function contractConditions(){
+        return $this->hasMany('App\ContractConditions', 'id', 'idPaymentUnit');
+      }
 }
