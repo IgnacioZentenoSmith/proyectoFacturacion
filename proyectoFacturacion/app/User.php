@@ -42,6 +42,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany('App\Permission', 'id', 'idUser');
     }
+    public function contractInvolvedUsers()
+    {
+        return $this->hasMany('App\ContractInvolvedUsers', 'id', 'idUser');
+    }
     /**
      * Send the email verification notification.
      *
