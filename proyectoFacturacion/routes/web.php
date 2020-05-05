@@ -15,14 +15,53 @@ use Illuminate\Support\Facades\Route;
 
 
 Auth::routes();
+
+// Email Verification Routes...
+Route::get('email/verify', 'Auth\VerificationController@show')->name('verification.notice');
+Route::get('email/verify/{id}', 'Auth\VerificationController@verify')->name('verification.verify');
+Route::get('email/resend', 'Auth\VerificationController@resend')->name('verification.resend');
+Route::put('email/{id}/setPassword', 'Auth\VerificationController@setPassword')->name('email.setPassword')->middleware('auth');
+
 Route::get('/home', 'HomeController@index')->name('home.index');
 Route::get('/', 'HomeController@index')->name('home.index');
-Route::get('/admin', 'AdminController@index')->name('admin.index')->middleware('auth');
+
 
 Route::get('/contracts', 'ContractsController@index')->name('contracts.index')->middleware('auth');
 Route::get('/billings', 'BillingsController@index')->name('billings.index')->middleware('auth');
-Route::get('/clients', 'ClientsController@index')->name('clients.index')->middleware('auth');
-// Ruta de CRUD Listado Inscripcion
 
-Route::resource('users', 'UsersController')->middleware('auth');
 
+// ADMIN ROUTES (RESOURCE CRUD)
+Route::resource('admin', 'AdminController')->middleware('auth');
+Route::get('/admin/{id}/editPermisos', 'AdminController@editPermisos')->name('admin.editPermisos')->middleware('auth');
+Route::put('/admin/{id}/updatePermisos', 'AdminController@updatePermisos')->name('admin.updatePermisos')->middleware('auth');
+Route::post('/admin/{id}', 'AdminController@changeStatus')->name('admin.changeStatus')->middleware('auth');
+
+// CLIENT ROUTES (RESOURCE CRUD)
+Route::resource('clients', 'ClientsController')->middleware('auth');
+
+// PARAMETERIZATION ROUTES
+Route::get('/parameterization', 'ParameterizationController@index')->name('parameterization.index')->middleware('auth');
+// CRUD MODULES
+Route::get('/parameterization/modules', 'ParameterizationController@modulesIndex')->name('parameterization.modules')->middleware('auth');
+Route::get('/parameterization/modulesCreate', 'ParameterizationController@modulesCreate')->name('parameterization.modulesCreate')->middleware('auth');
+Route::post('/parameterization/modules', 'ParameterizationController@modulesStore')->name('parameterization.modulesStore')->middleware('auth');
+Route::get('/parameterization/{id}/modulesEdit', 'ParameterizationController@modulesEdit')->name('parameterization.modulesEdit')->middleware('auth');
+Route::put('/parameterization/{id}/modulesUpdate', 'ParameterizationController@modulesUpdate')->name('parameterization.modulesUpdate')->middleware('auth');
+Route::delete('/parameterization/{id}/destroy', 'ParameterizationController@modulesDestroy')->name('parameterization.modulesDestroy')->middleware('auth');
+// CRUD PAYMENTUNITS
+Route::get('/parameterization/paymentunits', 'ParameterizationController@paymentunitsIndex')->name('parameterization.paymentunits')->middleware('auth');
+Route::get('/parameterization/paymentunitsCreate', 'ParameterizationController@paymentunitsCreate')->name('parameterization.paymentunitsCreate')->middleware('auth');
+Route::post('/parameterization/paymentunits', 'ParameterizationController@paymentunitsStore')->name('parameterization.paymentunitsStore')->middleware('auth');
+Route::get('/parameterization/{id}/paymentunitsEdit', 'ParameterizationController@paymentunitsEdit')->name('parameterization.paymentunitsEdit')->middleware('auth');
+Route::put('/parameterization/{id}/paymentunitsUpdate', 'ParameterizationController@paymentunitsUpdate')->name('parameterization.paymentunitsUpdate')->middleware('auth');
+Route::delete('/parameterization/{id}/paymentunits', 'ParameterizationController@paymentunitsDestroy')->name('parameterization.paymentunitsDestroy')->middleware('auth');
+//CRUD CONTRACTS
+Route::resource('contracts', 'ContractsController')->middleware('auth');
+Route::get('/contracts/{id}/editContractStatus', 'ContractsController@editContractStatus')->name('contracts.editContractStatus')->middleware('auth');
+//CRUD CONDICIONES CONTRACTUALES
+Route::get('/contracts/{id}/conditions', 'ContractsController@conditionsIndex')->name('contracts.conditions')->middleware('auth');
+Route::get('/contracts/{id}/conditionsCreate', 'ContractsController@conditionsCreate')->name('contracts.conditionsCreate')->middleware('auth');
+Route::post('/contracts/{id}/conditions', 'ContractsController@conditionsStore')->name('contracts.conditionsStore')->middleware('auth');
+Route::get('/contracts/{id}/conditionsEdit', 'ContractsController@conditionsEdit')->name('contracts.conditionsEdit')->middleware('auth');
+Route::put('/contracts/{id}/conditionsUpdate', 'ContractsController@conditionsUpdate')->name('contracts.conditionsUpdate')->middleware('auth');
+Route::delete('/contracts/{id}/conditions', 'ContractsController@conditionsDestroy')->name('contracts.conditionsDestroy')->middleware('auth');

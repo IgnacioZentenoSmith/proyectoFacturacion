@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Permission extends Model
 {
   protected $table = 'permissions';
-	protected $primaryKey = 'idPermissions';
+	protected $primaryKey = 'id';
 
   protected $fillable = [
 		'idActions',
@@ -18,6 +18,6 @@ class Permission extends Model
     return $this->hasOne('App\User', 'idUser', 'id');
   }
   public function action(){
-    return $this->hasOne('App\Action', 'idActions', 'idActions');
+    return $this->hasOne('App\Action', 'idActions', 'id');
 	}
 }

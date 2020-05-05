@@ -14,20 +14,14 @@ class CreatePermissionsTable extends Migration
     public function up()
     {
         Schema::create('permissions', function (Blueprint $table) {
-            $table->increments('idPermissions');
-            $table->integer('idUser')->unsigned();
-            $table->integer('idActions')->unsigned();
+            $table->id();
+            $table->unsignedBigInteger('idUser');
+            $table->unsignedBigInteger('idActions');
             $table->timestamps();
 
-            $table->unique("idPermissions");
-            $table->index("idUser");
-            $table->index("idActions");
+            $table->foreign('idUser')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('idActions')->references('id')->on('actions')->onDelete('cascade');
 
-            $table->foreign('idUser')
-                ->references('id')->on('users');
-
-            $table->foreign('idActions')
-                ->references('idActions')->on('actions');
         });
     }
 

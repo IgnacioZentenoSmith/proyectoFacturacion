@@ -13,17 +13,17 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 	<!-- Font Awesome CSS -->
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretty-checkbox/3.0.0/pretty-checkbox.min.css" integrity="sha256-KCHcsGm2E36dSODOtMCcBadNAbEUW5m+1xLId7xgLmw=" crossorigin="anonymous" />
 	<!-- JS -->
-	<!-- Font Awesome JS -->
-	<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
-	<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
 	<!-- jQuery JS -->
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
 	<!-- Popper JS -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 	<!-- Bootstrap JS -->
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    	<!-- Font Awesome JS -->
+	<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+	<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
 
 	<!-- Bootstrap Tables-->
 	<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css">
@@ -38,8 +38,8 @@
     
 </head>
 <body>
-    <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow">
+    <div id="app" class="d-flex flex-column">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow d-flex align-items-start">
             <div class="container-fluid">
                 <ul class="navbar-nav mr-auto text-center">
                     <a class="navbar-brand">
@@ -55,56 +55,66 @@
                     <ul class="navbar-nav m-auto text-center">
                     @guest
                     @else
-                        <li class="nav-item mx-2 {{ (request()->is('/')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('home.index')}}">
-                                <span style="font-size: 1.5em;">
-                                    <i class="fas fa-home"></i>
-                                </span><br>
-                                Home
-                            </a>
-                        </li>
-                        <li class="nav-item mx-2 {{ (request()->is('admin')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('admin.index')}}">
-                                <span style="font-size: 1.5em;">
-                                    <i class="fas fa-shield-alt"></i>
-                                </span><br>
-                                Admin
-                            </a>
-                        </li>
-                        <li class="nav-item mx-2 {{ (request()->is('users')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('users.index')}}">
-                                <span style="font-size: 1.5em;">
-                                    <i class="fas fa-users"></i>
-                                </span><br>
-                                Usuarios
-                            </a>
-                        </li>
-                        <li class="nav-item mx-2 {{ (request()->is('clients')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('clients.index')}}">
-                                <span style="font-size: 1.5em;">
-                                    <i class="fas fa-user-tie"></i>
-                                </span><br>
-                                Clientes 
-                            </a>
-                        </li>
-                        <li class="nav-item mx-2 {{ (request()->is('contracts')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('contracts.index')}}">
-                                <span style="font-size: 1.5em;">
-                                    <i class="fas fa-handshake"></i>
-                                </span><br>
-                                Contratos
-                            </a>
-                        </li>
-                        <li class="nav-item mx-2 {{ (request()->is('billings')) ? 'active' : '' }}">
-                            <a class="nav-link" href="{{route('billings.index')}}">
-                                <span style="font-size: 1.5em;">
-                                    <i class="fas fa-dollar-sign"></i>
-                                </span><br>
-                                Facturas
-                            </a>
-                        </li>
+                    
+                            <li class="nav-item mx-2 {{ (request()->is('/')) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{route('home.index')}}">
+                                    <span style="font-size: 1.5em;">
+                                        <i class="fas fa-home"></i>
+                                    </span><br>
+                                    Home
+                                </a>
+                            </li>
+                        @if(in_array(1, $authPermisos))
+                            <li class="nav-item mx-2 {{ (request()->is('admin*')) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{route('admin.index')}}">
+                                    <span style="font-size: 1.5em;">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </span><br>
+                                    Admin
+                                </a>
+                            </li>
+                        @endif
+                        @if(in_array(2, $authPermisos))
+                            <li class="nav-item mx-2 {{ (request()->is('clients*')) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{route('clients.index')}}">
+                                    <span style="font-size: 1.5em;">
+                                        <i class="fas fa-user-tie"></i>
+                                    </span><br>
+                                    Clientes 
+                                </a>
+                            </li>
+                        @endif
+                        @if(in_array(3, $authPermisos))
+                            <li class="nav-item mx-2 {{ (request()->is('contracts*')) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{route('contracts.index')}}">
+                                    <span style="font-size: 1.5em;">
+                                        <i class="fas fa-handshake"></i>
+                                    </span><br>
+                                    Contratos
+                                </a>
+                            </li>
+                        @endif
+                        @if(in_array(12, $authPermisos))
+                            <li class="nav-item mx-2 {{ (request()->is('parameterization*')) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{route('parameterization.index')}}">
+                                    <span style="font-size: 1.5em;">
+                                        <i class="fas fa-cogs"></i>
+                                    </span><br>
+                                    Parametrizaciones 
+                                </a>
+                            </li>
+                        @endif
+                        @if(in_array(4, $authPermisos))
+                            <li class="nav-item mx-2 {{ (request()->is('billings*')) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{route('billings.index')}}">
+                                    <span style="font-size: 1.5em;">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </span><br>
+                                    Facturas
+                                </a>
+                            </li>
+                        @endif
    
-
                     @endguest
                     </ul>
 
@@ -142,18 +152,35 @@
                     </ul>
             </div>
         </nav>
+        @include('flashMessages')
 
-        <main class="py-4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
+    <main class="py-4 my-4 d-flex align-items-center">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+
+                @guest
+                    <!-- NO ESTA DENTRO DEL SISTEMA -->
+                    @yield('content')
+                @else 
+
+                    <!-- ESTA DENTRO DEL SISTEMA -->
+                    @if (Auth::user() && Auth::user()->status == 'Inactivo')
+                        <div class="alert alert-danger text-center shadow" role="alert">
+                            <p class="font-weight-bold">Usted es un usuario inactivo de nuestro sistema, contáctese con un administrador para que sea activado.</p>
+                        </div>
+                    @elseif (Auth::user() && Auth::user()->status == 'Activo')
                         @yield('content')
-                    </div>
+                    @endif
+
+                @endguest
+                
                 </div>
             </div>
-        </main>
-    </div>
-    <footer id="sticky-footer" class="text-white fixed-bottom bg-dark">
+        </div>
+    </main>
+
+    <footer class="text-white d-flex align-items-end bg-dark mt-auto">
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
@@ -180,17 +207,22 @@
                     <div class="col-sm-3 mt-2">
                         <div class="row">
                             <div class="col-sm-6">&nbsp;</div>
-                            <div class="col-sm-6">
-                                <p class="mb-1"><img src="{{asset('img/footer/').'/'.'mail.svg'}}" alt=""> Mail de contacto:</p>
-                                <p class="mt-0">&nbsp;&nbsp;&nbsp;&nbsp;izenteno@planok.com</p>
+                                <div class="col-sm-6">
+                                    <p class="mb-1"><img src="{{asset('img/footer/').'/'.'mail.svg'}}" alt=""> Mail de contacto:</p>
+                                    <p class="mt-0">&nbsp;&nbsp;&nbsp;&nbsp;izenteno@planok.com</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</footer>
-
+    </footer>
+</div>
+<style>
+#app {
+    min-height: 100vh;
+}
+</style>
 </body>
 </html>

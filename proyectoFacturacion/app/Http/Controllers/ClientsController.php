@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Permission;
+use App\Client;
+use Auth;
+
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 
 class ClientsController extends Controller
@@ -22,7 +27,11 @@ class ClientsController extends Controller
      */
     public function index()
     {
-        return view('clients.index');
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+        $clientes = Client::all();
+        return view('clients.index', compact('clientes', 'authPermisos'));
     }
 
     /**
@@ -32,7 +41,11 @@ class ClientsController extends Controller
      */
     public function create()
     {
-        //
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+        $clientesPadre = Client::all();
+        return view('clients.create', compact('authPermisos', 'clientesPadre'));
     }
 
     /**
@@ -43,7 +56,29 @@ class ClientsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate(
+            ['clientName'=>'required', 'string', 'max:200'],
+            ['clientRazonSocial'=>'required', 'string', 'max:200'],
+            ['clientRUT'=> 'required', 'string', 'max:200', 'unique:clients'],
+            ['clientParentId' => 'required_if:hasParent,si','numeric','between:1,9999'],
+        );
+        if ($request->hasParent == 'no') {
+            $clientParentId = null;
+        }
+        else if ($request->hasParent == 'si') {
+            $clientParentId = $request->clientParentId;
+        }
+
+        
+        $newClient = new Client([
+            'clientName' => $request->clientName,
+            'clientRazonSocial' => $request->clientRazonSocial,
+            'clientRUT' => $request->clientRUT,
+            'clientParentId' => $clientParentId,
+        ]);
+        $newClient->save();
+
+        return redirect('clients')->with('success', 'Cliente agregado exitosamente.');
     }
 
     /**
@@ -65,7 +100,12 @@ class ClientsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+        $cliente = Client::where('id', $id)->first();
+        $clientesPadre = Client::all();
+        return view('clients.edit', compact('cliente', 'clientesPadre', 'authPermisos'));
     }
 
     /**
@@ -77,7 +117,31 @@ class ClientsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate(
+            ['clientName'=>'required', 'string', 'max:200'],
+            ['clientRazonSocial'=>'required', 'string', 'max:200'],
+            ['clientRUT'=> 'required', 'string', 'max:200', 'unique:clients'],
+            ['clientParentId' => 'required_if:hasParent,si','numeric','between:1,9999'],
+        );
+        if ($request->hasParent == 'no') {
+            $clientParentId = null;
+        }
+        else if ($request->hasParent == 'si') {
+            $clientParentId = $request->clientParentId;
+        }
+
+        $cliente = Client::find($id);
+        $cliente->clientName = $request->clientName;
+        $cliente->clientRazonSocial = $request->clientRazonSocial;
+        $cliente->clientRUT = $request->clientRUT;
+        $cliente->clientParentId = $clientParentId;
+
+        if ($cliente->isDirty()) {
+            $cliente->save();
+            return redirect('clients')->with('success', 'Cliente editado exitosamente.');
+        } else {
+            return redirect('clients');
+        }
     }
 
     /**
@@ -88,6 +152,24 @@ class ClientsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $cliente = Client::find($id);
+        $clientsIDs = $this->getAllChildren($id);
+        $clientsIDs = $clientsIDs->pluck('id');
+        if ($clientsIDs->count() > 0) {
+            return redirect('clients')->with('error', 'Clientes con hijos no pueden ser eliminados, por favor elimine sus hijos primero.');
+        } else {
+            $cliente->delete();;
+            return redirect('clients')->with('success', 'Cliente eliminado exitosamente');
+        }
+    }
+
+    public function getAllChildren($id) {
+        $childrenClientIds = new Collection();
+        $childrens = Client::where('clientParentId',$id)->get();
+        foreach ($childrens as $children) {
+            $childrenClientIds->push($children);
+            $childrenClientIds = $childrenClientIds->merge($this->getAllChildren($children['id']));
+        }
+        return $childrenClientIds;
     }
 }

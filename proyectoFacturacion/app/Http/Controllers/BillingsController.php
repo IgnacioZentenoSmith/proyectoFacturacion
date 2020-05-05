@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Permission;
+use Auth;
+
 class BillingsController extends Controller
 {
     /**
@@ -22,7 +25,10 @@ class BillingsController extends Controller
      */
     public function index()
     {
-        return view('billings.index');
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+        return view('billings.index', compact('authPermisos'));
     }
 
     /**
