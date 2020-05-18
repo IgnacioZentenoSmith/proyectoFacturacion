@@ -77,10 +77,11 @@ class ParameterizationController extends Controller
     public function modulesStore(Request $request)
     {
       
-        $request->validate(
-            ['moduleName'=>'required', 'string', 'max:200'],
-            ['moduleParentId' => 'required_if:hasParent,si','numeric','between:1,9999'],
-        );
+        $request->validate([
+            'moduleName'=>'required|string|max:100|unique:modules,moduleName' ,
+            'moduleParentId' => 'required_if:hasParent,si',
+        ]);
+
         if ($request->hasParent == 'no') {
             $moduleParentId = null;
         }
@@ -95,7 +96,7 @@ class ParameterizationController extends Controller
         ]);
         $newModules->save();
 
-        return redirect()->action('ParameterizationController@modulesIndex')->with('success', 'Modulo agregado exitosamente.');
+        return redirect()->action('ParameterizationController@modulesIndex')->with('success', 'Módulo agregado exitosamente.');
         
     }
 
@@ -135,10 +136,10 @@ class ParameterizationController extends Controller
      */
     public function modulesUpdate(Request $request, $id)
     {
-      $request->validate(
-        ['moduleName'=>'required', 'string', 'max:200'],
-        ['moduleParentId' => 'required_if:hasParent,si','numeric','between:1,9999'],
-      );
+      $request->validate([
+        'moduleName'=>'required|string|max:100|unique:modules,moduleName,' .$id ,
+        'moduleParentId' => 'required_if:hasParent,si',
+      ]);
       if ($request->hasParent == 'no') {
           $moduleParentId = null;
       }
@@ -152,7 +153,7 @@ class ParameterizationController extends Controller
 
         if ($modulo->isDirty()) {
             $modulo->save();
-            return redirect()->action('ParameterizationController@modulesIndex')->with('success', 'Modulo editado exitosamente.');
+            return redirect()->action('ParameterizationController@modulesIndex')->with('success', 'Módulo editado exitosamente.');
         } else {
           return redirect()->action('ParameterizationController@modulesIndex');
         }
@@ -171,10 +172,10 @@ class ParameterizationController extends Controller
         $moduloIDs = $this->getAllChildren($id);
         $moduloIDs = $moduloIDs->pluck('id');
         if ($moduloIDs->count() > 0) {
-          return redirect()->action('ParameterizationController@modulesIndex')->with('error', 'Modulos con hijos no pueden ser eliminados, por favor elimine sus hijos primero.');
+          return redirect()->action('ParameterizationController@modulesIndex')->with('error', 'Módulos con hijos no pueden ser eliminados, por favor elimine sus hijos primero.');
         } else {
             $modulo->delete();
-          return redirect()->action('ParameterizationController@modulesIndex')->with('success', 'Modulo eliminado exitosamente');
+          return redirect()->action('ParameterizationController@modulesIndex')->with('success', 'Módulo eliminado exitosamente');
         }
     }
 
@@ -220,9 +221,9 @@ class ParameterizationController extends Controller
      */
     public function paymentunitsStore(Request $request)
     {
-        $request->validate(
-            ['payment_units'=>'required', 'string', 'max:200'],
-        );
+      $request->validate([
+        'payment_units'=>'required|string|max:100|unique:payment_units,payment_units',
+      ]);
         $newPaymentUnit = new PaymentUnits([
             'payment_units' => $request->payment_units,
         ]);
@@ -254,9 +255,9 @@ class ParameterizationController extends Controller
      */
     public function paymentunitsUpdate(Request $request, $id)
     {
-      $request->validate(
-        ['payment_units'=>'required', 'string', 'max:200'],
-      );
+      $request->validate([
+        'payment_units'=>'required|string|max:100|unique:payment_units,payment_units,' .$request->payment_units ,
+      ]);
 
         $paymentUnit = PaymentUnits::find($id);
         $paymentUnit->payment_units = $request->payment_units;

@@ -27,7 +27,7 @@
     </div>
 
     <div class="form-group row">
-        <label for="hasParent" class="col-md-4 col-form-label text-md-right">Tiene padre?</label>
+        <label for="hasParent" class="col-md-4 col-form-label text-md-right">¿Es un holder?</label>
         <div class="col-md-6 form-check">
             <div class="pretty p-switch">
                 <input type="radio" name="hasParent" @if ($cliente['clientParentId'] == null) checked @endif value="no"
@@ -73,7 +73,7 @@
     <div class="form-group row mb-0">
         <div class="col-md-6 offset-md-4">
             <button type="submit" class="btn btn-primary">
-                Crear cliente
+                Editar cliente
             </button>
             <a class="btn btn-secondary" href="{{route('clients.index')}}" role="button">Cancelar</a>
         </div>

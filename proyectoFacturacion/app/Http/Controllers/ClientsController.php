@@ -56,12 +56,12 @@ class ClientsController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate(
-            ['clientName'=>'required', 'string', 'max:200'],
-            ['clientRazonSocial'=>'required', 'string', 'max:200'],
-            ['clientRUT'=> 'required', 'string', 'max:200', 'unique:clients'],
-            ['clientParentId' => 'required_if:hasParent,si','numeric','between:1,9999'],
-        );
+        $request->validate([
+            'clientName'=> 'required|string|max:100',
+            'clientRazonSocial'=> 'required|string|max:100',
+            'clientRUT'=> 'required|string|max:200|unique:clients,clientRUT',
+            'clientParentId'=> 'required_if:hasParent,si',
+        ]);
         if ($request->hasParent == 'no') {
             $clientParentId = null;
         }
@@ -117,12 +117,13 @@ class ClientsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate(
-            ['clientName'=>'required', 'string', 'max:200'],
-            ['clientRazonSocial'=>'required', 'string', 'max:200'],
-            ['clientRUT'=> 'required', 'string', 'max:200', 'unique:clients'],
-            ['clientParentId' => 'required_if:hasParent,si','numeric','between:1,9999'],
-        );
+        $request->validate([
+            'clientName'=> 'required|string|max:100',
+            'clientRazonSocial'=> 'required|string|max:100',
+            'clientRUT'=> 'required|string|max:200|unique:clients,clientRUT,'.$id,
+            'clientParentId'=> 'required_if:hasParent,si',
+        ]);
+
         if ($request->hasParent == 'no') {
             $clientParentId = null;
         }

@@ -33,9 +33,9 @@
 	@if ($errors->any())
     <div class="alert alert-danger shadow-sm">
         @foreach ($errors->all() as $error)
-						<button type="button" class="close" data-dismiss="alert">×</button>
 						<strong>{{ $error }}</strong>	
         @endforeach
+				<button type="button" class="close" data-dismiss="alert">×</button>
     </div>
 @endif
 </div>

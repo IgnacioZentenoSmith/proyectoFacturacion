@@ -26,7 +26,7 @@
     </div>
 
     <div class="form-group row">
-        <label for="hasParent" class="col-md-4 col-form-label text-md-right">Tiene padre?</label>
+        <label for="hasParent" class="col-md-4 col-form-label text-md-right">¿Es un holder?</label>
         <div class="col-md-6 form-check">
             <div class="pretty p-switch">
                 <input type="radio" name="hasParent" checked value="no"
