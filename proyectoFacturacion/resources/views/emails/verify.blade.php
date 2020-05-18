@@ -1,11 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Establecer contraseña') }}</div>
+            <div class="card shadow">
+                <div class="card-header">{{ __('Establezca su contraseña') }}</div>
+                    <div class="card-body">
 
                     <p class="my-3">{{ __('Porfavor establezca su contraseña antes de continuar.') }}</p>
 
@@ -49,6 +50,7 @@
                             </div>
                         </div>
                     </form>
+                </div>
             </div>
         </div>
     </div>
