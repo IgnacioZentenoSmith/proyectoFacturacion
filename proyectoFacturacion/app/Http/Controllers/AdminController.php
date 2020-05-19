@@ -85,11 +85,11 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate(
-            ['name'=>'required', 'string', 'max:255'],
-            ['email'=>'required', 'string', 'email', 'max:255', 'unique:users'],
-            ['role'=>'required', 'string']
-        );
+        $request->validate([
+            'name'=>'required|string|max:255',
+            'email'=>'required|email:rfc,dns,spoof|unique:users,email',
+            'role'=>'required|string'
+        ]);
         $acciones = Action::all();
         
         $newUser = new User([
@@ -172,6 +172,12 @@ class AdminController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'name'=>'required|string|max:255',
+            'email'=>'required|email:rfc,dns,spoof|unique:users,email,'.$id,
+            'role'=>'required|string'
+        ]);
+
         $user = User::find($id);
         $user->name = $request->name;
         $user->email = $request->email;

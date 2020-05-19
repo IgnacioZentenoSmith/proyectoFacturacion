@@ -41,7 +41,7 @@
                 <option value="" selected>Ninguno seleccionado</option>
                 <!-- Permitir solo clientes padres desde Backend -->
                 @foreach($clients as $client)
-                <option value="{{$client['id']}}">{{$client['clientName']}}</option>
+                <option value="{{$client['id']}}">{{$client['clientRazonSocial']}}</option>
                 @endforeach
             </select>
         </div>

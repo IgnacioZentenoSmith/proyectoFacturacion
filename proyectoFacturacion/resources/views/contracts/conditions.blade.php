@@ -2,15 +2,13 @@
 @section('contractsContent')
 
 <div class="row justify-content-center">
+    <div class="col-auto">
     <div class="col-12">
       <div class="alert alert-info" role="alert">
         Condiciones contractuales del contrato: <strong>{{$contract['contractsNumero']}}</strong>
       </div>
       <a class="btn btn-primary" href="{{ route('contracts.conditionsCreate', $contract['id']) }}"role="button">Nueva condicion</a>
     </div>
-</div>
-<div class="row justify-content-center">
-    <div class="col-auto">
         <div class="table-responsive">
             <table id="tablaContractsConditions" class="table table-hover w-auto text-nowrap" data-show-export="true"
                 data-pagination="true" data-click-to-select="true" data-show-columns="true" data-sortable="true"

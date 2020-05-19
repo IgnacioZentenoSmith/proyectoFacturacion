@@ -5,12 +5,6 @@
 <form method="POST" action="{{route('clients.update', $cliente['id'])}}">
     @csrf
     {{ method_field('PUT') }}
-    <div class="form-group row">
-        <label for="clientName" class="col-md-4 col-form-label text-md-right">Nombre del cliente</label>
-        <div class="col-md-6">
-            <input id="clientName" type="text" class="form-control" name="clientName" required autofocus value="{{$cliente['clientName']}}">
-        </div>
-    </div>
 
     <div class="form-group row">
         <label for="clientRazonSocial" class="col-md-4 col-form-label text-md-right">Razon social</label>
@@ -27,7 +21,35 @@
     </div>
 
     <div class="form-group row">
-        <label for="hasParent" class="col-md-4 col-form-label text-md-right">Tiene padre?</label>
+        <label for="clientContactEmail" class="col-md-4 col-form-label text-md-right">Email de contacto</label>
+        <div class="col-md-6">
+            <input id="clientContactEmail" type="email" class="form-control" name="clientContactEmail" required value="{{$cliente['clientContactEmail']}}">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="clientPhone" class="col-md-4 col-form-label text-md-right">Teléfono del cliente</label>
+        <div class="col-md-6">
+            <input id="clientPhone" type="text" class="form-control" name="clientPhone" required value="{{$cliente['clientPhone']}}">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="clientDirection" class="col-md-4 col-form-label text-md-right">Dirección del cliente</label>
+        <div class="col-md-6">
+            <input id="clientDirection" type="text" class="form-control" name="clientDirection" required value="{{$cliente['clientDirection']}}">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="clientBusinessActivity" class="col-md-4 col-form-label text-md-right">Giro del cliente</label>
+        <div class="col-md-6">
+            <input id="clientBusinessActivity" type="text" class="form-control" name="clientBusinessActivity" required value="{{$cliente['clientBusinessActivity']}}">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="hasParent" class="col-md-4 col-form-label text-md-right">¿Pertenece a un holding?</label>
         <div class="col-md-6 form-check">
             <div class="pretty p-switch">
                 <input type="radio" name="hasParent" @if ($cliente['clientParentId'] == null) checked @endif value="no"
@@ -62,7 +84,7 @@
                   <!-- Si es un hijo, seleccionar su padre -->
                     <option value="{{$clientePadre['id']}}" 
                     @if ($clientePadre['id'] == $cliente['clientParentId']) selected @endif>
-                      {{$clientePadre['clientName']}}
+                      {{$clientePadre['clientRazonSocial']}}
                     </option>
                   @endif
                 @endforeach
@@ -73,7 +95,7 @@
     <div class="form-group row mb-0">
         <div class="col-md-6 offset-md-4">
             <button type="submit" class="btn btn-primary">
-                Crear cliente
+                Editar cliente
             </button>
             <a class="btn btn-secondary" href="{{route('clients.index')}}" role="button">Cancelar</a>
         </div>
