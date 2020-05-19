@@ -32,7 +32,7 @@
                         <td>{{$cliente['clientPhone']}}</td>
                         <td>{{$cliente['clientDirection']}}</td>
                         <td>{{$cliente['clientBusinessActivity']}}</td>
-                        <td class="text-center">{{$cliente['clientParentId']}}</td>
+                        <td class="text-center @if($cliente['clientParentId'] == null) bg-info @else bg-light @endif">{{$cliente['clientParentId']}}</td>
                         <td>
                             @if(in_array(10, $authPermisos))
                             <a class="btn btn-secondary" href="{{ route('clients.edit', $cliente['id']) }}"
