@@ -10,10 +10,13 @@ class Client extends Model
 	protected $primaryKey = 'id';
 
     protected $fillable = [
-        'clientName',
         'clientRazonSocial',
         'clientRUT',
         'clientParentId',
+        'clientContactEmail',
+        'clientPhone',
+        'clientDirection',
+        'clientBusinessActivity'
     ];
     public function contractConditions(){
         return $this->hasMany('App\ContractConditions', 'id', 'idClient');

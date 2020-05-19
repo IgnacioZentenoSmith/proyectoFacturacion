@@ -46,7 +46,7 @@ class ContractsController extends Controller
             $client = Client::where('id', $contract['idClient'])->first();
 
             //Agregar a la coleccion si es que existen
-            $contract = Arr::add($contract, 'contract_clientName', $client->clientName);
+            $contract = Arr::add($contract, 'contract_clientName', $client->clientRazonSocial);
             $contract = Arr::add($contract, 'contract_ejecutivoName', $userEjecutivo->name);
         }
         
@@ -243,7 +243,7 @@ class ContractsController extends Controller
             $contractCondition = Arr::add($contractCondition, 'contractCondition_paymentUnitName', $getPaymentUnit->payment_units);
             //Saca y agrega a la coleccion el nombre del cliente
             $getClient = Client::where('id', $contractCondition['idClient'])->first();
-            $contractCondition = Arr::add($contractCondition, 'contractCondition_clientName', $getClient->clientName);
+            $contractCondition = Arr::add($contractCondition, 'contractCondition_clientName', $getClient->clientRazonSocial);
             //Saca y agrega a la coleccion el nombre del contrato
             $getContract = Contracts::where('id', $contractCondition['idContract'])->first();
             $contractCondition = Arr::add($contractCondition, 'contractCondition_contractName', $getContract->contractsNombre);
@@ -289,9 +289,10 @@ class ContractsController extends Controller
     public function conditionsEdit($id) {
         $authPermisos = $this->getPermisos();
         $contractConditions = ContractConditions::find($id);
-        $contractId = $contractConditions->idContract;
+        $contractId = Contracts::find($contractConditions->idContract)->first();
+        $clientID = $contractId->idClient;
         //Saca hijos y padres
-        $clients = Client::where('clientParentId', $contractId)->orWhere('id', $contractId)->get();
+        $clients = Client::where('clientParentId', $clientID)->orWhere('id', $clientID)->get();
         $modules = Modules::all();
         $paymentUnits = PaymentUnits::all();
         return view('contracts.conditionsEdit', compact('authPermisos', 'contractConditions', 'clients', 'modules', 'paymentUnits'));

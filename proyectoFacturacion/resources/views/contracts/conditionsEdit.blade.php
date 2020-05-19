@@ -11,7 +11,6 @@
         <div class="col-md-6">
             <select class="form-control" id="idModule" name="idModule">
                 <option value="" selected>Ninguno seleccionado</option>
-                <!-- Permitir solo clientes padres desde Backend -->
                 @foreach($modules as $module)
                 <option value="{{$module['id']}}"
                 @if ($contractConditions['idModule'] == $module['id']) selected @endif>{{$module['moduleName']}}</option>
@@ -26,7 +25,6 @@
         <div class="col-md-6">
             <select class="form-control" id="idPaymentUnit" name="idPaymentUnit">
                 <option value="" selected>Ninguno seleccionado</option>
-                <!-- Permitir solo clientes padres desde Backend -->
                 @foreach($paymentUnits as $paymentUnit)
                 <option value="{{$paymentUnit['id']}}"
                 @if ($contractConditions['idPaymentUnit'] == $paymentUnit['id']) selected @endif>{{$paymentUnit['payment_units']}}</option>
@@ -41,10 +39,10 @@
         <div class="col-md-6">
             <select class="form-control" id="idClient" name="idClient">
                 <option value="" selected>Ninguno seleccionado</option>
-                <!-- Permitir solo clientes padres desde Backend -->
+                <!-- Clientes padres y hijos -->
                 @foreach($clients as $client)
                 <option value="{{$client['id']}}"
-                @if ($contractConditions['idClient'] == $client['id']) selected @endif>{{$client['clientName']}}</option>
+                @if ($contractConditions['idClient'] == $client['id']) selected @endif>{{$client['clientRazonSocial']}}</option>
                 @endforeach
             </select>
         </div>
@@ -93,7 +91,7 @@
     <div class="form-group row mb-0">
         <div class="col-md-6 offset-md-4">
             <button type="submit" class="btn btn-primary">
-                Crear condicion contractual
+                Editar condicion contractual
             </button>
             <a class="btn btn-secondary" href="{{ route('contracts.conditions', $contractConditions['idContract']) }}" role="button">Cancelar</a>
         </div>

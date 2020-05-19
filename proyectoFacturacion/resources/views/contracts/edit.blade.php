@@ -34,7 +34,7 @@
                 <option value="" selected>Ninguno seleccionado</option>
                 @foreach($clients as $client)
                 <option value="{{$client['id']}}" 
-                @if ($client['id'] == $contract['idClient']) selected @endif>{{$client['clientName']}}</option>
+                @if ($client['id'] == $contract['idClient']) selected @endif>{{$client['clientRazonSocial']}}</option>
                 @endforeach
             </select>
         </div>

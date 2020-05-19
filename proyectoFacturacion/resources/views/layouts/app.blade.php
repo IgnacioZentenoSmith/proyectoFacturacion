@@ -150,7 +150,7 @@
         @include('flashMessages')
 
     <main class="py-4 my-4 d-flex align-items-center">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
 

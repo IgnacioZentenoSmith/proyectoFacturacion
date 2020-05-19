@@ -44,7 +44,7 @@ class ClientsController extends Controller
         $userId = Auth::user()->id;
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
-        $clientesPadre = Client::all();
+        $clientesPadre = Client::whereNull('clientParentId')->get();
         return view('clients.create', compact('authPermisos', 'clientesPadre'));
     }
 
@@ -57,10 +57,13 @@ class ClientsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'clientName'=> 'required|string|max:100',
             'clientRazonSocial'=> 'required|string|max:100',
             'clientRUT'=> 'required|string|max:200|unique:clients,clientRUT',
             'clientParentId'=> 'required_if:hasParent,si',
+            'clientContactEmail'=> 'required|email:rfc,dns,spoof',
+            'clientPhone'=> 'required|string|max:100',
+            'clientDirection'=> 'required|string|max:100',
+            'clientBusinessActivity'=> 'required|string|max:100',
         ]);
         if ($request->hasParent == 'no') {
             $clientParentId = null;
@@ -69,12 +72,14 @@ class ClientsController extends Controller
             $clientParentId = $request->clientParentId;
         }
 
-        
         $newClient = new Client([
-            'clientName' => $request->clientName,
             'clientRazonSocial' => $request->clientRazonSocial,
             'clientRUT' => $request->clientRUT,
             'clientParentId' => $clientParentId,
+            'clientContactEmail' => $request->clientContactEmail,
+            'clientPhone' => $request->clientPhone,
+            'clientDirection' => $request->clientDirection,
+            'clientBusinessActivity' => $request->clientBusinessActivity,
         ]);
         $newClient->save();
 
@@ -104,7 +109,7 @@ class ClientsController extends Controller
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
         $cliente = Client::where('id', $id)->first();
-        $clientesPadre = Client::all();
+        $clientesPadre = Client::whereNull('clientParentId')->get();
         return view('clients.edit', compact('cliente', 'clientesPadre', 'authPermisos'));
     }
 
@@ -118,10 +123,13 @@ class ClientsController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'clientName'=> 'required|string|max:100',
             'clientRazonSocial'=> 'required|string|max:100',
             'clientRUT'=> 'required|string|max:200|unique:clients,clientRUT,'.$id,
             'clientParentId'=> 'required_if:hasParent,si',
+            'clientContactEmail'=> 'required|email:rfc,dns,spoof',
+            'clientPhone'=> 'required|string|max:100',
+            'clientDirection'=> 'required|string|max:100',
+            'clientBusinessActivity'=> 'required|string|max:100',
         ]);
 
         if ($request->hasParent == 'no') {
@@ -132,10 +140,13 @@ class ClientsController extends Controller
         }
 
         $cliente = Client::find($id);
-        $cliente->clientName = $request->clientName;
         $cliente->clientRazonSocial = $request->clientRazonSocial;
         $cliente->clientRUT = $request->clientRUT;
         $cliente->clientParentId = $clientParentId;
+        $cliente->clientContactEmail = $request->clientContactEmail;
+        $cliente->clientPhone = $request->clientPhone;
+        $cliente->clientDirection = $request->clientDirection;
+        $cliente->clientBusinessActivity = $request->clientBusinessActivity;
 
         if ($cliente->isDirty()) {
             $cliente->save();
@@ -157,7 +168,7 @@ class ClientsController extends Controller
         $clientsIDs = $this->getAllChildren($id);
         $clientsIDs = $clientsIDs->pluck('id');
         if ($clientsIDs->count() > 0) {
-            return redirect('clients')->with('error', 'Clientes con hijos no pueden ser eliminados, por favor elimine sus hijos primero.');
+            return redirect('clients')->with('error', 'Este holding no ha podido ser eliminado, por favor elimine todas sus razones sociales dependientes primero.');
         } else {
             $cliente->delete();;
             return redirect('clients')->with('success', 'Cliente eliminado exitosamente');

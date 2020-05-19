@@ -11,20 +11,27 @@
                 <thead>
                     <tr>
                         <th scope="col" data-field="ID" data-sortable="true">ID</th>
-                        <th scope="col" data-field="Nombre" data-sortable="true">Nombre</th>
-                        <th scope="col" data-field="Email" data-sortable="true">Razon social</th>
-                        <th scope="col" data-field="Role" data-sortable="true">RUT</th>
-                        <th scope="col" data-field="Status" data-sortable="true">Cliente padre</th>
+                        <th scope="col" data-field="clientRazonSocial" data-sortable="true">Razon social</th>
+                        <th scope="col" data-field="clientRUT" data-sortable="true">RUT</th>
+                        <th scope="col" data-field="clientContactEmail" data-sortable="true">clientContactEmail</th>
+                        <th scope="col" data-field="clientPhone" data-sortable="true">clientPhone</th>
+                        <th scope="col" data-field="clientDirection" data-sortable="true">clientDirection</th>
+                        <th scope="col" data-field="clientBusinessActivity" data-sortable="true">clientBusinessActivity</th>
+                        <th scope="col" data-field="clientParentId" data-sortable="true">Cliente padre</th>
                         <th scope="col" data-field="Accion" data-sortable="true">Acción</th>
+
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($clientes as $cliente)
                     <tr>
                         <td>{{$cliente['id']}}</td>
-                        <td>{{$cliente['clientName']}}</td>
                         <td>{{$cliente['clientRazonSocial']}}</td>
                         <td>{{$cliente['clientRUT']}}</td>
+                        <td>{{$cliente['clientContactEmail']}}</td>
+                        <td>{{$cliente['clientPhone']}}</td>
+                        <td>{{$cliente['clientDirection']}}</td>
+                        <td>{{$cliente['clientBusinessActivity']}}</td>
                         <td class="text-center">{{$cliente['clientParentId']}}</td>
                         <td>
                             @if(in_array(10, $authPermisos))
