@@ -65,3 +65,10 @@ Route::post('/contracts/{id}/conditions', 'ContractsController@conditionsStore')
 Route::get('/contracts/{id}/conditionsEdit', 'ContractsController@conditionsEdit')->name('contracts.conditionsEdit')->middleware('auth');
 Route::put('/contracts/{id}/conditionsUpdate', 'ContractsController@conditionsUpdate')->name('contracts.conditionsUpdate')->middleware('auth');
 Route::delete('/contracts/{id}/conditions', 'ContractsController@conditionsDestroy')->name('contracts.conditionsDestroy')->middleware('auth');
+//CRUD CANTIDADES DE CONDICIONES CONTRACTUALES
+Route::get('/contracts/{idContrato}/quantities/{periodo}', 'ContractsController@quantitiesIndex')->name('contracts.quantities')->middleware('auth');
+//Route::get('/contracts/{idContrato}/quantitiesCreate', 'ContractsController@quantitiesCreate')->name('contracts.quantitiesCreate')->middleware('auth');
+//Route::post('/contracts/{idContrato}/quantities', 'ContractsController@quantitiesStore')->name('contracts.quantitiesStore')->middleware('auth');
+//Route::get('/contracts/{idCantidad}/quantitiesEdit/{idContrato}', 'ContractsController@quantitiesEdit')->name('contracts.quantitiesEdit')->middleware('auth');
+Route::put('/contracts/{idCantidad}/quantitiesUpdate/{periodo}', 'ContractsController@quantitiesUpdate')->name('contracts.quantitiesUpdate')->middleware('auth');
+//Route::delete('/contracts/{idCantidad}/quantities/{idContrato}', 'ContractsController@quantitiesDestroy')->name('contracts.quantitiesDestroy')->middleware('auth');

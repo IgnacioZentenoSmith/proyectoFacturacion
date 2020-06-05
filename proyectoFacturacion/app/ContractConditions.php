@@ -18,6 +18,8 @@ class ContractConditions extends Model
         'contractsConditions_Precio',
         'contractsConditions_Modalidad',
         'contractsConditions_Cantidad',
+        'contractsConditions_fechaInicio',
+        'contractsConditions_fechaTermino',
     ];
 
   public function module(){

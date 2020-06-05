@@ -76,6 +76,7 @@
                 <option value="">Ninguno seleccionado</option>
                 <option value="Fijo" @if ($contractConditions['contractsConditions_Modalidad'] == 'Fijo') selected @endif>Fijo</option>
                 <option value="Variable" @if ($contractConditions['contractsConditions_Modalidad'] == 'Variable') selected @endif>Variable</option>
+                <option value="Escalonado" @if ($contractConditions['contractsConditions_Modalidad'] == 'Escalonado') selected @endif>Escalonado</option>
                 <option value="Adicional" @if ($contractConditions['contractsConditions_Modalidad'] == 'Adicional') selected @endif>Adicional</option>
             </select>
         </div>
@@ -85,6 +86,20 @@
         <label for="contractsConditions_Cantidad" class="col-md-4 col-form-label text-md-right">Cantidad</label>
         <div class="col-md-6">
             <input id="contractsConditions_Cantidad" type="number" class="form-control" name="contractsConditions_Cantidad" required value="{{$contractConditions['contractsConditions_Cantidad']}}">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="contractsConditions_fechaInicio" class="col-md-4 col-form-label text-md-right">Fecha de inicio</label>
+        <div class="col-md-6">
+            <input id="contractsConditions_fechaInicio" type="date" class="form-control" name="contractsConditions_fechaInicio" required value="{{$contractConditions['contractsConditions_fechaInicio']}}">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="contractsConditions_fechaTermino" class="col-md-4 col-form-label text-md-right">Fecha de término</label>
+        <div class="col-md-6">
+            <input id="contractsConditions_fechaTermino" type="date" class="form-control" name="contractsConditions_fechaTermino" value="{{$contractConditions['contractsConditions_fechaTermino']}}">
         </div>
     </div>
 

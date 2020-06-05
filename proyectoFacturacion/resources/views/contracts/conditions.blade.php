@@ -5,7 +5,7 @@
     <div class="col-auto">
     <div class="col-12">
       <div class="alert alert-info" role="alert">
-        Condiciones contractuales del contrato: <strong>{{$contract['contractsNumero']}}</strong>
+        Condiciones contractuales del contrato: <strong>{{$contract['contractsNumero']}}</strong> de la razon social: <strong>{{$contract['contract_clientName']}}</strong>
       </div>
       <a class="btn btn-primary" href="{{ route('contracts.conditionsCreate', $contract['id']) }}"role="button">Nueva condicion</a>
     </div>
@@ -25,6 +25,8 @@
                         <th scope="col" data-field="contractsConditions_Precio" data-sortable="true">Precio</th>
                         <th scope="col" data-field="contractsConditions_Modalidad" data-sortable="true">Modalidad</th>
                         <th scope="col" data-field="contractsConditions_Cantidad" data-sortable="true">Cantidad</th>
+                        <th scope="col" data-field="contractsConditions_fechaInicio" data-sortable="true">Fecha de inicio</th>
+                        <th scope="col" data-field="contractsConditions_fechaTermino" data-sortable="true">Fecha de término</th>
 
                         <th scope="col" data-field="Accion" data-sortable="true">Acción</th>
                     </tr>
@@ -41,6 +43,8 @@
                         <td>{{$contractCondition['contractsConditions_Precio']}}</td>
                         <td>{{$contractCondition['contractsConditions_Modalidad']}}</td>
                         <td>{{$contractCondition['contractsConditions_Cantidad']}}</td>
+                        <td>{{$contractCondition['contractsConditions_fechaInicio']}}</td>
+                        <td>{{$contractCondition['contractsConditions_fechaTermino']}}</td>
                         <td>
                             @if(in_array(10, $authPermisos))
                             <!-- ID de la condicion -->

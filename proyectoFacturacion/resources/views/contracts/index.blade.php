@@ -38,7 +38,12 @@
                         <td>
                             @if(in_array(7, $authPermisos))
                                 <a class="btn btn-primary" href="{{ route('contracts.conditions', $contract['id']) }}"
-                                role="button">Condiciones</a>
+                                role="button">Ingresar condiciones</a>
+                            @endif
+
+                            @if(in_array(7, $authPermisos))
+                                <a class="btn btn-primary" href="{{ route('contracts.quantities', [$contract['id'], $periodo]) }}"
+                                role="button">Ingresar cantidades</a>
                             @endif
 
                             @if(in_array(7, $authPermisos))
