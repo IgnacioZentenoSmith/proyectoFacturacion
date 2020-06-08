@@ -378,9 +378,22 @@ class ContractsController extends Controller
         $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
         $contract = Contracts::find($idContrato);
         //Sacar las condiciones contractuales del contrato que sean Fijo o Variables
+        /*
+        Contrato con el ID id
+        Modalidad de fijo y variable
+        Fecha de inicio debe ser menor al periodo
+        La fecha de termino debe ser mayor o igual al periodo, o bien, null
+        */
         $contractConditions = ContractConditions::where('idContract', $idContrato)
-        ->where('contractsConditions_Modalidad', 'Fijo')
-        ->orWhere('contractsConditions_Modalidad', 'Variable')
+        //Sacar modalidad fija y variable
+        ->whereIn('contractsConditions_Modalidad', ['Fijo', 'Variable'])
+        //Sacar fecha inicio menor o igual al periodo
+        ->where('contractsConditions_fechaInicio', '<=', $periodo . '-01')
+        //Sacar fecha termino mayor o igual al periodo o null
+        ->where(function($query) use ($periodo) {
+                $query->where('contractsConditions_fechaTermino', '>=', $periodo . '-01')
+                      ->orWhere('contractsConditions_fechaTermino', null);
+            })
         ->get();
         //Crear todas las cantidades relevantes (Fijo/Variable) de las condiciones contractuales
         foreach ($contractConditions as $contractCondition) {
@@ -492,50 +505,26 @@ class ContractsController extends Controller
         return view('contracts.quantitiesEdit', compact('authPermisos', 'quantity', 'contract', 'contractCondition'));
     }
 */
-    public function quantitiesUpdate(Request $request, $idCantidad, $idContrato) {
-        //Combinacion de condicion contractual y fecha debe ser unica
-        //Misma condicion contractual en misma fecha es incorrecto
+    public function quantitiesUpdate(Request $request, $idContrato, $periodo) {
+        $largoTabla = $request->quantitiesTableLength;
         $request->validate([
-            'quantitiesCantidad'=> 'required|numeric|min:0',
-            'quantitiesPeriodo'=> 'required|date',
+            'quantitiesId' => 'required|array|min:' . $largoTabla,
+            'quantitiesId.*' => 'required|numeric|min:0',
+            'quantitiesCantidad'=> 'required|array|min:' . $largoTabla,
+            'quantitiesCantidad.*'=> 'required|numeric|min:0',
+            'quantitiesMonto'=> 'required|array|min:' . $largoTabla,
+            'quantitiesMonto.*'=> 'numeric|min:0|nullable',
         ]);
-        $quantity = Quantities::find($idCantidad);
-        $quantity->quantitiesCantidad = $request->quantitiesCantidad;
-        $quantity->quantitiesPeriodo = $request->quantitiesPeriodo;
-
-        //Si hay una modificacion
-        if ($quantity->isDirty()) {
-            //Chequear cantidades existentes de esa condicion contractual
-            $existingQuantities = Quantities::where('idContractCondition', $quantity->idContractCondition);
-            if ($existingQuantities->count() > 0) {
-                //Chequear si existen con la misma fecha
-                if ($existingQuantities->where('quantitiesPeriodo', $quantity->quantitiesPeriodo)->count() > 0) {
-                    //Si es el mismo
-                    if ($existingQuantities->where('quantitiesPeriodo', $quantity->quantitiesPeriodo)->first()->id == $idCantidad) {
-                        //Es una actualizacion de la cantidad del mismo
-                        $quantity->save();
-                        return redirect()->action('ContractsController@quantitiesIndex', ['idContrato' => $idContrato, 'periodo' => 'todos'])->with('success', 'Cantidad editada exitosamente.');
-                    //Si no es el mismo
-                    } else {
-                        //Ya existe
-                        return redirect()->action('ContractsController@quantitiesEdit', ['idCantidad' => $idCantidad, 'idContrato' => $idContrato])->with('warning', 'La cantidad que ha intentado editar ya existe.');
-                    }
-                }
-            } else {
-                //Es nuevo -> guardar
+        for ($i = 0; $i < $largoTabla; $i++ ) {
+            $quantity = Quantities::find($request->quantitiesId[$i]);
+            $quantity->quantitiesCantidad = $request->quantitiesCantidad[$i];
+            $quantity->quantitiesMonto = $request->quantitiesMonto[$i];
+            //Guardar si hay un cambio
+            if ($quantity->isDirty()) {
                 $quantity->save();
-                return redirect()->action('ContractsController@quantitiesIndex', ['idContrato' => $idContrato, 'periodo' => 'todos'])->with('success', 'Cantidad editada exitosamente.');
             }
-        //Si no hay modificaciones
-        } else {
-            return redirect()->action('ContractsController@quantitiesIndex', ['idContrato' => $idContrato, 'periodo' => 'todos']);
-        } 
-    }
-
-    public function quantitiesDestroy($idCantidad, $idContrato) {
-        $quantity = Quantities::find($idCantidad);
-        $quantity->delete();
-        return redirect()->action('ContractsController@quantitiesIndex', ['idContrato' => $idContrato, 'periodo' => 'todos'])->with('success', 'Cantidad eliminada exitosamente.');
+        }
+        return redirect()->action('ContractsController@quantitiesIndex', ['idContrato' => $idContrato, 'periodo' => $periodo])->with('success', 'Montos guardados exitosamente.');
     }
 
 
