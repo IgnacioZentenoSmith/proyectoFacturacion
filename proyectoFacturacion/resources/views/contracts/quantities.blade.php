@@ -29,6 +29,9 @@
 
 
     </div>
+    <form method="POST" action="{{route('contracts.quantitiesUpdate', [$contract['id'], $periodo])}}">
+    @csrf
+    {{ method_field('PUT') }}
         <div class="table-responsive">
             <table id="tablaQuantities" class="table table-hover w-auto text-nowrap" data-show-export="true"
                 data-pagination="true" data-click-to-select="true" data-show-columns="true" data-sortable="true"
@@ -53,7 +56,10 @@
                 <tbody>
                     @foreach($contractConditions as $contractCondition)
                     <tr>
-                        <td>{{$contractCondition['quantitiesId']}}</td>
+                        <td>
+                            {{$contractCondition['quantitiesId']}}
+                            <input type="hidden" name="quantitiesId[]" required value="{{$contractCondition['quantitiesId']}}">
+                        </td>
                         <td>{{$contractCondition['contractCondition_moduleName']}}</td>
                         <td>{{$contractCondition['contractCondition_paymentUnitName']}}</td>
                         <td>{{$contractCondition['contractCondition_clientName']}}</td>
@@ -68,13 +74,14 @@
                             name="quantitiesCantidad[]" required min="0" value="{{$contractCondition['quantitiesCantidad']}}" onchange="getCurrentValue(this);">
                         </td>
                         <td>
-                            <input id="quantitiesMonto[{{$contractCondition['id']}}]" type="number" class="form-control" name="quantitiesMonto[]" value="{{$contractCondition['quantitiesMonto']}}" disabled>
+                            <input id="quantitiesMonto[{{$contractCondition['id']}}]" type="number" class="form-control" name="quantitiesMonto[]" value="{{$contractCondition['quantitiesMonto']}}" readonly>
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
+        <input type="hidden" id="quantitiesTableLength" name="quantitiesTableLength" required value="0">
         <div class="form-group row">
             <div class="col-md-3">
                 <button type="submit" class="btn btn-primary">
@@ -83,6 +90,7 @@
             </div>
         </div>
     </div>
+    </form>
 </div>
 
 <script>
@@ -91,6 +99,8 @@
         pageSize: 25,
         exportDataType: 'all',
     });
+    const quantitiesTableLength = $('#tablaQuantities').bootstrapTable('getData').length;
+    document.getElementById('quantitiesTableLength').value = quantitiesTableLength;
     const allContractConditions = {!! json_encode($allContractConditions->toArray(), JSON_HEX_TAG) !!};
     function getCurrentDate(inputDate) {
         //Saca el valor del formulario de la fecha
