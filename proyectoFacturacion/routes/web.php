@@ -37,6 +37,14 @@ Route::post('/admin/{id}', 'AdminController@changeStatus')->name('admin.changeSt
 
 // CLIENT ROUTES (RESOURCE CRUD)
 Route::resource('clients', 'ClientsController')->middleware('auth');
+//hijos
+Route::get('/clients/{idCliente}/childrenIndex', 'ClientsController@childrenIndex')->name('clients.childrenIndex')->middleware('auth');
+Route::get('/clients/{idCliente}/childrenCreate', 'ClientsController@childrenCreate')->name('clients.childrenCreate')->middleware('auth');
+Route::post('/clients/{idCliente}/childrenStore', 'ClientsController@childrenStore')->name('clients.childrenStore')->middleware('auth');
+Route::get('/clients/{idCliente}/childrenEdit/{idHijo}', 'ClientsController@childrenEdit')->name('clients.childrenEdit')->middleware('auth');
+Route::put('/clients/{idCliente}/childrenUpdate/{idHijo}', 'ClientsController@childrenUpdate')->name('clients.childrenUpdate')->middleware('auth');
+Route::delete('/clients/{idCliente}/childrenDestroy/{idHijo}', 'ClientsController@childrenDestroy')->name('clients.childrenDestroy')->middleware('auth');
+
 
 // PARAMETERIZATION ROUTES
 Route::get('/parameterization', 'ParameterizationController@index')->name('parameterization.index')->middleware('auth');
