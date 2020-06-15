@@ -5,11 +5,11 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item">
-        <a class="nav-link {{ (request()->is('clients')) ? 'active' : '' }}" href="{{route('clients.index')}}">Lista de clientes</a>
+        <a class="nav-link {{ (request()->is('clients')) ? 'active' : '' }}" href="{{route('clients.index')}}">Lista de holdings</a>
       </li>
     @if(in_array(9, $authPermisos)) 
       <li class="nav-item">
-        <a class="nav-link {{ (request()->is('clients/create')) ? 'active' : '' }}" href="{{route('clients.create')}}">Crear cliente</a>
+        <a class="nav-link {{ (request()->is('clients/create')) ? 'active' : '' }}" href="{{route('clients.create')}}">Crear holding</a>
       </li>
     @endif
     </ul>
