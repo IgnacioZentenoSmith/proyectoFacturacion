@@ -12,12 +12,11 @@
                     <tr>
                         <th scope="col" data-field="ID" data-sortable="true">ID</th>
                         <th scope="col" data-field="clientRazonSocial" data-sortable="true">Razon social</th>
-                        <th scope="col" data-field="clientRUT" data-sortable="true">RUT</th>
-                        <th scope="col" data-field="clientContactEmail" data-sortable="true">clientContactEmail</th>
-                        <th scope="col" data-field="clientPhone" data-sortable="true">clientPhone</th>
-                        <th scope="col" data-field="clientDirection" data-sortable="true">clientDirection</th>
-                        <th scope="col" data-field="clientBusinessActivity" data-sortable="true">clientBusinessActivity</th>
-                        <th scope="col" data-field="clientParentId" data-sortable="true">Cliente padre</th>
+                        <th scope="col" data-field="clientContactEmail" data-sortable="true">Email de contacto</th>
+                        <th scope="col" data-field="clientPhone" data-sortable="true">Teléfono del holding</th>
+                        <th scope="col" data-field="clientDirection" data-sortable="true">Dirección del holding</th>
+                        <th scope="col" data-field="clientBusinessActivity" data-sortable="true">Giro del holding</th>
+                        <th scope="col" data-field="clientChildrenCount" data-sortable="true">Cantidad de clientes</th>
                         <th scope="col" data-field="Accion" data-sortable="true">Acción</th>
 
                     </tr>
@@ -27,13 +26,16 @@
                     <tr>
                         <td>{{$cliente['id']}}</td>
                         <td>{{$cliente['clientRazonSocial']}}</td>
-                        <td>{{$cliente['clientRUT']}}</td>
                         <td>{{$cliente['clientContactEmail']}}</td>
                         <td>{{$cliente['clientPhone']}}</td>
                         <td>{{$cliente['clientDirection']}}</td>
                         <td>{{$cliente['clientBusinessActivity']}}</td>
-                        <td class="text-center @if($cliente['clientParentId'] == null) bg-info @else bg-light @endif">{{$cliente['clientParentId']}}</td>
+                        <td class="text-right">{{$cliente['clientChildrenCount']}}</td>
                         <td>
+                            <!-- ver detalle del holding -> sus clientes -->
+                            <a class="btn btn-primary" href="{{ route('clients.childrenIndex', $cliente['id']) }}"
+                                role="button">Ver clientes</a>
+
                             @if(in_array(10, $authPermisos))
                             <a class="btn btn-secondary" href="{{ route('clients.edit', $cliente['id']) }}"
                                 role="button">Editar</a>
