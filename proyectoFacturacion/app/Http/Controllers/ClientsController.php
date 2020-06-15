@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Permission;
 use App\Client;
 use Auth;
+use Illuminate\Support\Arr;
 
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
@@ -30,7 +31,13 @@ class ClientsController extends Controller
         $userId = Auth::user()->id;
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
-        $clientes = Client::all();
+        $clientes = Client::whereNull('clientParentId')->get();
+        
+        foreach ($clientes as $cliente) {
+            $getChildren = $this->getAllChildren($cliente->id);
+            $childrenNumber = count($getChildren);
+            $cliente = Arr::add($cliente, 'clientChildrenCount', $childrenNumber);
+        }
         return view('clients.index', compact('clientes', 'authPermisos'));
     }
 
@@ -44,8 +51,7 @@ class ClientsController extends Controller
         $userId = Auth::user()->id;
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
-        $clientesPadre = Client::whereNull('clientParentId')->get();
-        return view('clients.create', compact('authPermisos', 'clientesPadre'));
+        return view('clients.create', compact('authPermisos'));
     }
 
     /**
@@ -58,24 +64,16 @@ class ClientsController extends Controller
     {
         $request->validate([
             'clientRazonSocial'=> 'required|string|max:100',
-            'clientRUT'=> 'required|string|max:200|unique:clients,clientRUT',
-            'clientParentId'=> 'required_if:hasParent,si',
-            'clientContactEmail'=> 'required|email:rfc,dns,spoof',
-            'clientPhone'=> 'required|string|max:100',
-            'clientDirection'=> 'required|string|max:100',
-            'clientBusinessActivity'=> 'required|string|max:100',
+            'clientContactEmail'=> 'email:dns|nullable',
+            'clientPhone'=> 'string|max:100|nullable',
+            'clientDirection'=> 'string|max:100|nullable',
+            'clientBusinessActivity'=> 'string|max:100|nullable',
         ]);
-        if ($request->hasParent == 'no') {
-            $clientParentId = null;
-        }
-        else if ($request->hasParent == 'si') {
-            $clientParentId = $request->clientParentId;
-        }
 
         $newClient = new Client([
             'clientRazonSocial' => $request->clientRazonSocial,
-            'clientRUT' => $request->clientRUT,
-            'clientParentId' => $clientParentId,
+            'clientRUT' => null,
+            'clientParentId' => null,
             'clientContactEmail' => $request->clientContactEmail,
             'clientPhone' => $request->clientPhone,
             'clientDirection' => $request->clientDirection,
@@ -83,7 +81,7 @@ class ClientsController extends Controller
         ]);
         $newClient->save();
 
-        return redirect('clients')->with('success', 'Cliente agregado exitosamente.');
+        return redirect('clients')->with('success', 'Holding agregado exitosamente.');
     }
 
     /**
@@ -109,8 +107,7 @@ class ClientsController extends Controller
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
         $cliente = Client::where('id', $id)->first();
-        $clientesPadre = Client::whereNull('clientParentId')->get();
-        return view('clients.edit', compact('cliente', 'clientesPadre', 'authPermisos'));
+        return view('clients.edit', compact('cliente', 'authPermisos'));
     }
 
     /**
@@ -120,29 +117,19 @@ class ClientsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    //UPDATE HOLDING
     public function update(Request $request, $id)
     {
         $request->validate([
             'clientRazonSocial'=> 'required|string|max:100',
-            'clientRUT'=> 'required|string|max:200|unique:clients,clientRUT,'.$id,
-            'clientParentId'=> 'required_if:hasParent,si',
-            'clientContactEmail'=> 'required|email:rfc,dns,spoof',
-            'clientPhone'=> 'required|string|max:100',
-            'clientDirection'=> 'required|string|max:100',
-            'clientBusinessActivity'=> 'required|string|max:100',
+            'clientContactEmail'=> 'email:dns|nullable',
+            'clientPhone'=> 'string|max:100|nullable',
+            'clientDirection'=> 'string|max:100|nullable',
+            'clientBusinessActivity'=> 'string|max:100|nullable',
         ]);
-
-        if ($request->hasParent == 'no') {
-            $clientParentId = null;
-        }
-        else if ($request->hasParent == 'si') {
-            $clientParentId = $request->clientParentId;
-        }
 
         $cliente = Client::find($id);
         $cliente->clientRazonSocial = $request->clientRazonSocial;
-        $cliente->clientRUT = $request->clientRUT;
-        $cliente->clientParentId = $clientParentId;
         $cliente->clientContactEmail = $request->clientContactEmail;
         $cliente->clientPhone = $request->clientPhone;
         $cliente->clientDirection = $request->clientDirection;
@@ -150,7 +137,7 @@ class ClientsController extends Controller
 
         if ($cliente->isDirty()) {
             $cliente->save();
-            return redirect('clients')->with('success', 'Cliente editado exitosamente.');
+            return redirect('clients')->with('success', 'Holding editado exitosamente.');
         } else {
             return redirect('clients');
         }
@@ -175,6 +162,83 @@ class ClientsController extends Controller
         }
     }
 
+    public function childrenIndex($idCliente) {
+        $authPermisos = $this->getPermisos();
+        $holding = Client::find($idCliente);
+        $children = Client::where('clientParentId', $idCliente)->get();
+        return view('clients.childrenIndex', compact('authPermisos', 'holding', 'children'));
+    }
+
+    public function childrenCreate($idCliente) {
+        $authPermisos = $this->getPermisos();
+        $holding = Client::find($idCliente);
+        return view('clients.childrenCreate', compact('authPermisos', 'holding'));
+    }
+
+    public function childrenStore(Request $request, $idCliente) {
+        $authPermisos = $this->getPermisos();
+
+        $request->validate([
+            'clientRazonSocial'=> 'required|string|max:100',
+            'clientRUT'=> 'required|string|max:200|unique:clients,clientRUT',
+            'clientContactEmail'=> 'email:dns|nullable',
+            'clientPhone'=> 'string|max:100|nullable',
+            'clientDirection'=> 'string|max:100|nullable',
+            'clientBusinessActivity'=> 'string|max:100|nullable',
+        ]);
+
+        $newClient = new Client([
+            'clientRazonSocial' => $request->clientRazonSocial,
+            'clientRUT' => $request->clientRUT,
+            'clientParentId' => $idCliente,
+            'clientContactEmail' => $request->clientContactEmail,
+            'clientPhone' => $request->clientPhone,
+            'clientDirection' => $request->clientDirection,
+        ]);
+        $newClient->save();
+        return redirect()->action('ClientsController@childrenIndex', ['idCliente' => $idCliente])->with('success', 'Cliente agregado exitosamente.');
+    }
+
+    public function childrenEdit($idCliente, $idHijo) {
+        $authPermisos = $this->getPermisos();
+        $holding = Client::find($idCliente);
+        $hijo = Client::find($idHijo);
+        return view('clients.childrenEdit', compact('authPermisos', 'holding', 'hijo'));
+    }
+
+    public function childrenUpdate(Request $request, $idCliente, $idHijo) {
+        $authPermisos = $this->getPermisos();
+
+        $request->validate([
+            'clientRazonSocial'=> 'required|string|max:100',
+            'clientRUT'=> 'required|string|max:200|unique:clients,clientRUT,'.$idHijo,
+            'clientContactEmail'=> 'email:dns|nullable',
+            'clientPhone'=> 'string|max:100|nullable',
+            'clientDirection'=> 'string|max:100|nullable',
+            'clientBusinessActivity'=> 'string|max:100|nullable',
+        ]);
+
+        $hijo = Client::find($idHijo);
+        $hijo->clientRazonSocial = $request->clientRazonSocial;
+        $hijo->clientRUT = $request->clientRUT;
+        $hijo->clientContactEmail = $request->clientContactEmail;
+        $hijo->clientPhone = $request->clientPhone;
+        $hijo->clientDirection = $request->clientDirection;
+        if ($hijo->isDirty()) {
+            $hijo->save();
+            return redirect()->action('ClientsController@childrenIndex', ['idCliente' => $idCliente])->with('success', 'Cliente editado exitosamente.');
+        } else {
+            return redirect()->action('ClientsController@childrenIndex', ['idCliente' => $idCliente]);
+        }
+    }
+
+    public function childrenDestroy($idCliente, $idHijo) {
+        $authPermisos = $this->getPermisos();
+        $hijo = Client::find($idHijo);
+        $hijo->delete();
+        return redirect()->action('ClientsController@childrenIndex', ['idCliente' => $idCliente])->with('success', 'Cliente eliminado exitosamente.');
+    }
+
     public function getAllChildren($id) {
         $childrenClientIds = new Collection();
         $childrens = Client::where('clientParentId',$id)->get();
@@ -185,37 +249,10 @@ class ClientsController extends Controller
         return $childrenClientIds;
     }
 
-    /**
- * Comprueba si el rut ingresado es valido
- * @param string $rut RUT
- * @return boolean
- */
-    public function valida_rut($rut)
-    {
-        if (!preg_match("/^[0-9.]+[-]?+[0-9kK]{1}/", $rut)) {
-            return false;
-        }
-
-        $rut = preg_replace('/[\.\-]/i', '', $rut);
-        $dv = substr($rut, -1);
-        $numero = substr($rut, 0, strlen($rut) - 1);
-        $i = 2;
-        $suma = 0;
-        foreach (array_reverse(str_split($numero)) as $v) {
-            if ($i == 8)
-                $i = 2;
-            $suma += $v * $i;
-            ++$i;
-        }
-        $dvr = 11 - ($suma % 11);
-
-        if ($dvr == 11)
-            $dvr = 0;
-        if ($dvr == 10)
-            $dvr = 'K';
-        if ($dvr == strtoupper($dv))
-            return true;
-        else
-            return false;
+    public function getPermisos() {
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+        return $authPermisos;
     }
 }

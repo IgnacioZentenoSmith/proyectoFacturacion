@@ -27,7 +27,6 @@ Route::get('/', 'HomeController@index')->name('home.index');
 
 
 Route::get('/contracts', 'ContractsController@index')->name('contracts.index')->middleware('auth');
-Route::get('/billings', 'BillingsController@index')->name('billings.index')->middleware('auth');
 
 
 // ADMIN ROUTES (RESOURCE CRUD)
@@ -38,6 +37,14 @@ Route::post('/admin/{id}', 'AdminController@changeStatus')->name('admin.changeSt
 
 // CLIENT ROUTES (RESOURCE CRUD)
 Route::resource('clients', 'ClientsController')->middleware('auth');
+//hijos
+Route::get('/clients/{idCliente}/childrenIndex', 'ClientsController@childrenIndex')->name('clients.childrenIndex')->middleware('auth');
+Route::get('/clients/{idCliente}/childrenCreate', 'ClientsController@childrenCreate')->name('clients.childrenCreate')->middleware('auth');
+Route::post('/clients/{idCliente}/childrenStore', 'ClientsController@childrenStore')->name('clients.childrenStore')->middleware('auth');
+Route::get('/clients/{idCliente}/childrenEdit/{idHijo}', 'ClientsController@childrenEdit')->name('clients.childrenEdit')->middleware('auth');
+Route::put('/clients/{idCliente}/childrenUpdate/{idHijo}', 'ClientsController@childrenUpdate')->name('clients.childrenUpdate')->middleware('auth');
+Route::delete('/clients/{idCliente}/childrenDestroy/{idHijo}', 'ClientsController@childrenDestroy')->name('clients.childrenDestroy')->middleware('auth');
+
 
 // PARAMETERIZATION ROUTES
 Route::get('/parameterization', 'ParameterizationController@index')->name('parameterization.index')->middleware('auth');
@@ -72,3 +79,8 @@ Route::get('/contracts/{idContrato}/quantities/{periodo}', 'ContractsController@
 //Route::get('/contracts/{idCantidad}/quantitiesEdit/{idContrato}', 'ContractsController@quantitiesEdit')->name('contracts.quantitiesEdit')->middleware('auth');
 Route::put('/contracts/{idCantidad}/quantitiesUpdate/{periodo}', 'ContractsController@quantitiesUpdate')->name('contracts.quantitiesUpdate')->middleware('auth');
 //Route::delete('/contracts/{idCantidad}/quantities/{idContrato}', 'ContractsController@quantitiesDestroy')->name('contracts.quantitiesDestroy')->middleware('auth');
+
+Route::get('/billings/{periodo}', 'TributarydocumentsController@index')->name('billings.index')->middleware('auth');
+Route::post('/billings/{periodo}/generateDocuments/{tipoDocumento}', 'TributarydocumentsController@generateDocumentos')->name('billings.generateDocuments')->middleware('auth');
+Route::delete('/billings/{id}', 'TributarydocumentsController@documentDestroy')->name('billings.documentDestroy')->middleware('auth');
+Route::post('/billings/{id}/generateNotaCredito/{periodo}', 'TributarydocumentsController@generateNotaCredito')->name('billings.generateNotaCredito')->middleware('auth');
