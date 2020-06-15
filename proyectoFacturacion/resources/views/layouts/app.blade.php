@@ -106,7 +106,7 @@
                         @endif
                         @if(in_array(4, $authPermisos))
                             <li class="nav-item mx-2 {{ (request()->is('billings*')) ? 'active' : '' }}">
-                                <a class="nav-link" href="{{route('billings.index')}}">
+                                <a class="nav-link" href="{{ route('billings.index', 0) }}">
                                     <span style="font-size: 1.5em;">
                                         <i class="fas fa-dollar-sign"></i>
                                     </span><br>
