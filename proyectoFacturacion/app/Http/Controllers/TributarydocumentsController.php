@@ -128,8 +128,7 @@ class TributarydocumentsController extends Controller
           */
         }
 
-        //return redirect()->action('TributarydocumentsController@index', ['periodo' => $periodo])->with('success', 'Facturas generadas exitosamente');
-        return $contratos;
+        return redirect()->action('TributarydocumentsController@index', ['periodo' => $periodo])->with('success', 'Facturas generadas exitosamente');
       }
       //HACER NOTAS DE CREDITO
       else if ($tipoDocumento === 'NotaCredito') {
