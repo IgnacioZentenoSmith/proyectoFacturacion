@@ -27,7 +27,6 @@ Route::get('/', 'HomeController@index')->name('home.index');
 
 
 Route::get('/contracts', 'ContractsController@index')->name('contracts.index')->middleware('auth');
-Route::get('/billings', 'BillingsController@index')->name('billings.index')->middleware('auth');
 
 
 // ADMIN ROUTES (RESOURCE CRUD)
@@ -72,3 +71,8 @@ Route::get('/contracts/{idContrato}/quantities/{periodo}', 'ContractsController@
 //Route::get('/contracts/{idCantidad}/quantitiesEdit/{idContrato}', 'ContractsController@quantitiesEdit')->name('contracts.quantitiesEdit')->middleware('auth');
 Route::put('/contracts/{idCantidad}/quantitiesUpdate/{periodo}', 'ContractsController@quantitiesUpdate')->name('contracts.quantitiesUpdate')->middleware('auth');
 //Route::delete('/contracts/{idCantidad}/quantities/{idContrato}', 'ContractsController@quantitiesDestroy')->name('contracts.quantitiesDestroy')->middleware('auth');
+
+Route::get('/billings/{periodo}', 'TributarydocumentsController@index')->name('billings.index')->middleware('auth');
+Route::post('/billings/{periodo}/generateDocuments/{tipoDocumento}', 'TributarydocumentsController@generateDocumentos')->name('billings.generateDocuments')->middleware('auth');
+Route::delete('/billings/{id}', 'TributarydocumentsController@documentDestroy')->name('billings.documentDestroy')->middleware('auth');
+Route::post('/billings/{id}/generateNotaCredito/{periodo}', 'TributarydocumentsController@generateNotaCredito')->name('billings.generateNotaCredito')->middleware('auth');
