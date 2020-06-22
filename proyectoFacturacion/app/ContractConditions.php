@@ -14,7 +14,6 @@ class ContractConditions extends Model
         'idPaymentUnit',
         'idClient',
         'idContract',
-        'contractsConditions_Moneda',
         'contractsConditions_Precio',
         'contractsConditions_Modalidad',
         'contractsConditions_Cantidad',
