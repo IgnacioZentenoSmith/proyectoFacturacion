@@ -85,6 +85,7 @@ class ContractsController extends Controller
             'idClient'=> 'required|numeric',
             'contractsNombre'=> 'required|string|max:100',
             'contractsNumero'=> 'required|string|max:100|unique:contracts,contractsNumero',
+            'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
             'idEjecutivo'=> 'required|numeric|min:1',
         ]);
@@ -98,6 +99,7 @@ class ContractsController extends Controller
             'idClient' => $request->idClient,
             'contractsNombre' => $request->contractsNombre,
             'contractsNumero' => $numeroContrato,
+            'contractsMoneda' => $request->contractsMoneda,
             'contractsFecha' => $request->contractsFecha,
             'contractsEstado' => false
         ]);
@@ -166,6 +168,7 @@ class ContractsController extends Controller
             'idClient'=> 'required|numeric',
             'contractsNombre'=> 'required|string|max:100',
             'contractsNumero'=> 'required|string|max:100|unique:contracts,contractsNumero,' .$id ,
+            'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
             'idEjecutivo'=> 'required|numeric|min:1',
         ]);
@@ -176,6 +179,7 @@ class ContractsController extends Controller
         $contract->idClient = $request->idClient;
         $contract->contractsNombre = $request->contractsNombre;
         $contract->contractsNumero = $request->contractsNumero;
+        $contract->contractsMoneda = $request->contractsMoneda;
         $contract->contractsFecha = $request->contractsFecha;
 
         //Encuentra al ejecutivo de este contrato
