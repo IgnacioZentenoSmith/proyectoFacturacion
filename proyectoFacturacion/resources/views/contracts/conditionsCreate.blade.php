@@ -50,7 +50,7 @@
     <div class="form-group row">
         <label for="contractsConditions_Precio" class="col-md-4 col-form-label text-md-right">Precio</label>
         <div class="col-md-6">
-            <input id="contractsConditions_Precio" type="number" class="form-control" name="contractsConditions_Precio" required>
+            <input id="contractsConditions_Precio" type="number" step="0.01" class="form-control" name="contractsConditions_Precio" required>
         </div>
     </div>
 
