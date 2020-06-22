@@ -12,8 +12,9 @@
                     <tr>
                         <th scope="col" data-field="ID" data-sortable="true">ID</th>
                         <th scope="col" data-field="idClient" data-sortable="true">ID Cliente</th>
-                        <th scope="col" data-field="contractsNombre" data-sortable="true">Nombre contrato</th>
-                        <th scope="col" data-field="contractsNumero" data-sortable="true">Numero contrato</th>
+                        <th scope="col" data-field="contractsNombre" data-sortable="true">Nombre del contrato</th>
+                        <th scope="col" data-field="contractsNumero" data-sortable="true">Numero del contrato</th>
+                        <th scope="col" data-field="contractsMoneda" data-sortable="true">Moneda del contrato</th>
                         <th scope="col" data-field="contract_ejecutivoName" data-sortable="true">Atención</th>
                         <th scope="col" data-field="contractsFecha" data-sortable="true">Fecha</th>
                         <th scope="col" data-field="contractsEstado" data-sortable="true">Estado</th>
@@ -28,6 +29,7 @@
                         <td>{{$contract['contract_clientName']}}</td>
                         <td>{{$contract['contractsNombre']}}</td>
                         <td>{{$contract['contractsNumero']}}</td>
+                        <td>{{$contract['contractsMoneda']}}</td>
                         <td>{{$contract['contract_ejecutivoName']}}</td>
                         <td>{{$contract['contractsFecha']}}</td>
                         <td class="text-white @if ($contract['contractsEstado'] == false) bg-secondary @else bg-success @endif">

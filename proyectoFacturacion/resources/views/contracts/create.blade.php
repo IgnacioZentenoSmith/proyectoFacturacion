@@ -19,6 +19,19 @@
     </div>
 
     <div class="form-group row">
+        <label for="contractsMoneda" class="col-md-4 col-form-label text-md-right">Tipo de moneda</label>
+
+        <div class="col-md-6">
+            <select class="form-control" id="contractsMoneda" name="contractsMoneda">
+                <option value="UF" selected>UF</option>
+                <option value="CLP">Peso chileno</option>
+                <option value="USD">Dólar</option>
+            </select>
+        </div>
+    </div>
+    
+
+    <div class="form-group row">
         <label for="contractsFecha" class="col-md-4 col-form-label text-md-right">Fecha del contrato</label>
         <div class="col-md-6">
             <input id="contractsFecha" type="date" class="form-control" name="contractsFecha" required>
