@@ -15,7 +15,7 @@ class UpdateContractConditionsTableChangeMonedaPrecio extends Migration
     {
         Schema::table('contract_conditions', function (Blueprint $table) {
             $table->dropColumn('contractsConditions_Moneda');
-            $table->decimal('contractsConditions_Precio', 10, 4)->change();
+            $table->decimal('contractsConditions_Precio', 10, 2)->change();
         });
     }
 

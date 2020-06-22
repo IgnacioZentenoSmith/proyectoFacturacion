@@ -14,7 +14,7 @@ class UpdateQuantitiesTableChangeMonto extends Migration
     public function up()
     {
         Schema::table('quantities', function (Blueprint $table) {
-            $table->decimal('quantitiesMonto', 10, 4)->change();
+            $table->decimal('quantitiesMonto', 10, 2)->change();
         });
     }
 
