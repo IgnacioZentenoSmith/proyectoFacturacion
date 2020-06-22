@@ -270,7 +270,6 @@ class ContractsController extends Controller
             'idModule'=> 'required|numeric',
             'idPaymentUnit'=> 'required|numeric',
             'idClient'=> 'required|numeric',
-            'contractsConditions_Moneda'=> 'required|string|max:100',
             'contractsConditions_Precio'=> 'required|numeric|min:1',
             'contractsConditions_Modalidad'=> 'required|string|max:100',
             'contractsConditions_Cantidad'=> 'required|numeric|min:1',
@@ -283,7 +282,6 @@ class ContractsController extends Controller
             'idPaymentUnit' => $request->idPaymentUnit,
             'idClient' => $request->idClient,
             'idContract' => $id,
-            'contractsConditions_Moneda' => $request->contractsConditions_Moneda,
             'contractsConditions_Precio' => $request->contractsConditions_Precio,
             'contractsConditions_Modalidad' => $request->contractsConditions_Modalidad,
             'contractsConditions_Cantidad' => $request->contractsConditions_Cantidad,
@@ -313,7 +311,6 @@ class ContractsController extends Controller
             'idModule'=> 'required|numeric',
             'idPaymentUnit'=> 'required|numeric',
             'idClient'=> 'required|numeric',
-            'contractsConditions_Moneda'=> 'required|string|max:100',
             'contractsConditions_Precio'=> 'required|numeric|min:1',
             'contractsConditions_Modalidad'=> 'required|string|max:100',
             'contractsConditions_Cantidad'=> 'required|numeric|min:1',
@@ -337,7 +334,6 @@ class ContractsController extends Controller
         $contractConditions->idPaymentUnit = $request->idPaymentUnit;
         $contractConditions->idClient = $request->idClient;
         //ID del contrato es el mismo
-        $contractConditions->contractsConditions_Moneda = $request->contractsConditions_Moneda;
         $contractConditions->contractsConditions_Precio = $request->contractsConditions_Precio;
         $contractConditions->contractsConditions_Modalidad = $request->contractsConditions_Modalidad;
         $contractConditions->contractsConditions_Cantidad = $request->contractsConditions_Cantidad;
@@ -352,7 +348,6 @@ class ContractsController extends Controller
                 'idPaymentUnit' => $request->idPaymentUnit,
                 'idClient' => $request->idClient,
                 'idContract' => $contractConditions->idContract,
-                'contractsConditions_Moneda' => $request->contractsConditions_Moneda,
                 'contractsConditions_Precio' => $request->contractsConditions_Precio,
                 'contractsConditions_Modalidad' => $request->contractsConditions_Modalidad,
                 'contractsConditions_Cantidad' => $request->contractsConditions_Cantidad,
