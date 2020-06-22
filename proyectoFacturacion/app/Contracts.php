@@ -15,6 +15,7 @@ class Contracts extends Model
         'contractsNumero',
         'contractsFecha',
         'contractsEstado',
+        'contractsMoneda',
     ];
 
   public function client(){

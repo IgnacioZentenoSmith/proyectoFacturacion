@@ -124,55 +124,55 @@
                 currentCondition = condition;
             }
         });
-        //Si es fijo
-        if (currentCondition['contractsConditions_Modalidad'] == 'Fijo') {
-            //Si tiene al menos 1
-            if (currentValue > 0) {
-                outputDocument.value = currentCondition['contractsConditions_Precio'];
-            //Si no
-            } else {
-                outputDocument.value = 0;
+        //Si la cantidad es mayor a 0
+        if (currentValue > 0) {
+            //Si es fijo
+            if (currentCondition['contractsConditions_Modalidad'] == 'Fijo') {
+                outputDocument.value = parseFloat(currentCondition['contractsConditions_Precio']).toFixed(2);
             }
-        //Si no es fijo, es variable
-        } 
-        else {
-            let neededConditions = [];
-            allContractConditions.forEach((condition) => {
-                if (condition['idClient'] == currentCondition['idClient'] &&
-                    condition['idContract'] == currentCondition['idContract'] &&
-                    condition['idModule'] == currentCondition['idModule'] &&
-                    condition['idPaymentUnit'] == currentCondition['idPaymentUnit'] &&
-                    condition['contractsConditions_Moneda'] == currentCondition['contractsConditions_Moneda'] &&
-                    condition['contractsConditions_Modalidad'] != 'Fijo') {
-                        //Si es variable o escalonado
-                        neededConditions.push({
-                            'modalidad': condition['contractsConditions_Modalidad'],
-                            'cantidad': condition['contractsConditions_Cantidad'],
-                            'precio': condition['contractsConditions_Precio']
-                        })
-                }
-            });
-            let cantidad = 0;
-            let maxCantidad = Math.max.apply(Math, neededConditions.map((item) => { return item.cantidad; }))
-            let maxItem = neededConditions.filter((item) => {return (item.cantidad === maxCantidad  && item.modalidad != 'Adicional')});
-            neededConditions.forEach((condition) => {
-                if (condition['modalidad'] == 'Variable' || condition['modalidad'] == 'Escalonado') {
-                    if (currentValue <= condition['cantidad'] && currentValue > cantidad) {
-                        outputDocument.value = condition['precio'];
+            //Descuento
+            else if (currentCondition['contractsConditions_Modalidad'] == 'Descuento') {
+
+            }
+            //Si no es fijo --> escalonado, variable, adicional
+            else {
+                let neededConditions = [];
+                allContractConditions.forEach((condition) => {
+                    if (condition['idClient'] == currentCondition['idClient'] &&
+                        condition['idContract'] == currentCondition['idContract'] &&
+                        condition['idModule'] == currentCondition['idModule'] &&
+                        condition['idPaymentUnit'] == currentCondition['idPaymentUnit'] &&
+                        condition['contractsConditions_Moneda'] == currentCondition['contractsConditions_Moneda'] &&
+                        condition['contractsConditions_Modalidad'] != 'Fijo') {
+                            //Si es variable o escalonado
+                            neededConditions.push({
+                                'modalidad': condition['contractsConditions_Modalidad'],
+                                'cantidad': condition['contractsConditions_Cantidad'],
+                                'precio': condition['contractsConditions_Precio']
+                            })
                     }
-                    //cantidad es el valor de contractCondition cantidad anterior a la iteracion actual
-                    cantidad = condition['cantidad'];
-                //Adicional
-                } else {
-                    if (currentValue - maxCantidad >= condition['cantidad']) {
-                        outputDocument.value = maxItem[0].precio + Math.floor(currentValue - maxCantidad / condition['cantidad']) * condition['precio'];
+                });
+                let cantidad = 0;
+                let maxCantidad = Math.max.apply(Math, neededConditions.map((item) => { return item.cantidad; }))
+                let maxItem = neededConditions.filter((item) => {return (item.cantidad === maxCantidad  && item.modalidad != 'Adicional')});
+                neededConditions.forEach((condition) => {
+                    if (condition['modalidad'] == 'Variable' || condition['modalidad'] == 'Escalonado') {
+                        if (currentValue <= condition['cantidad'] && currentValue > cantidad) {
+                            outputDocument.value = parseFloat(condition['precio']).toFixed(2);
+                        }
+                        //cantidad es el valor de contractCondition cantidad anterior a la iteracion actual
+                        cantidad = condition['cantidad'];
+                    //Adicional
+                    } else {
+                        if (currentValue - maxCantidad >= condition['cantidad']) {
+                            outputDocument.value = parseFloat(parseFloat(maxItem[0].precio) + Math.floor(currentValue - maxCantidad / condition['cantidad']) * parseFloat(condition['precio'])).toFixed(2);
+                        }
                     }
-                }
-            })
-        }
-        
-        
-        
+                })
+            }
+        } else {
+            outputDocument.value = 0;
+        }  
         //let hiddenInput = document.getElementById('inputPeriodoForm').action
     }
 </script>

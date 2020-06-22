@@ -85,6 +85,7 @@ class ContractsController extends Controller
             'idClient'=> 'required|numeric',
             'contractsNombre'=> 'required|string|max:100',
             'contractsNumero'=> 'required|string|max:100|unique:contracts,contractsNumero',
+            'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
             'idEjecutivo'=> 'required|numeric|min:1',
         ]);
@@ -98,6 +99,7 @@ class ContractsController extends Controller
             'idClient' => $request->idClient,
             'contractsNombre' => $request->contractsNombre,
             'contractsNumero' => $numeroContrato,
+            'contractsMoneda' => $request->contractsMoneda,
             'contractsFecha' => $request->contractsFecha,
             'contractsEstado' => false
         ]);
@@ -166,6 +168,7 @@ class ContractsController extends Controller
             'idClient'=> 'required|numeric',
             'contractsNombre'=> 'required|string|max:100',
             'contractsNumero'=> 'required|string|max:100|unique:contracts,contractsNumero,' .$id ,
+            'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
             'idEjecutivo'=> 'required|numeric|min:1',
         ]);
@@ -176,6 +179,7 @@ class ContractsController extends Controller
         $contract->idClient = $request->idClient;
         $contract->contractsNombre = $request->contractsNombre;
         $contract->contractsNumero = $request->contractsNumero;
+        $contract->contractsMoneda = $request->contractsMoneda;
         $contract->contractsFecha = $request->contractsFecha;
 
         //Encuentra al ejecutivo de este contrato
@@ -270,8 +274,7 @@ class ContractsController extends Controller
             'idModule'=> 'required|numeric',
             'idPaymentUnit'=> 'required|numeric',
             'idClient'=> 'required|numeric',
-            'contractsConditions_Moneda'=> 'required|string|max:100',
-            'contractsConditions_Precio'=> 'required|numeric|min:1',
+            'contractsConditions_Precio'=> 'required|numeric|min:0.01',
             'contractsConditions_Modalidad'=> 'required|string|max:100',
             'contractsConditions_Cantidad'=> 'required|numeric|min:1',
             'contractsConditions_fechaInicio'=> 'required|date_format:Y-m-d',
@@ -283,7 +286,6 @@ class ContractsController extends Controller
             'idPaymentUnit' => $request->idPaymentUnit,
             'idClient' => $request->idClient,
             'idContract' => $id,
-            'contractsConditions_Moneda' => $request->contractsConditions_Moneda,
             'contractsConditions_Precio' => $request->contractsConditions_Precio,
             'contractsConditions_Modalidad' => $request->contractsConditions_Modalidad,
             'contractsConditions_Cantidad' => $request->contractsConditions_Cantidad,
@@ -298,7 +300,7 @@ class ContractsController extends Controller
     public function conditionsEdit($id) {
         $authPermisos = $this->getPermisos();
         $contractConditions = ContractConditions::find($id);
-        $contractId = Contracts::find($contractConditions->idContract)->first();
+        $contractId = Contracts::find($contractConditions->idContract);
         $clientID = $contractId->idClient;
         //Saca hijos y padres
         $clients = Client::where('clientParentId', $clientID)->orWhere('id', $clientID)->get();
@@ -313,8 +315,7 @@ class ContractsController extends Controller
             'idModule'=> 'required|numeric',
             'idPaymentUnit'=> 'required|numeric',
             'idClient'=> 'required|numeric',
-            'contractsConditions_Moneda'=> 'required|string|max:100',
-            'contractsConditions_Precio'=> 'required|numeric|min:1',
+            'contractsConditions_Precio'=> 'required|numeric|min:0.01',
             'contractsConditions_Modalidad'=> 'required|string|max:100',
             'contractsConditions_Cantidad'=> 'required|numeric|min:1',
             'contractsConditions_fechaInicio'=> 'required|date_format:Y-m-d',
@@ -337,7 +338,6 @@ class ContractsController extends Controller
         $contractConditions->idPaymentUnit = $request->idPaymentUnit;
         $contractConditions->idClient = $request->idClient;
         //ID del contrato es el mismo
-        $contractConditions->contractsConditions_Moneda = $request->contractsConditions_Moneda;
         $contractConditions->contractsConditions_Precio = $request->contractsConditions_Precio;
         $contractConditions->contractsConditions_Modalidad = $request->contractsConditions_Modalidad;
         $contractConditions->contractsConditions_Cantidad = $request->contractsConditions_Cantidad;
@@ -352,7 +352,6 @@ class ContractsController extends Controller
                 'idPaymentUnit' => $request->idPaymentUnit,
                 'idClient' => $request->idClient,
                 'idContract' => $contractConditions->idContract,
-                'contractsConditions_Moneda' => $request->contractsConditions_Moneda,
                 'contractsConditions_Precio' => $request->contractsConditions_Precio,
                 'contractsConditions_Modalidad' => $request->contractsConditions_Modalidad,
                 'contractsConditions_Cantidad' => $request->contractsConditions_Cantidad,
@@ -388,10 +387,10 @@ class ContractsController extends Controller
         //Sacar modalidad fija y variable
         ->whereIn('contractsConditions_Modalidad', ['Fijo', 'Variable'])
         //Sacar fecha inicio menor o igual al periodo
-        ->where('contractsConditions_fechaInicio', '<=', $periodo . '-01')
+        ->where('contractsConditions_fechaInicio', '<=', $periodo . '-25')
         //Sacar fecha termino mayor o igual al periodo o null
         ->where(function($query) use ($periodo) {
-                $query->where('contractsConditions_fechaTermino', '>=', $periodo . '-01')
+                $query->where('contractsConditions_fechaTermino', '>=', $periodo . '-25')
                       ->orWhere('contractsConditions_fechaTermino', null);
             })
         ->get();
@@ -417,7 +416,7 @@ class ContractsController extends Controller
             $contractCondition = Arr::add($contractCondition, 'quantitiesPeriodo', $getQuantity->quantitiesPeriodo);
             $contractCondition = Arr::add($contractCondition, 'quantitiesMonto', $getQuantity->quantitiesMonto);
     
-            $carbonPeriodo = Carbon::createFromFormat('Y-m-d', $getQuantity->quantitiesPeriodo . '-01');
+            $carbonPeriodo = Carbon::createFromFormat('Y-m-d', $getQuantity->quantitiesPeriodo . '-25');
             //Transformar mes a espaniol
             $contractCondition = Arr::add($contractCondition, 'quantitiesMonth', $meses[($carbonPeriodo->month) - 1]);
             $contractCondition = Arr::add($contractCondition, 'quantitiesYear', $carbonPeriodo->year);
@@ -426,85 +425,6 @@ class ContractsController extends Controller
         return view('contracts.quantities', compact('authPermisos', 'contract', 'periodo', 'contractConditions', 'allContractConditions'));
     }
 
-/*
-    public function quantitiesIndex($idContrato, $periodo) {
-        $authPermisos = $this->getPermisos();
-        $contract = Contracts::find($idContrato)->first();
-        //Sacar las condiciones contractuales del contrato
-        $contractConditions = ContractConditions::where('idContract', $idContrato)->get();
-        $periodos = Quantities::get('quantitiesPeriodo');
-        $quantities = new Collection();
-        $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
-        foreach ($contractConditions as $contractCondition) {
-            //Si existe este id en las cantidades
-            if (Quantities::where('idContractCondition', $contractCondition->id)->count() > 0) {
-                //Sacar las cantidades que existen de este contrato
-                if ($periodo == 'todos') {
-                    //Saca las cantidades de todos los periodos de esta cantidad contractual
-                    $quantity = Quantities::where('idContractCondition', $contractCondition->id)->get();
-                    foreach ($quantity as $quantityCollection) {
-                        $quantityCollection = $this->fillModulesUnitsClientsContracts($contractCondition, $quantityCollection);
-                        $carbonPeriodo = Carbon::createFromFormat('Y-m-d', $quantityCollection->quantitiesPeriodo . '-01');
-                        //Transformar mes a espaniol
-                        $quantityCollection = Arr::add($quantityCollection, 'quantitiesMonth', $meses[($carbonPeriodo->month) - 1]);
-                        $quantityCollection = Arr::add($quantityCollection, 'quantitiesYear', $carbonPeriodo->year);
-                    }
-                } else {
-                    //Saca la cantidad de este periodo de esta cantidad contractual
-                    $quantity = Quantities::where('idContractCondition', $contractCondition->id)->where('quantitiesPeriodo', $periodo)->first();
-                    $quantity = $this->fillModulesUnitsClientsContracts($contractCondition, $quantity);
-                    $carbonPeriodo = Carbon::createFromFormat('Y-m', $quantity->quantitiesPeriodo);
-                    //Transformar mes a espaniol
-                    $quantity = Arr::add($quantity, 'quantitiesMonth', $meses[($carbonPeriodo->month) - 1]);
-                    $quantity = Arr::add($quantity, 'quantitiesYear', $carbonPeriodo->year);
-                }
-                //Une todas las quantities
-                $quantities = $quantities->concat($quantity);
-            }
-        }
-        return view('contracts.quantities', compact('authPermisos', 'quantities', 'contract', 'periodo', 'periodos'));
-    }
-
-    public function quantitiesCreate($idContrato) {
-        $authPermisos = $this->getPermisos();
-        $contract = Contracts::find($idContrato)->first();
-        $contractConditions = ContractConditions::where('idContract', $idContrato)->get();
-        foreach ($contractConditions as $contractCondition) {
-            $contractCondition = $this->fillModulesUnitsClientsContracts($contractCondition, $contractCondition);
-        }
-        return view('contracts.quantitiesCreate', compact('authPermisos', 'contract', 'contractConditions'));
-    }
-    public function quantitiesStore(Request $request, $contractId) {
-        //Combinacion de condicion contractual y fecha debe ser unica
-        //Misma condicion contractual en misma fecha es incorrecto
-        $request->validate([
-            'idContractCondition'=> 'required|numeric|min:0',
-            'quantitiesCantidad'=> 'required|numeric|min:0',
-            'quantitiesPeriodo'=> 'required|date',
-        ]);
-        //Si existe esta cantidad
-        if (Quantities::where('idContractCondition', $request->idContractCondition)->where('quantitiesPeriodo', $request->quantitiesPeriodo)->count() > 0) {
-            return redirect()->action('ContractsController@quantitiesCreate', ['idContrato' => $contractId])->with('warning', 'La cantidad que ha intentado crear ya existe.');
-        } else {
-            $newQuantities = new Quantities([
-                'idContractCondition' => $request->idContractCondition,
-                'quantitiesCantidad' => $request->quantitiesCantidad,
-                'quantitiesPeriodo' => $request->quantitiesPeriodo,
-            ]);
-            $newQuantities->save();
-            return redirect()->action('ContractsController@quantitiesIndex', ['idContrato' => $contractId, 'periodo' => 'todos'])->with('success', 'Cantidad creada exitosamente.');
-        }
-    }
-
-    public function quantitiesEdit($idCantidad, $idContrato) {
-        $authPermisos = $this->getPermisos();
-        $quantity = Quantities::find($idCantidad);
-        $contract = Contracts::find($idContrato);
-        $contractCondition = ContractConditions::find($quantity->idContractCondition)->first();
-        $contractCondition = $this->fillModulesUnitsClientsContracts($contractCondition, $contractCondition);
-        return view('contracts.quantitiesEdit', compact('authPermisos', 'quantity', 'contract', 'contractCondition'));
-    }
-*/
     public function quantitiesUpdate(Request $request, $idContrato, $periodo) {
         $largoTabla = $request->quantitiesTableLength;
         $request->validate([

@@ -21,7 +21,6 @@
                         <th scope="col" data-field="idPaymentUnit" data-sortable="true">Unidad de pago</th>
                         <th scope="col" data-field="idClient" data-sortable="true">Cliente</th>
                         <th scope="col" data-field="idContract" data-sortable="true">Contrato</th>
-                        <th scope="col" data-field="contractsConditions_Moneda" data-sortable="true">Moneda</th>
                         <th scope="col" data-field="contractsConditions_Precio" data-sortable="true">Precio</th>
                         <th scope="col" data-field="contractsConditions_Modalidad" data-sortable="true">Modalidad</th>
                         <th scope="col" data-field="contractsConditions_Cantidad" data-sortable="true">Cantidad</th>
@@ -39,7 +38,6 @@
                         <td>{{$contractCondition['contractCondition_paymentUnitName']}}</td>
                         <td>{{$contractCondition['contractCondition_clientName']}}</td>
                         <td>{{$contractCondition['contractCondition_contractName']}}</td>
-                        <td>{{$contractCondition['contractsConditions_Moneda']}}</td>
                         <td>{{$contractCondition['contractsConditions_Precio']}}</td>
                         <td>{{$contractCondition['contractsConditions_Modalidad']}}</td>
                         <td>{{$contractCondition['contractsConditions_Cantidad']}}</td>

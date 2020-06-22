@@ -48,22 +48,9 @@
     </div>
 
     <div class="form-group row">
-        <label for="contractsConditions_Moneda" class="col-md-4 col-form-label text-md-right">Tipo de moneda</label>
-
-        <div class="col-md-6">
-            <select class="form-control" id="contractsConditions_Moneda" name="contractsConditions_Moneda">
-                <option value="" selected>Ninguno seleccionado</option>
-                <option value="UF">UF</option>
-                <option value="CLP">Peso chileno</option>
-                <option value="USD">Dolar</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="form-group row">
         <label for="contractsConditions_Precio" class="col-md-4 col-form-label text-md-right">Precio</label>
         <div class="col-md-6">
-            <input id="contractsConditions_Precio" type="number" class="form-control" name="contractsConditions_Precio" required>
+            <input id="contractsConditions_Precio" type="number" step="0.01" class="form-control" name="contractsConditions_Precio" required>
         </div>
     </div>
 
@@ -75,7 +62,7 @@
                 <option value="" selected>Ninguno seleccionado</option>
                 <option value="Fijo">Fijo</option>
                 <option value="Variable">Variable</option>
-                <option value="Variable">Escalonado</option>
+                <option value="Escalonado">Escalonado</option>
                 <option value="Adicional">Adicional</option>
             </select>
         </div>

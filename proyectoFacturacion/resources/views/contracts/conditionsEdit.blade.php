@@ -49,19 +49,6 @@
     </div>
 
     <div class="form-group row">
-        <label for="contractsConditions_Moneda" class="col-md-4 col-form-label text-md-right">Tipo de moneda</label>
-
-        <div class="col-md-6">
-            <select class="form-control" id="contractsConditions_Moneda" name="contractsConditions_Moneda">
-                <option value="">Ninguno seleccionado</option>
-                <option value="UF" @if ($contractConditions['contractsConditions_Moneda'] == 'UF') selected @endif>UF</option>
-                <option value="CLP" @if ($contractConditions['contractsConditions_Moneda'] == 'CLP') selected @endif>Peso chileno</option>
-                <option value="USD" @if ($contractConditions['contractsConditions_Moneda'] == 'USD') selected @endif>Dolar</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="form-group row">
         <label for="contractsConditions_Precio" class="col-md-4 col-form-label text-md-right">Precio</label>
         <div class="col-md-6">
             <input id="contractsConditions_Precio" type="number" class="form-control" name="contractsConditions_Precio" required value="{{$contractConditions['contractsConditions_Precio']}}">
