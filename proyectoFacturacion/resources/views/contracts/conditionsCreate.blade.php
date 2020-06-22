@@ -75,7 +75,7 @@
                 <option value="" selected>Ninguno seleccionado</option>
                 <option value="Fijo">Fijo</option>
                 <option value="Variable">Variable</option>
-                <option value="Variable">Escalonado</option>
+                <option value="Escalonado">Escalonado</option>
                 <option value="Adicional">Adicional</option>
             </select>
         </div>
