@@ -128,7 +128,7 @@
         if (currentValue > 0) {
             //Si es fijo
             if (currentCondition['contractsConditions_Modalidad'] == 'Fijo') {
-                outputDocument.value = currentCondition['contractsConditions_Precio'];
+                outputDocument.value = parseFloat(currentCondition['contractsConditions_Precio']).toFixed(2);
             }
             //Descuento
             else if (currentCondition['contractsConditions_Modalidad'] == 'Descuento') {
@@ -158,14 +158,14 @@
                 neededConditions.forEach((condition) => {
                     if (condition['modalidad'] == 'Variable' || condition['modalidad'] == 'Escalonado') {
                         if (currentValue <= condition['cantidad'] && currentValue > cantidad) {
-                            outputDocument.value = condition['precio'];
+                            outputDocument.value = parseFloat(condition['precio']).toFixed(2);
                         }
                         //cantidad es el valor de contractCondition cantidad anterior a la iteracion actual
                         cantidad = condition['cantidad'];
                     //Adicional
                     } else {
                         if (currentValue - maxCantidad >= condition['cantidad']) {
-                            outputDocument.value = maxItem[0].precio + Math.floor(currentValue - maxCantidad / condition['cantidad']) * condition['precio'];
+                            outputDocument.value = parseFloat(parseFloat(maxItem[0].precio) + Math.floor(currentValue - maxCantidad / condition['cantidad']) * parseFloat(condition['precio'])).toFixed(2);
                         }
                     }
                 })
