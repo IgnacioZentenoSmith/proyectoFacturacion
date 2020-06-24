@@ -110,9 +110,7 @@
     });
     const quantitiesTableLength = $('#tablaQuantities').bootstrapTable('getData').length;
     document.getElementById('quantitiesTableLength').value = quantitiesTableLength;
-    const allContractConditions = {
-        !!json_encode($allContractConditions - > toArray(), JSON_HEX_TAG) !!
-    };
+    const allContractConditions = {!!json_encode($allContractConditions->toArray(), JSON_HEX_TAG) !!};
 
     function getCurrentDate(inputDate) {
         //Saca el valor del formulario de la fecha
