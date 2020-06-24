@@ -58,7 +58,7 @@
         <label for="contractsConditions_Modalidad" class="col-md-4 col-form-label text-md-right">Modalidad</label>
 
         <div class="col-md-6">
-            <select class="form-control" id="contractsConditions_Modalidad" name="contractsConditions_Modalidad">
+            <select class="form-control" id="contractsConditions_Modalidad" name="contractsConditions_Modalidad" onchange="getCurrentModalidad(this);">
                 <option value="" selected>Ninguno seleccionado</option>
                 <option value="Fijo">Fijo</option>
                 <option value="Variable">Variable</option>
@@ -99,4 +99,15 @@
         </div>
     </div>
 </form>
+
+<script> 
+    function getCurrentModalidad(inputModalidad) {
+        if (inputModalidad.value == 'Fijo' || inputModalidad.value == 'Descuento') {
+            document.getElementById('contractsConditions_Cantidad').value = 1;
+            document.getElementById('contractsConditions_Cantidad').readOnly = true;
+        } else {
+            document.getElementById('contractsConditions_Cantidad').readOnly = false;
+        }
+    }
+</script>
 @endsection
