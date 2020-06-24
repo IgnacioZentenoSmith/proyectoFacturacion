@@ -65,6 +65,7 @@
                 <option value="Variable" @if ($contractConditions['contractsConditions_Modalidad'] == 'Variable') selected @endif>Variable</option>
                 <option value="Escalonado" @if ($contractConditions['contractsConditions_Modalidad'] == 'Escalonado') selected @endif>Escalonado</option>
                 <option value="Adicional" @if ($contractConditions['contractsConditions_Modalidad'] == 'Adicional') selected @endif>Adicional</option>
+                <option value="Descuento" @if ($contractConditions['contractsConditions_Modalidad'] == 'Descuento') selected @endif>Descuento</option>
             </select>
         </div>
     </div>

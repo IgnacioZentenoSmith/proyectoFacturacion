@@ -41,7 +41,7 @@
                 <option value="" selected>Ninguno seleccionado</option>
                 <!-- Permitir solo clientes padres desde Backend -->
                 @foreach($clients as $client)
-                <option value="{{$client['id']}}">{{$client['clientRazonSocial']}}</option>
+                <option value="{{$client['id']}}"@if ($contract['idClient'] == $client['id']) selected @endif>{{$client['clientRazonSocial']}}</option>
                 @endforeach
             </select>
         </div>
@@ -64,6 +64,7 @@
                 <option value="Variable">Variable</option>
                 <option value="Escalonado">Escalonado</option>
                 <option value="Adicional">Adicional</option>
+                <option value="Descuento">Descuento</option>
             </select>
         </div>
     </div>
