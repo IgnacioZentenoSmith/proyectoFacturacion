@@ -21,8 +21,4 @@ class Contracts extends Model
   public function client(){
     return $this->hasOne('App\Client', 'idClient', 'id');
   }
-
-  public function contractConditions(){
-    return $this->hasMany('App\ContractConditions', 'id', 'idClient');
-  }
 }

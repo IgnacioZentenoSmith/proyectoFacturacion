@@ -11,7 +11,8 @@
                 <thead>
                     <tr>
                         <th scope="col" data-field="ID" data-sortable="true">ID</th>
-                        <th scope="col" data-field="clientRazonSocial" data-sortable="true">Razon social</th>
+                        <th scope="col" data-field="clientRazonSocial" data-sortable="true">Nombre del holding</th>
+                        <th scope="col" data-field="ejecutivoNombre" data-sortable="true">Ejecutivo asociado</th>
                         <th scope="col" data-field="clientContactEmail" data-sortable="true">Email de contacto</th>
                         <th scope="col" data-field="clientPhone" data-sortable="true">Teléfono del holding</th>
                         <th scope="col" data-field="clientDirection" data-sortable="true">Dirección del holding</th>
@@ -26,6 +27,7 @@
                     <tr>
                         <td>{{$cliente['id']}}</td>
                         <td>{{$cliente['clientRazonSocial']}}</td>
+                        <td>{{$cliente['ejecutivoNombre']}}</td>
                         <td>{{$cliente['clientContactEmail']}}</td>
                         <td>{{$cliente['clientPhone']}}</td>
                         <td>{{$cliente['clientDirection']}}</td>

@@ -73,7 +73,7 @@
     <div class="form-group row">
         <label for="contractsConditions_Cantidad" class="col-md-4 col-form-label text-md-right">Cantidad</label>
         <div class="col-md-6">
-            <input id="contractsConditions_Cantidad" type="number" class="form-control" name="contractsConditions_Cantidad" required value="{{$contractConditions['contractsConditions_Cantidad']}}">
+            <input id="contractsConditions_Cantidad" type="number" step="0.01" class="form-control" name="contractsConditions_Cantidad" required value="{{$contractConditions['contractsConditions_Cantidad']}}">
         </div>
     </div>
 
