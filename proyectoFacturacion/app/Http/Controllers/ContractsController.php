@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Permission;
 use App\Client;
 use App\ContractConditions;
-use App\ContractInvolvedUsers;
 use App\Contracts;
 use App\Modules;
 use App\PaymentUnits;
@@ -43,16 +42,19 @@ class ContractsController extends Controller
         $periodo = Carbon::now()->format('Y-m');
         
         foreach ($contracts as $contract) {
-            //Saca el nombre del ejecutivo
-            $idEjecutivo = ContractInvolvedUsers::where('idContract', $contract['id'])->where('involvedUser_role', 'Ejecutivo')->first();
-            $userEjecutivo = User::where('id', $idEjecutivo->idUser)->first();
 
             //Saca el nombre del cliente
             $client = Client::where('id', $contract['idClient'])->first();
-
-            //Agregar a la coleccion si es que existen
+            //Agregar a la coleccion
             $contract = Arr::add($contract, 'contract_clientName', $client->clientRazonSocial);
-            $contract = Arr::add($contract, 'contract_ejecutivoName', $userEjecutivo->name);
+            //Sacar ejecutivo y agregarlo a la coleccion
+            if ($client->idUser != null) {
+                $ejecutivo = User::find($client->idUser);
+                $ejecutivoNombre = $ejecutivo->name;
+            } else {
+                $ejecutivoNombre = 'Aún no asignado';
+            }
+            $contract = Arr::add($contract, 'contract_clientEjecutivoName', $ejecutivoNombre);
         }
         
         //return $contracts;
@@ -87,7 +89,6 @@ class ContractsController extends Controller
             'contractsNumero'=> 'required|string|max:100|unique:contracts,contractsNumero',
             'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
-            'idEjecutivo'=> 'required|numeric|min:1',
         ]);
 
         //Saca id del ejecutivo
@@ -104,27 +105,7 @@ class ContractsController extends Controller
             'contractsEstado' => false
         ]);
         //Guarda datos
-        $newContract->save();
-        //Saca ese contrato
-        $contract = Contracts::where('contractsNumero', $numeroContrato)->first();
-        //Guardar usuario y contrato en tabla asociativa
-        //involvedUser_role Rol del usuario dentro del contrato - Creador -> crea el contrato, Ejecutivo -> Encargado del contrato
-        $newContractInvolvedUsers_Ejecutivo = new ContractInvolvedUsers([
-            'idUser' => $idEjecutivo,
-            'idContract' => $contract->id,
-            'involvedUser_role' => 'Ejecutivo'
-        ]);
-        $newContractInvolvedUsers_Ejecutivo->save();
-        //Saca usuario actual
-        $idAuthUser = Auth::user()->id;
-        $newContractInvolvedUsers_Creador = new ContractInvolvedUsers([
-            'idUser' => $idAuthUser,
-            'idContract' => $contract->id,
-            'involvedUser_role' => 'Creador'
-        ]);
-        $newContractInvolvedUsers_Creador->save();
-        
-        
+        $newContract->save();    
         return redirect('contracts')->with('success', 'Contrato agregado exitosamente.');
     }
 
@@ -149,10 +130,9 @@ class ContractsController extends Controller
     {
         $authPermisos = $this->getPermisos();
         $contract = Contracts::where('id', $id)->first();
-        $ejecutivoActual = ContractInvolvedUsers::where('idContract', $id)->where('involvedUser_role', 'Ejecutivo')->first();
         $clients = Client::whereNull('clientParentId')->get();
         $users = User::all();
-        return view('contracts.edit', compact('contract', 'clients', 'users', 'ejecutivoActual', 'authPermisos'));
+        return view('contracts.edit', compact('contract', 'clients', 'users', 'authPermisos'));
     }
 
     /**
@@ -170,7 +150,6 @@ class ContractsController extends Controller
             'contractsNumero'=> 'required|string|max:100|unique:contracts,contractsNumero,' .$id ,
             'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
-            'idEjecutivo'=> 'required|numeric|min:1',
         ]);
 
         $idEjecutivo = $request->idEjecutivo;
@@ -182,27 +161,10 @@ class ContractsController extends Controller
         $contract->contractsMoneda = $request->contractsMoneda;
         $contract->contractsFecha = $request->contractsFecha;
 
-        //Encuentra al ejecutivo de este contrato
-        $involvedUser = ContractInvolvedUsers::where('idContract', $id)->where('idUser', $idEjecutivo)->where('involvedUser_role', 'Ejecutivo')->first();
         //Si hay un cambio en el contrato o se cambio al ejecutivo del contrato
-        if ($contract->isDirty() || !$involvedUser) {
-            if ($contract->isDirty()) {
-                $contract->contractsEstado = false;
-                $contract->save();
-            }
-            if (!$involvedUser) {
-                //Saca al ejecutivo actual y eliminalo
-                $currentEjecutivo = ContractInvolvedUsers::where('idContract', $id)->where('involvedUser_role', 'Ejecutivo')->first();
-                if ($currentEjecutivo)
-                    $currentEjecutivo->delete();
-                //Agrega al ejecutivo nuevo
-                $newContractInvolvedUsers_Ejecutivo = new ContractInvolvedUsers([
-                    'idUser' => $idEjecutivo,
-                    'idContract' => $id,
-                    'involvedUser_role' => 'Ejecutivo'
-                ]);
-                $newContractInvolvedUsers_Ejecutivo->save();
-            }
+        if ($contract->isDirty()) {
+            $contract->contractsEstado = false;
+            $contract->save();
             return redirect('contracts')->with('success', 'Contrato editado exitosamente.');
         } else {
             return redirect('contracts');
