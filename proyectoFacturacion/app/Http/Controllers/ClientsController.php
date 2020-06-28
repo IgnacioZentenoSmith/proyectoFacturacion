@@ -90,6 +90,7 @@ class ClientsController extends Controller
             'clientDirection' => $request->clientDirection,
             'clientBusinessActivity' => $request->clientBusinessActivity,
             'idEjecutivo'=> $request->idEjecutivo,
+            'clientTipoEmpresa' => 'Holding',
         ]);
         $newClient->save();
 
@@ -149,6 +150,7 @@ class ClientsController extends Controller
         $cliente->clientDirection = $request->clientDirection;
         $cliente->clientBusinessActivity = $request->clientBusinessActivity;
         $cliente->idUser = $request->idEjecutivo;
+        $cliente->clientTipoEmpresa = 'Holding';
 
         if ($cliente->isDirty()) {
             $cliente->save();
@@ -209,6 +211,7 @@ class ClientsController extends Controller
             'clientContactEmail' => $request->clientContactEmail,
             'clientPhone' => $request->clientPhone,
             'clientDirection' => $request->clientDirection,
+            'clientTipoEmpresa' => 'Empresa',
         ]);
         $newClient->save();
         return redirect()->action('ClientsController@childrenIndex', ['idCliente' => $idCliente])->with('success', 'Cliente agregado exitosamente.');
@@ -239,6 +242,7 @@ class ClientsController extends Controller
         $hijo->clientContactEmail = $request->clientContactEmail;
         $hijo->clientPhone = $request->clientPhone;
         $hijo->clientDirection = $request->clientDirection;
+        $hijo->clientTipoEmpresa = 'Empresa';
         if ($hijo->isDirty()) {
             $hijo->save();
             return redirect()->action('ClientsController@childrenIndex', ['idCliente' => $idCliente])->with('success', 'Cliente editado exitosamente.');

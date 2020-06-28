@@ -17,7 +17,8 @@ class Client extends Model
         'clientPhone',
         'clientDirection',
         'clientBusinessActivity',
-        'idUser'
+        'idUser',
+        'clientTipoEmpresa'
     ];
     public function contractConditions(){
         return $this->hasMany('App\ContractConditions', 'id', 'idClient');
