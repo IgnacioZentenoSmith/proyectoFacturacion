@@ -7,9 +7,23 @@
     {{ method_field('PUT') }}
 
     <div class="form-group row">
-        <label for="clientRazonSocial" class="col-md-4 col-form-label text-md-right">Razon social</label>
+        <label for="clientRazonSocial" class="col-md-4 col-form-label text-md-right">Nombre del holding</label>
         <div class="col-md-6">
             <input id="clientRazonSocial" type="text" class="form-control" name="clientRazonSocial" required value="{{$cliente['clientRazonSocial']}}">
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="idEjecutivo" class="col-md-4 col-form-label text-md-right">Atención del holding</label>
+
+        <div class="col-md-6">
+            <select class="form-control" id="idEjecutivo" name="idEjecutivo">
+                <option>Ninguno seleccionado</option>
+                <!-- Permitir solo ejecutivos -->
+                @foreach($ejecutivos as $ejecutivo)
+                    <option value="{{$ejecutivo['id']}}" @if ($ejecutivo['id'] == $cliente['idUser']) selected @endif>{{$ejecutivo['name']}}</option>
+                @endforeach
+            </select>
         </div>
     </div>
 
