@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Permission;
 use App\Client;
+use App\User;
 use Auth;
 use Illuminate\Support\Arr;
 
@@ -34,9 +35,17 @@ class ClientsController extends Controller
         $clientes = Client::whereNull('clientParentId')->get();
         
         foreach ($clientes as $cliente) {
+            //Obtener sus hijos
             $getChildren = $this->getAllChildren($cliente->id);
             $childrenNumber = count($getChildren);
             $cliente = Arr::add($cliente, 'clientChildrenCount', $childrenNumber);
+
+            //Obtener nombre de sus ejecutivos
+            if ($cliente->idUser != null) {
+                $ejecutivo = User::find($cliente->idUser);
+                $ejecutivoNombre = $ejecutivo->name;
+                $cliente = Arr::add($cliente, 'ejecutivoNombre', $ejecutivoNombre);
+            }
         }
         return view('clients.index', compact('clientes', 'authPermisos'));
     }
@@ -51,7 +60,8 @@ class ClientsController extends Controller
         $userId = Auth::user()->id;
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
-        return view('clients.create', compact('authPermisos'));
+        $ejecutivos = User::where('role', 'Ejecutivo')->get();
+        return view('clients.create', compact('ejecutivos', 'authPermisos'));
     }
 
     /**
@@ -68,6 +78,7 @@ class ClientsController extends Controller
             'clientPhone'=> 'string|max:100|nullable',
             'clientDirection'=> 'string|max:100|nullable',
             'clientBusinessActivity'=> 'string|max:100|nullable',
+            'idEjecutivo'=> 'required|numeric|min:1',
         ]);
 
         $newClient = new Client([
@@ -78,6 +89,7 @@ class ClientsController extends Controller
             'clientPhone' => $request->clientPhone,
             'clientDirection' => $request->clientDirection,
             'clientBusinessActivity' => $request->clientBusinessActivity,
+            'idEjecutivo'=> $request->idEjecutivo,
         ]);
         $newClient->save();
 
@@ -107,7 +119,8 @@ class ClientsController extends Controller
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
         $cliente = Client::where('id', $id)->first();
-        return view('clients.edit', compact('cliente', 'authPermisos'));
+        $ejecutivos = User::where('role', 'Ejecutivo')->get();
+        return view('clients.edit', compact('cliente', 'ejecutivos', 'authPermisos'));
     }
 
     /**
@@ -126,6 +139,7 @@ class ClientsController extends Controller
             'clientPhone'=> 'string|max:100|nullable',
             'clientDirection'=> 'string|max:100|nullable',
             'clientBusinessActivity'=> 'string|max:100|nullable',
+            'idEjecutivo'=> 'required|numeric|min:1',
         ]);
 
         $cliente = Client::find($id);
@@ -134,6 +148,7 @@ class ClientsController extends Controller
         $cliente->clientPhone = $request->clientPhone;
         $cliente->clientDirection = $request->clientDirection;
         $cliente->clientBusinessActivity = $request->clientBusinessActivity;
+        $cliente->idUser = $request->idEjecutivo;
 
         if ($cliente->isDirty()) {
             $cliente->save();
