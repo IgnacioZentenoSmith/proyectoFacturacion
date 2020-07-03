@@ -36,7 +36,7 @@
                         <td>
                             <!-- ver detalle del holding -> sus clientes -->
                             <a class="btn btn-primary" href="{{ route('clients.childrenIndex', $cliente['id']) }}"
-                                role="button">Ver clientes</a>
+                                role="button">Razones sociales</a>
 
                             @if(in_array(10, $authPermisos))
                             <a class="btn btn-secondary" href="{{ route('clients.edit', $cliente['id']) }}"
