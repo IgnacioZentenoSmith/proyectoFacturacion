@@ -57,6 +57,16 @@
                                 </button>
                             </form>
                         @endif
+                        @if(in_array(9, $authPermisos))
+                            <form style="display: inline-block;" action="{{ route('admin.resendVerification', $usuario['id']) }}"
+                                method="post">
+                                @csrf
+                                @method('POST')
+                                <button class="btn btn-warning" @if ($usuario['email_verified_at']) disabled @endif type="submit">
+                                    Reenviar verificación
+                                </button>
+                            </form>
+                        @endif
                         @if(in_array(8, $authPermisos))
                             <form style="display: inline-block;" action="{{ route('admin.destroy', $usuario['id']) }}"
                                 method="post">
