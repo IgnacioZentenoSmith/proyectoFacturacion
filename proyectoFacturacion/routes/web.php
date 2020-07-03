@@ -34,6 +34,7 @@ Route::resource('admin', 'AdminController')->middleware('auth');
 Route::get('/admin/{id}/editPermisos', 'AdminController@editPermisos')->name('admin.editPermisos')->middleware('auth');
 Route::put('/admin/{id}/updatePermisos', 'AdminController@updatePermisos')->name('admin.updatePermisos')->middleware('auth');
 Route::post('/admin/{id}', 'AdminController@changeStatus')->name('admin.changeStatus')->middleware('auth');
+Route::post('/admin/{id}/resend', 'AdminController@resendVerification')->name('admin.resendVerification')->middleware('auth');
 
 // CLIENT ROUTES (RESOURCE CRUD)
 Route::resource('clients', 'ClientsController')->middleware('auth');

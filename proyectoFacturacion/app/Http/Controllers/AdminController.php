@@ -252,6 +252,12 @@ class AdminController extends Controller
         return redirect('admin')->with('success', 'Status del usuario modificado correctamente.');
     }
 
+    public function resendVerification($id) {
+        $user = User::find($id);
+        $user->sendEmailVerificationNotification();
+        return redirect('admin')->with('success', 'Correo enviado exitosamente.');
+    }
+
 
     /**
      * Remove the specified resource from storage.
