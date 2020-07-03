@@ -6,9 +6,9 @@
 
     <div class="col-12">
     <div class="alert alert-info" role="alert">
-        Clientes del holding: <strong>{{$holding['clientRazonSocial']}}</strong>
+        Razones sociales del holding: <strong>{{$holding['clientRazonSocial']}}</strong>
       </div>
-      <a class="btn btn-primary" href="{{ route('clients.childrenCreate', $holding['id']) }}"role="button">Nuevo cliente</a>
+      <a class="btn btn-primary" href="{{ route('clients.childrenCreate', $holding['id']) }}"role="button">Nueva razón social</a>
     
     </div>
         <div class="table-responsive">
@@ -19,7 +19,7 @@
                 <thead>
                     <tr>
                         <th scope="col" data-field="ID" data-sortable="true">ID</th>
-                        <th scope="col" data-field="clientRazonSocial" data-sortable="true">Razon social</th>
+                        <th scope="col" data-field="clientRazonSocial" data-sortable="true">Razón social</th>
                         <th scope="col" data-field="clientRUT" data-sortable="true">RUT</th>
                         <th scope="col" data-field="clientContactEmail" data-sortable="true">Email de contacto</th>
                         <th scope="col" data-field="clientPhone" data-sortable="true">Teléfono del cliente</th>

@@ -35,17 +35,21 @@ class ClientsController extends Controller
         $clientes = Client::whereNull('clientParentId')->get();
         
         foreach ($clientes as $cliente) {
+            //Obtener nombre de sus ejecutivos
+            if ($cliente->idUser != null) {
+                $ejecutivo = User::find($cliente->idUser);
+                if ($ejecutivo) {
+                    $ejecutivoNombre = $ejecutivo->name;
+                    $cliente = Arr::add($cliente, 'ejecutivoNombre', $ejecutivoNombre);
+                } else {
+                    $cliente->idUser = null;
+                    $cliente->save();
+                }
+            }
             //Obtener sus hijos
             $getChildren = $this->getAllChildren($cliente->id);
             $childrenNumber = count($getChildren);
             $cliente = Arr::add($cliente, 'clientChildrenCount', $childrenNumber);
-
-            //Obtener nombre de sus ejecutivos
-            if ($cliente->idUser != null) {
-                $ejecutivo = User::find($cliente->idUser);
-                $ejecutivoNombre = $ejecutivo->name;
-                $cliente = Arr::add($cliente, 'ejecutivoNombre', $ejecutivoNombre);
-            }
         }
         return view('clients.index', compact('clientes', 'authPermisos'));
     }
@@ -89,7 +93,7 @@ class ClientsController extends Controller
             'clientPhone' => $request->clientPhone,
             'clientDirection' => $request->clientDirection,
             'clientBusinessActivity' => $request->clientBusinessActivity,
-            'idEjecutivo'=> $request->idEjecutivo,
+            'idUser'=> $request->idEjecutivo,
             'clientTipoEmpresa' => 'Holding',
         ]);
         $newClient->save();

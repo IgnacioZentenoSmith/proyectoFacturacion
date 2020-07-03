@@ -5,7 +5,7 @@
     <div class="col-auto">
         <div class="col-12">
             <div class="alert alert-info" role="alert">
-                Cantidades de unidades de cobro del contrato: <strong>{{$contract['contractsNumero']}}</strong>
+                Cantidades de unidades de cobro del contrato: <strong>{{$contract['contractsNombre']}}</strong> de número: <strong>{{$contract['contractsNumero']}}</strong>
             </div>
             <form method="GET" id="inputPeriodoForm"
                 action="{{ route('contracts.quantities', [$contract['id'], $periodo]) }}">
@@ -171,7 +171,7 @@
                     //Adicional
                 } else if (condition['modalidad'] == 'Adicional') {
                     if (currentValue - maxCantidad >= condition['cantidad']) {
-                        outputDocument.value = parseFloat(parseFloat(maxItem[0].precio) + Math.floor(currentValue - maxCantidad / condition['cantidad']) * parseFloat(condition['precio'])).toFixed(2);
+                        outputDocument.value = parseFloat(parseFloat(maxItem[0].precio) + Math.floor((currentValue - maxCantidad) / condition['cantidad']) * parseFloat(condition['precio'])).toFixed(2);
                     }
                 } else if (condition['modalidad'] == 'Fijo') {
                     outputDocument.value = parseFloat(condition['precio']).toFixed(2);

@@ -87,7 +87,7 @@ class AdminController extends Controller
     {
         $request->validate([
             'name'=>'required|string|max:255',
-            'email'=>'required|email:rfc,dns,spoof|unique:users,email',
+            'email'=>'required|email:rfc|unique:users,email',
             'role'=>'required|string'
         ]);
         $acciones = Action::all();

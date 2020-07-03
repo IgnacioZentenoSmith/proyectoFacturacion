@@ -5,9 +5,9 @@
     <div class="col-auto">
     <div class="col-12">
       <div class="alert alert-info" role="alert">
-        Condiciones contractuales del contrato: <strong>{{$contract['contractsNumero']}}</strong> de la razon social: <strong>{{$contract['contract_clientName']}}</strong>
+        Condiciones contractuales del contrato: <strong>{{$contract['contractsNombre']}}</strong> de número: <strong>{{$contract['contractsNumero']}}</strong>
       </div>
-      <a class="btn btn-primary" href="{{ route('contracts.conditionsCreate', $contract['id']) }}"role="button">Nueva condicion</a>
+      <a class="btn btn-primary" href="{{ route('contracts.conditionsCreate', $contract['id']) }}"role="button">Nueva condición</a>
     </div>
         <div class="table-responsive">
             <table id="tablaContractsConditions" class="table table-hover w-auto text-nowrap" data-show-export="true"
@@ -17,7 +17,7 @@
                 <thead>
                     <tr>
                         <th scope="col" data-field="ID" data-sortable="true">ID</th>
-                        <th scope="col" data-field="idModule" data-sortable="true">Modulo</th>
+                        <th scope="col" data-field="idModule" data-sortable="true">Módulo</th>
                         <th scope="col" data-field="idPaymentUnit" data-sortable="true">Unidad de pago</th>
                         <th scope="col" data-field="idClient" data-sortable="true">Cliente</th>
                         <th scope="col" data-field="idContract" data-sortable="true">Contrato</th>
