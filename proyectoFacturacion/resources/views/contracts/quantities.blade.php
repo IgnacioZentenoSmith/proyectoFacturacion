@@ -178,7 +178,7 @@
                 }
             });
             if (discount.length > 0) {
-                outputDocument.value = parseFloat(outputDocument.value).toFixed(2) * parseFloat(discount[0].precio).toFixed(2) / 100;
+                outputDocument.value = parseFloat(outputDocument.value).toFixed(2) * (100 - parseFloat(discount[0].precio).toFixed(2)) / 100;
             }
         } else {
             outputDocument.value = 0;
