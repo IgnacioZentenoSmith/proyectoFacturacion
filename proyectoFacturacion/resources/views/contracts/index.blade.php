@@ -12,6 +12,7 @@
                     <tr>
                         <th scope="col" data-field="ID" data-sortable="true">ID contrato</th>
                         <th scope="col" data-field="idClient" data-sortable="true">Holding</th>
+                        <th scope="col" data-field="idModule" data-sortable="true">Módulo del contrato</th>
                         <th scope="col" data-field="contractsNombre" data-sortable="true">Nombre del contrato</th>
                         <th scope="col" data-field="contractsNumero" data-sortable="true">Número del contrato</th>
                         <th scope="col" data-field="contractsMoneda" data-sortable="true">Moneda del contrato</th>
@@ -27,6 +28,7 @@
                     <tr>
                         <td>{{$contract['id']}}</td>
                         <td>{{$contract['contract_clientName']}}</td>
+                        <td>{{$contract['contract_moduleName']}}</td>
                         <td>{{$contract['contractsNombre']}}</td>
                         <td>{{$contract['contractsNumero']}}</td>
                         <td>{{$contract['contractsMoneda']}}</td>
