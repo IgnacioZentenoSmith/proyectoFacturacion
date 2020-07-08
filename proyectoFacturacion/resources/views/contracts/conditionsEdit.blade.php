@@ -49,7 +49,7 @@
     </div>
 
     <div class="form-group row">
-        <label for="contractsConditions_Precio" class="col-md-4 col-form-label text-md-right">Precio</label>
+        <label id="labelPrecio" for="contractsConditions_Precio" class="col-md-4 col-form-label text-md-right">Precio</label>
         <div class="col-md-6">
             <input id="contractsConditions_Precio" type="number" class="form-control" name="contractsConditions_Precio" required value="{{$contractConditions['contractsConditions_Precio']}}">
         </div>
@@ -106,8 +106,15 @@
         if (inputModalidad.value == 'Fijo' || inputModalidad.value == 'Descuento') {
             document.getElementById('contractsConditions_Cantidad').value = 1;
             document.getElementById('contractsConditions_Cantidad').readOnly = true;
+            //Cambiar nombre del label del precio a dcto si es dcto
+            if (inputModalidad.value == 'Descuento') {
+                document.getElementById('labelPrecio').innerHTML = 'Porcentaje de descuento';
+            } else {
+                document.getElementById('labelPrecio').innerHTML = 'Precio';
+            }
         } else {
             document.getElementById('contractsConditions_Cantidad').readOnly = false;
+            document.getElementById('labelPrecio').innerHTML = 'Precio';
         }
     }
 </script>

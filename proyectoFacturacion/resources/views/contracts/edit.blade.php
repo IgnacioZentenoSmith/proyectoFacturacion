@@ -5,12 +5,28 @@
 <form method="POST" action="{{route('contracts.update', $contract['id'])}}">
     @csrf
     {{ method_field('PUT') }}
+
     <div class="form-group row">
+        <label for="idModule" class="col-md-4 col-form-label text-md-right">Módulo</label>
+
+        <div class="col-md-6">
+            <select class="form-control" id="idModule" name="idModule">
+                <option value="" selected>Ninguno seleccionado</option>
+                @foreach($modules as $module)
+                <option value="{{$module['id']}}"
+                @if ($contract['idModule'] == $module['id']) selected @endif>{{$module['moduleName']}}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <!-- Nombre del contrato -->
+    {{-- <div class="form-group row">
         <label for="contractsNombre" class="col-md-4 col-form-label text-md-right">Nombre del contrato</label>
         <div class="col-md-6">
             <input id="contractsNombre" type="text" class="form-control" name="contractsNombre" required autofocus value="{{$contract['contractsNombre']}}">
         </div>
-    </div>
+    </div> --}}
 
     <div class="form-group row">
         <label for="contractsNumero" class="col-md-4 col-form-label text-md-right">Numero del contrato</label>
