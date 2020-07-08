@@ -4,12 +4,28 @@
 
 <form method="POST" action="{{route('contracts.store')}}">
     @csrf
+
     <div class="form-group row">
+        <label for="idModule" class="col-md-4 col-form-label text-md-right">Módulo del contrato</label>
+
+        <div class="col-md-6">
+            <select class="form-control" id="idModule" name="idModule">
+                <option value="" selected>Ninguno seleccionado</option>
+                <!-- Permitir solo clientes padres desde Backend -->
+                @foreach($modules as $module)
+                <option value="{{$module['id']}}">{{$module['moduleName']}}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+
+    <!-- Nombre del contrato -->
+    {{-- <div class="form-group row">
         <label for="contractsNombre" class="col-md-4 col-form-label text-md-right">Nombre del contrato</label>
         <div class="col-md-6">
             <input id="contractsNombre" type="text" class="form-control" name="contractsNombre" required autofocus>
         </div>
-    </div>
+    </div> --}}
 
     <div class="form-group row">
         <label for="contractsNumero" class="col-md-4 col-form-label text-md-right">Numero del contrato</label>
