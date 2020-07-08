@@ -47,6 +47,16 @@ class ContractsController extends Controller
             $client = Client::where('id', $contract['idClient'])->first();
             //Agregar a la coleccion
             $contract = Arr::add($contract, 'contract_clientName', $client->clientRazonSocial);
+            //Saca el nombre del modulo
+            $module = Modules::where('id', $contract['idModule'])->first();
+            if ($module == null) {
+                //Agregar a la coleccion
+                $contract = Arr::add($contract, 'contract_moduleName', 'Aún no asignado');
+            } else {
+                //Agregar a la coleccion
+                $contract = Arr::add($contract, 'contract_moduleName', $module->moduleName);
+            }
+            
             //Sacar ejecutivo y agregarlo a la coleccion
             if ($client->idUser != null) {
                 $ejecutivo = User::find($client->idUser);
@@ -69,10 +79,12 @@ class ContractsController extends Controller
     public function create()
     {
         $authPermisos = $this->getPermisos();
-        //Saca solo los padres
+        //Saca clientes padre
         $clients = Client::whereNull('clientParentId')->get();
         $users = User::all();
-        return view('contracts.create', compact('authPermisos', 'clients', 'users'));
+        //Saca modulos padre
+        $modules = Modules::whereNull('moduleParentId')->get();
+        return view('contracts.create', compact('authPermisos', 'clients', 'users', 'modules'));
     }
 
     /**
@@ -83,26 +95,32 @@ class ContractsController extends Controller
      */
     public function store(Request $request)
     {
+        //VALIDAR DATOS
         $request->validate([
             'idClient'=> 'required|numeric',
-            'contractsNombre'=> 'required|string|max:100',
+            'idModule'=> 'required|numeric',
             'contractsNumero'=> 'required|string|max:100|unique:contracts,contractsNumero',
             'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
         ]);
-
-        //Saca id del ejecutivo
-        $idEjecutivo = $request->idEjecutivo;
-        //Saca numero del contrato
-        $numeroContrato = $request->contractsNumero;
-
+        //VALIDAR CLIENTE Y MODULO --> COMBINACION UNICA
+        $request->validate([
+            'idClient'=> 'unique:contracts,idClient,NULL,id,idModule,' . $request->idModule,
+            'idModule'=> 'unique:contracts,idModule,NULL,id,idClient,' . $request->idClient,
+        ]);
+        
+        $holding = Client::find($request->idClient);
+        $modulo = Modules::find($request->idModule);
+        $nombre = $holding->clientRazonSocial . ' ' . $modulo->moduleName;
+        
         $newContract = new Contracts([
             'idClient' => $request->idClient,
-            'contractsNombre' => $request->contractsNombre,
-            'contractsNumero' => $numeroContrato,
+            'contractsNombre' => $nombre,
+            'contractsNumero' => $request->contractsNumero,
             'contractsMoneda' => $request->contractsMoneda,
             'contractsFecha' => $request->contractsFecha,
-            'contractsEstado' => false
+            'contractsEstado' => false,
+            'idModule' => $request->idModule,
         ]);
         //Guarda datos
         $newContract->save();    
@@ -132,7 +150,8 @@ class ContractsController extends Controller
         $contract = Contracts::where('id', $id)->first();
         $clients = Client::whereNull('clientParentId')->get();
         $users = User::all();
-        return view('contracts.edit', compact('contract', 'clients', 'users', 'authPermisos'));
+        $modules = Modules::whereNull('moduleParentId')->get();
+        return view('contracts.edit', compact('contract', 'clients', 'users', 'authPermisos', 'modules'));
     }
 
     /**
@@ -144,26 +163,34 @@ class ContractsController extends Controller
      */
     public function update(Request $request, $id)
     {
+        //VALIDAR DATOS MENOS ESTE ID
         $request->validate([
             'idClient'=> 'required|numeric',
-            'contractsNombre'=> 'required|string|max:100',
+            'idModule'=> 'required|numeric',
             'contractsNumero'=> 'required|string|max:100|unique:contracts,contractsNumero,' .$id ,
             'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
         ]);
-
-        $idEjecutivo = $request->idEjecutivo;
+        //VALIDAR CLIENTE Y MODULO --> COMBINACION UNICA MENOS ESTE ID
+        $request->validate([
+            'idClient'=> 'unique:contracts,idClient,' . $id . ',id,idModule,' . $request->idModule,
+            'idModule'=> 'unique:contracts,idModule,' . $id . ',id,idClient,' . $request->idClient,
+        ]);
 
         $contract = Contracts::find($id);
         $contract->idClient = $request->idClient;
-        $contract->contractsNombre = $request->contractsNombre;
         $contract->contractsNumero = $request->contractsNumero;
         $contract->contractsMoneda = $request->contractsMoneda;
         $contract->contractsFecha = $request->contractsFecha;
+        $contract->idModule = $request->idModule;
 
         //Si hay un cambio en el contrato o se cambio al ejecutivo del contrato
         if ($contract->isDirty()) {
             $contract->contractsEstado = false;
+            $holding = Client::find($contract->idClient);
+            $modulo = Modules::find($contract->idModule);
+            $nombre = $holding->clientRazonSocial . ' ' . $modulo->moduleName;
+            $contract->contractsNombre = $nombre;
             $contract->save();
             return redirect('contracts')->with('success', 'Contrato editado exitosamente.');
         } else {
@@ -226,7 +253,7 @@ class ContractsController extends Controller
         $contract = Contracts::find($id);
         //Saca hijos y padres
         $clients = Client::where('clientParentId', $contract->idClient)->orWhere('id', $contract->idClient)->get();
-        $modules = Modules::all();
+        $modules = Modules::where('moduleParentId', $contract->idModule)->orWhere('id', $contract->idModule)->get();
         $paymentUnits = PaymentUnits::all();
         return view('contracts.conditionsCreate', compact('authPermisos', 'contract', 'clients', 'modules', 'paymentUnits'));
     }
@@ -262,11 +289,11 @@ class ContractsController extends Controller
     public function conditionsEdit($id) {
         $authPermisos = $this->getPermisos();
         $contractConditions = ContractConditions::find($id);
-        $contractId = Contracts::find($contractConditions->idContract);
-        $clientID = $contractId->idClient;
+        //Saca ID del contrato
+        $contract = Contracts::find($contractConditions->idContract);
         //Saca hijos y padres
-        $clients = Client::where('clientParentId', $clientID)->orWhere('id', $clientID)->get();
-        $modules = Modules::all();
+        $clients = Client::where('clientParentId', $contract->idClient)->orWhere('id', $contract->idClient)->get();
+        $modules = Modules::where('moduleParentId', $contract->idModule)->orWhere('id', $contract->idModule)->get();
         $paymentUnits = PaymentUnits::all();
         return view('contracts.conditionsEdit', compact('authPermisos', 'contractConditions', 'clients', 'modules', 'paymentUnits'));
     }
