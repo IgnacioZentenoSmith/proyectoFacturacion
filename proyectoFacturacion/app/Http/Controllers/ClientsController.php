@@ -33,7 +33,7 @@ class ClientsController extends Controller
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
         $clientes = Client::whereNull('clientParentId')->get();
-        
+
         foreach ($clientes as $cliente) {
             //Obtener nombre de sus ejecutivos
             if ($cliente->idUser != null) {
@@ -256,6 +256,7 @@ class ClientsController extends Controller
     }
 
     public function childrenDestroy($idCliente, $idHijo) {
+        //DIE
         $authPermisos = $this->getPermisos();
         $hijo = Client::find($idHijo);
         $hijo->delete();

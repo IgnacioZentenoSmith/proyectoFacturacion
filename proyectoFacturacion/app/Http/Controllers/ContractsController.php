@@ -40,7 +40,7 @@ class ContractsController extends Controller
         $contracts = Contracts::all();
         //Periodo
         $periodo = Carbon::now()->format('Y-m');
-        
+
         foreach ($contracts as $contract) {
 
             //Saca el nombre del cliente
@@ -56,7 +56,7 @@ class ContractsController extends Controller
                 //Agregar a la coleccion
                 $contract = Arr::add($contract, 'contract_moduleName', $module->moduleName);
             }
-            
+
             //Sacar ejecutivo y agregarlo a la coleccion
             if ($client->idUser != null) {
                 $ejecutivo = User::find($client->idUser);
@@ -66,7 +66,7 @@ class ContractsController extends Controller
             }
             $contract = Arr::add($contract, 'contract_clientEjecutivoName', $ejecutivoNombre);
         }
-        
+
         //return $contracts;
         return view('contracts.index', compact('authPermisos', 'contracts', 'periodo'));
     }
@@ -108,11 +108,18 @@ class ContractsController extends Controller
             'idClient'=> 'unique:contracts,idClient,NULL,id,idModule,' . $request->idModule,
             'idModule'=> 'unique:contracts,idModule,NULL,id,idClient,' . $request->idClient,
         ]);
-        
+
         $holding = Client::find($request->idClient);
         $modulo = Modules::find($request->idModule);
         $nombre = $holding->clientRazonSocial . ' ' . $modulo->moduleName;
-        
+
+        if ($modulo->moduleName == 'GCI' || $modulo->moduleName == 'PVI') {
+            $recepcionMunicipal = true;
+        } else {
+            $recepcionMunicipal = false;
+        }
+
+
         $newContract = new Contracts([
             'idClient' => $request->idClient,
             'contractsNombre' => $nombre,
@@ -121,9 +128,10 @@ class ContractsController extends Controller
             'contractsFecha' => $request->contractsFecha,
             'contractsEstado' => false,
             'idModule' => $request->idModule,
+            'contractsRecepcionMunicipal' => $recepcionMunicipal,
         ]);
         //Guarda datos
-        $newContract->save();    
+        $newContract->save();
         return redirect('contracts')->with('success', 'Contrato agregado exitosamente.');
     }
 
@@ -176,13 +184,19 @@ class ContractsController extends Controller
             'idClient'=> 'unique:contracts,idClient,' . $id . ',id,idModule,' . $request->idModule,
             'idModule'=> 'unique:contracts,idModule,' . $id . ',id,idClient,' . $request->idClient,
         ]);
-
+        $modulo = Modules::find($request->idModule);
+        if ($modulo->moduleName == 'GCI' || $modulo->moduleName == 'PVI') {
+            $recepcionMunicipal = true;
+        } else {
+            $recepcionMunicipal = false;
+        }
         $contract = Contracts::find($id);
         $contract->idClient = $request->idClient;
         $contract->contractsNumero = $request->contractsNumero;
         $contract->contractsMoneda = $request->contractsMoneda;
         $contract->contractsFecha = $request->contractsFecha;
         $contract->idModule = $request->idModule;
+        $contract->contractsRecepcionMunicipal = $recepcionMunicipal;
 
         //Si hay un cambio en el contrato o se cambio al ejecutivo del contrato
         if ($contract->isDirty()) {
@@ -263,7 +277,7 @@ class ContractsController extends Controller
             'idModule'=> 'required|numeric',
             'idPaymentUnit'=> 'required|numeric',
             'idClient'=> 'required|numeric',
-            'contractsConditions_Precio'=> 'required|numeric|min:0.01',
+            'contractsConditions_Precio'=> 'required|numeric|min:0',
             'contractsConditions_Modalidad'=> 'required|string|max:100',
             'contractsConditions_Cantidad'=> 'required|numeric|min:1',
             'contractsConditions_fechaInicio'=> 'required|date_format:Y-m-d',
@@ -304,7 +318,7 @@ class ContractsController extends Controller
             'idModule'=> 'required|numeric',
             'idPaymentUnit'=> 'required|numeric',
             'idClient'=> 'required|numeric',
-            'contractsConditions_Precio'=> 'required|numeric|min:0.01',
+            'contractsConditions_Precio'=> 'required|numeric|min:0',
             'contractsConditions_Modalidad'=> 'required|string|max:100',
             'contractsConditions_Cantidad'=> 'required|numeric|min:1',
             'contractsConditions_fechaInicio'=> 'required|date_format:Y-m-d',
@@ -394,7 +408,7 @@ class ContractsController extends Controller
                     'quantitiesMonto' => null,
                 ]);
                 //Guardar la cantidad
-                $newQuantities->save(); 
+                $newQuantities->save();
             }
             //Agregar nombre del modulo, paymentunit, contrato, cliente a todas las condiciones contractuales relevantes
             $this->fillModulesUnitsClientsContracts($contractCondition, $contractCondition);
@@ -404,7 +418,7 @@ class ContractsController extends Controller
             $contractCondition = Arr::add($contractCondition, 'quantitiesCantidad', $getQuantity->quantitiesCantidad);
             $contractCondition = Arr::add($contractCondition, 'quantitiesPeriodo', $getQuantity->quantitiesPeriodo);
             $contractCondition = Arr::add($contractCondition, 'quantitiesMonto', $getQuantity->quantitiesMonto);
-    
+
             $carbonPeriodo = Carbon::createFromFormat('Y-m-d', $getQuantity->quantitiesPeriodo . '-25');
             //Transformar mes a espaniol
             $contractCondition = Arr::add($contractCondition, 'quantitiesMonth', $meses[($carbonPeriodo->month) - 1]);
@@ -435,9 +449,6 @@ class ContractsController extends Controller
         }
         return redirect()->action('ContractsController@quantitiesIndex', ['idContrato' => $idContrato, 'periodo' => $periodo])->with('success', 'Montos guardados exitosamente.');
     }
-
-
-
 
     public function getPermisos() {
         $userId = Auth::user()->id;
