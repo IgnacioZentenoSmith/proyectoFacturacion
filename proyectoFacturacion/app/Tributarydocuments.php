@@ -10,17 +10,12 @@ class Tributarydocuments extends Model
 	protected $primaryKey = 'id';
 
     protected $fillable = [
-        'idClient',
         'idContract',
         'tributarydocuments_period',
         'tributarydocuments_documentType',
         'tributarydocuments_totalAmount',
+        'tributarydocuments_tax',
+        'tributarydocuments_totalAmountTax,'
     ];
 
-    public function client(){
-        return $this->hasOne('App\Client', 'idClient', 'id');
-      }
-    public function contract(){
-        return $this->hasOne('App\Contracts', 'idContract', 'id');
-      }
 }
