@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Permission;
-use App\Client;
 use App\ContractConditions;
 use App\ContractInvolvedUsers;
 use App\Contracts;
@@ -12,6 +11,7 @@ use App\PaymentUnits;
 use App\User;
 use App\Quantities;
 use App\Tributarydocuments;
+use App\Tributarydetails;
 use Auth;
 
 use Illuminate\Support\Collection;
@@ -44,14 +44,12 @@ class TributarydocumentsController extends Controller
         }
         $documentosTributarios = Tributarydocuments::where('tributarydocuments_period', $periodo)->get();
         foreach ($documentosTributarios as $documentoTributario) {
-          //Saca y agrega a la coleccion el nombre del cliente
-          $getClient = Client::where('id', $documentoTributario['idClient'])->first();
-          $documentoTributario = Arr::add($documentoTributario, 'documentoTributario_clientName', $getClient->clientRazonSocial);
+
           //Saca y agrega a la coleccion el nombre del contrato
           $getContract = Contracts::where('id', $documentoTributario['idContract'])->first();
           $documentoTributario = Arr::add($documentoTributario, 'documentoTributario_contractName', $getContract->contractsNombre);
           $documentoTributario = Arr::add($documentoTributario, 'documentoTributario_IVA', 19);
-          $montoTotalIva = $documentoTributario->tributarydocuments_totalAmount * 1.19;
+          $montoTotalIva = $documentoTributario['tributarydocuments_totalAmount'] * 1.19;
           $documentoTributario = Arr::add($documentoTributario, 'documentoTributario_MontoTotalIVA', $montoTotalIva);
         }
         return view('billings.index', compact('authPermisos', 'periodo', 'documentosTributarios'));
@@ -86,14 +84,14 @@ class TributarydocumentsController extends Controller
           //Saca todas las condiciones contractuales con montos
           $condicionesContractuales = $condicionesContractuales->whereNotNull('quantitiesMonto');
           $uniqueContracts = $condicionesContractuales->unique('idContract');
-          //Saca a todos los clientes unicos
+
           $uniqueContracts = $uniqueContracts->pluck('idContract');
-          
-          //Para cada cliente unico, generar factura con su monto
+
+          //Para cada contrato unico, generar factura con su monto
           foreach ($uniqueContracts as $uniqueContract) {
             $totalSuma = 0;
             $contract = Contracts::find($uniqueContract);
-            $holding = $contract->idClient;
+
             foreach ($condicionesContractuales as $condicionContractual) {
               //Si es el mismo contrato que se esta revisando
               if ($condicionContractual->idContract == $uniqueContract) {
@@ -102,30 +100,15 @@ class TributarydocumentsController extends Controller
             }
             //Generar el documento
             $newTributaryDocument = new Tributarydocuments([
-              'idClient' => $holding,
               'idContract' => $uniqueContract,
               'tributarydocuments_period' => $periodo,
               'tributarydocuments_documentType' => $tipoDocumento,
-              'tributarydocuments_totalAmount' => $totalSuma
+              'tributarydocuments_totalAmount' => $totalSuma,
+              'tributarydocuments_tax' => 19,
+              'tributarydocuments_totalAmountTax' => $totalSuma * 1.19
             ]);
             $newTributaryDocument->save();
           }
-          /*
-          foreach ($quantities as $quantity) {
-            $suma += $quantity['quantitiesMonto'];
-          }
-          //Generar el documento
-          $newTributaryDocument = new Tributarydocuments([
-            'idClient' => $contrato->idClient,
-            'idContract' => $contrato->id,
-            'tributarydocuments_period' => $periodo,
-            'tributarydocuments_documentType' => $tipoDocumento,
-            'tributarydocuments_totalAmount' => $suma
-          ]);
-          $newTributaryDocument->save();
-          $quantities = new Collection();
-          $suma = 0;
-          */
         }
 
         return redirect()->action('TributarydocumentsController@index', ['periodo' => $periodo])->with('success', 'Facturas generadas exitosamente');
@@ -133,12 +116,12 @@ class TributarydocumentsController extends Controller
       //HACER NOTAS DE CREDITO
       else if ($tipoDocumento === 'NotaCredito') {
 
-      } 
+      }
       //ERROR
       else {
 
       }
-      
+
     }
 
 
@@ -219,7 +202,6 @@ class TributarydocumentsController extends Controller
       $authPermisos = $this->getPermisos();
       $documentoTributario = Tributarydocuments::find($id);
       $newTributaryDocument = new Tributarydocuments([
-        'idClient' => $documentoTributario->idClient,
         'idContract' => $documentoTributario->idContract,
         'tributarydocuments_period' => $documentoTributario->tributarydocuments_period,
         'tributarydocuments_documentType' => 'Nota de crédito',
@@ -229,6 +211,20 @@ class TributarydocumentsController extends Controller
       return redirect()->action('TributarydocumentsController@index', ['periodo' => $periodo])->with('success', 'Nota de credito generada exitosamente');
     }
     */
+
+
+    public function paymentDetailsIndex($idTributarydocument) {
+        $authPermisos = $this->getPermisos();
+        $tributaryDocument = Tributarydocuments::find($idTributarydocument);
+        $contract = Contracts::find($tributaryDocument->idContract);
+        $quantities = Quantities::where('idContractCondition', $condicionContractual->id)
+            ->where('quantitiesPeriodo', $periodo)
+            ->whereNotNull('quantitiesMonto')
+    }
+
+    public function paymentDetailsUpdate(Request $request, $idTributarydocument) {
+
+    }
 
     public function getPermisos() {
       $userId = Auth::user()->id;
