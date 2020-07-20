@@ -36,10 +36,15 @@
                         <td>{{$contract['contractsFecha']}}</td>
                         <td class="text-white @if ($contract['contractsEstado'] == false) bg-secondary @else bg-success @endif">
                             @if ($contract['contractsEstado'] == false) Inactivo
-                            @else Activo 
+                            @else Activo
                             @endif
 
                         <td>
+                            @if(in_array(7, $authPermisos))
+                                <a class="btn btn-primary" href="{{ route('contracts.distributions', $contract['id']) }}"
+                                role="button">Distribución de cobro</a>
+                            @endif
+
                             @if(in_array(7, $authPermisos))
                                 <a class="btn btn-primary" href="{{ route('contracts.conditions', $contract['id']) }}"
                                 role="button">Ingresar condiciones</a>
