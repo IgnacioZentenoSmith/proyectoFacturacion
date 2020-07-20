@@ -75,13 +75,15 @@ Route::put('/contracts/{id}/conditionsUpdate', 'ContractsController@conditionsUp
 Route::delete('/contracts/{id}/conditions', 'ContractsController@conditionsDestroy')->name('contracts.conditionsDestroy')->middleware('auth');
 //CRUD CANTIDADES DE CONDICIONES CONTRACTUALES
 Route::get('/contracts/{idContrato}/quantities/{periodo}', 'ContractsController@quantitiesIndex')->name('contracts.quantities')->middleware('auth');
-//Route::get('/contracts/{idContrato}/quantitiesCreate', 'ContractsController@quantitiesCreate')->name('contracts.quantitiesCreate')->middleware('auth');
-//Route::post('/contracts/{idContrato}/quantities', 'ContractsController@quantitiesStore')->name('contracts.quantitiesStore')->middleware('auth');
-//Route::get('/contracts/{idCantidad}/quantitiesEdit/{idContrato}', 'ContractsController@quantitiesEdit')->name('contracts.quantitiesEdit')->middleware('auth');
 Route::put('/contracts/{idCantidad}/quantitiesUpdate/{periodo}', 'ContractsController@quantitiesUpdate')->name('contracts.quantitiesUpdate')->middleware('auth');
-//Route::delete('/contracts/{idCantidad}/quantities/{idContrato}', 'ContractsController@quantitiesDestroy')->name('contracts.quantitiesDestroy')->middleware('auth');
+//RUTAS DE DISTRIBUCIONES DE CONTRATO
+Route::get('/contracts/{idContrato}/distributions', 'ContractdistributionController@distributionsIndex')->name('contracts.distributions')->middleware('auth');
+Route::put('/contracts/{idContrato}/distributions', 'ContractdistributionController@distributionsUpdate')->name('contracts.distributionsUpdate')->middleware('auth');
 
 Route::get('/billings/{periodo}', 'TributarydocumentsController@index')->name('billings.index')->middleware('auth');
 Route::post('/billings/{periodo}/generateDocuments/{tipoDocumento}', 'TributarydocumentsController@generateDocumentos')->name('billings.generateDocuments')->middleware('auth');
 Route::delete('/billings/{id}', 'TributarydocumentsController@documentDestroy')->name('billings.documentDestroy')->middleware('auth');
 Route::post('/billings/{id}/generateNotaCredito/{periodo}', 'TributarydocumentsController@generateNotaCredito')->name('billings.generateNotaCredito')->middleware('auth');
+
+Route::get('/billings/{idTributarydocument}/paymentDetails', 'TributarydocumentsController@paymentDetailsIndex')->name('billings.paymentDetails')->middleware('auth');
+Route::put('/billings/{idTributarydocument}/paymentDetails', 'TributarydocumentsController@paymentDetailsUpdate')->name('billings.paymentDetailsUpdate')->middleware('auth');
