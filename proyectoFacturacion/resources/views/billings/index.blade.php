@@ -39,7 +39,6 @@
         <thead>
           <tr>
             <th scope="col" data-field="ID" data-sortable="true">ID</th>
-            <th scope="col" data-field="clientName" data-sortable="true">Cliente</th>
             <th scope="col" data-field="contractNumber" data-sortable="true">Contrato</th>
             <th scope="col" data-field="tributarydocuments_period" data-sortable="true">Periodo</th>
             <th scope="col" data-field="tributarydocuments_documentType" data-sortable="true">Tipo de documento</th>
@@ -53,7 +52,6 @@
           @foreach ($documentosTributarios as $documentosTributario)
             <tr>
               <td>{{$documentosTributario['id']}}</td>
-              <td>{{$documentosTributario['documentoTributario_clientName']}}</td>
               <td>{{$documentosTributario['documentoTributario_contractName']}}</td>
               <td>{{$documentosTributario['tributarydocuments_period']}}</td>
               <td class="text-right">{{$documentosTributario['tributarydocuments_documentType']}}</td>
@@ -61,15 +59,16 @@
               <td class="text-right">{{$documentosTributario['documentoTributario_IVA']}}%</td>
               <td class="text-right">{{$documentosTributario['documentoTributario_MontoTotalIVA']}} UF</td>
               <td>
-              <button class="btn btn-primary" disabled>Distribución de cobro</button>
-                <a class="btn btn-secondary"
-                  role="button" disabled>Ver detalles</a>
-                  <form style="display: inline-block;" action=""
-                    method="">
+
+              @if(in_array(7, $authPermisos))
+                    <a class="btn btn-primary" href="{{ route('billings.paymentDetails', $documentosTributario['id']) }}"
+                    role="button">Ver detalles</a>
+                @endif
+
 
                     <button class="btn btn-warning" type="submit" disabled>Nota de crédito</button>
                   </form>
-                  
+
                   <form style="display: inline-block;" action="{{ route('billings.documentDestroy', $documentosTributario['id']) }}"
                     method="post">
                     @csrf
@@ -81,7 +80,7 @@
         </tbody>
       </table>
     </div>
-    
+
   </div>
 </div>
 
