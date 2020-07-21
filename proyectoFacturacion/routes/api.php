@@ -17,4 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('clients', 'ApiclientsController@getAllClients');
+Route::get('clientes', 'ApiclientsController@getAllClients');
+Route::get('holdings/{idHolding}', 'ApiclientsController@getAllClients');
+Route::get('razonSocial/{idHolding}', 'ApiclientsController@getAllClients');
