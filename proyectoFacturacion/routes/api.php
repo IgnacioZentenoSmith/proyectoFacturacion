@@ -19,4 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::get('clientes', 'ApiclientsController@getAllClients');
 Route::get('holdings/{idHolding}', 'ApiclientsController@getAllClients');
-Route::get('razonSocial/{idHolding}', 'ApiclientsController@getAllClients');
+Route::get('razonesSociales/{idHolding}', 'ApiclientsController@getAllClients');
