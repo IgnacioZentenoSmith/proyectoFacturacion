@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Permission;
 use App\ContractConditions;
-use App\ContractInvolvedUsers;
+use App\ContractDistribution;
+
 use App\Contracts;
+use App\Client;
 use App\Modules;
 use App\PaymentUnits;
 use App\User;
@@ -98,14 +100,16 @@ class TributarydocumentsController extends Controller
                 $totalSuma += $condicionContractual->quantitiesMonto;
               }
             }
+            $totalAmountTax = $totalSuma * 1.19;
             //Generar el documento
             $newTributaryDocument = new Tributarydocuments([
+              'idClient' => $contract->idClient,
               'idContract' => $uniqueContract,
               'tributarydocuments_period' => $periodo,
               'tributarydocuments_documentType' => $tipoDocumento,
               'tributarydocuments_totalAmount' => $totalSuma,
               'tributarydocuments_tax' => 19,
-              'tributarydocuments_totalAmountTax' => $totalSuma * 1.19
+              'tributarydocuments_totalAmountTax' => $totalAmountTax,
             ]);
             $newTributaryDocument->save();
           }
@@ -217,9 +221,57 @@ class TributarydocumentsController extends Controller
         $authPermisos = $this->getPermisos();
         $tributaryDocument = Tributarydocuments::find($idTributarydocument);
         $contract = Contracts::find($tributaryDocument->idContract);
-        $quantities = Quantities::where('idContractCondition', $condicionContractual->id)
-            ->where('quantitiesPeriodo', $periodo)
-            ->whereNotNull('quantitiesMonto')
+        $tributaryDetails = Tributarydetails::where('idTributarydocument', $tributaryDocument->id)->get();
+        //Si no hay detalles, crearlos
+        if ($tributaryDetails->count() == 0) {
+            //Sacar todas las condiciones, cantidades y unidades de pago correspondientes a este periodo
+            $thisPeriod_contractConditions_quantities_paymentUnits = ContractConditions::where('idContract', $contract->id)
+            ->join('payment_units', 'payment_units.id', '=', 'contract_conditions.idPaymentUnit')
+            ->join('quantities', 'quantities.idContractCondition', '=', 'contract_conditions.id')
+            ->where('quantities.quantitiesPeriodo', $tributaryDocument->tributarydocuments_period)
+            ->whereNotNull('quantities.quantitiesMonto')
+            ->select('contract_conditions.*', 'payment_units.payment_units', 'quantities.id as idQuantities', 'quantities.quantitiesCantidad', 'quantities.quantitiesPeriodo', 'quantities.quantitiesMonto')
+            ->get();
+
+            //Sacar las distribuciones de cada una de las razones sociales del contrato
+            $contractDistributions = ContractDistribution::where('idContract', $contract->id)
+            ->join('clients', 'clients.id', '=', 'contract_distribution.idClient')
+            ->select('contract_distribution.*', 'clients.clientRazonSocial', 'clients.clientRUT')
+            ->get();
+
+            foreach ($contractDistributions as $contractDistribution) {
+                foreach ($thisPeriod_contractConditions_quantities_paymentUnits as $thisPeriodData) {
+
+                    if ($contractDistribution->contractDistribution_type == "Porcentaje") {
+                        $paymentQuantity = round($thisPeriodData->quantitiesCantidad * $contractDistribution->contractDistribution_percentage/100);
+                        $paymentValue = $thisPeriodData->quantitiesMonto * $contractDistribution->contractDistribution_percentage/100 * 1.19;
+
+                        $newTributaryDetail = new Tributarydetails([
+                            'idTributarydocument' => $idTributarydocument,
+                            'idClient' => $contractDistribution->idClient,
+                            'idPaymentUnit' => $thisPeriodData->idPaymentUnit,
+                            'tributarydetails_paymentUnitQuantity' => $paymentQuantity,
+                            'tributarydetails_paymentPercentage' => $contractDistribution->contractDistribution_percentage,
+                            'tributarydetails_paymentValue' => $paymentValue,
+                          ]);
+                          $newTributaryDetail->save();
+                    }
+                    //Por APIs
+                    else if ($contractDistribution->contractDistribution_type == "Unidad de cobro") {
+
+                    }
+
+                }
+            }
+        }
+
+        $tributaryDetails = Tributarydetails::where('idTributarydocument', $tributaryDocument->id)
+        ->join('payment_units', 'payment_units.id', '=', 'tributarydetails.idPaymentUnit')
+        ->join('clients', 'clients.id', '=', 'tributarydetails.idClient')
+        ->select('tributarydetails.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units')
+        ->get();
+
+        return view('billings.paymentDetails', compact('authPermisos', 'tributaryDocument', 'contract', 'tributaryDetails'));
     }
 
     public function paymentDetailsUpdate(Request $request, $idTributarydocument) {

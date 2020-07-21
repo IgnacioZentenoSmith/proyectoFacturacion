@@ -29,13 +29,9 @@
                     <tbody>
                         @foreach($tributaryDetails as $tributaryDetail)
                         <tr>
-                            <td>
-                            {{$tributaryDetail['id']}}
-                                <input type="hidden" name="tributaryDetail_id[]" required
-                                value="{{$tributaryDetail['id']}}">
-                            </td>
-                            <td>{{$tributaryDetail['tributarydetails_clientName']}}</td>
-                            <td>{{$tributaryDetail['tributarydetails_paymentUnitName']}}</td>
+                            <td>{{$tributaryDetail['id']}}</td>
+                            <td>{{$tributaryDetail['clientRazonSocial']}}</td>
+                            <td>{{$tributaryDetail['payment_units']}}</td>
                             <td>{{$tributaryDetail['tributarydetails_paymentUnitQuantity']}}</td>
                             <td>{{$tributaryDetail['tributarydetails_paymentPercentage']}}</td>
                             <td>{{$tributaryDetail['tributarydetails_paymentValue']}}</td>

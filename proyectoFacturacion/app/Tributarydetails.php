@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Tributarydocuments extends Model
+class Tributarydetails extends Model
 {
     protected $table = 'tributarydetails';
 	protected $primaryKey = 'id';
@@ -15,10 +15,6 @@ class Tributarydocuments extends Model
         'idPaymentUnit',
         'tributarydetails_paymentUnitQuantity',
         'tributarydetails_paymentPercentage',
-        'tributarydetails_paymentValue,'
+        'tributarydetails_paymentValue',
     ];
-
-    public function contract(){
-        return $this->hasOne('App\Contracts', 'idContract', 'id');
-      }
 }

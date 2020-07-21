@@ -14,7 +14,6 @@ class UpdateTributaryDocumentsTableRemoveClientsAddTotaltaxamountTax extends Mig
     public function up()
     {
         Schema::table('tributarydocuments', function (Blueprint $table) {
-            $table->dropColumn('idClient');
             $table->integer('tributarydocuments_tax')->unsigned();
             $table->float('tributarydocuments_totalAmountTax');
         });
