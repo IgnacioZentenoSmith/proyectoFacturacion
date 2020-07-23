@@ -23,6 +23,11 @@ Route::get('email/resend', 'Auth\VerificationController@resend')->name('verifica
 Route::put('email/{id}/setPassword', 'Auth\VerificationController@setPassword')->name('email.setPassword')->middleware('auth');
 
 Route::get('/home', 'HomeController@index')->name('home.index');
+Route::get('/home/gci', 'HomeController@GCI_Api')->name('home.gci');
+Route::get('/home/pvi', 'HomeController@PVI_Api')->name('home.pvi');
+Route::get('/home/etdtp', 'HomeController@ETDTP_Api')->name('home.etdtp');
+Route::get('/home/licita', 'HomeController@LICITA_Api')->name('home.licita');
+
 Route::get('/', 'HomeController@index')->name('home.index');
 
 
@@ -81,9 +86,11 @@ Route::get('/contracts/{idContrato}/distributions', 'ContractdistributionControl
 Route::put('/contracts/{idContrato}/distributions', 'ContractdistributionController@distributionsUpdate')->name('contracts.distributionsUpdate')->middleware('auth');
 
 Route::get('/billings/{periodo}', 'TributarydocumentsController@index')->name('billings.index')->middleware('auth');
-Route::post('/billings/{periodo}/generateDocuments/{tipoDocumento}', 'TributarydocumentsController@generateDocumentos')->name('billings.generateDocuments')->middleware('auth');
+Route::post('/billings/{periodo}/generateDocuments', 'TributarydocumentsController@generateDocumentos')->name('billings.generateDocuments')->middleware('auth');
 Route::delete('/billings/{id}', 'TributarydocumentsController@documentDestroy')->name('billings.documentDestroy')->middleware('auth');
-Route::post('/billings/{id}/generateNotaCredito/{periodo}', 'TributarydocumentsController@generateNotaCredito')->name('billings.generateNotaCredito')->middleware('auth');
+//Route::post('/billings/{id}/generateNotaCredito/{periodo}', 'TributarydocumentsController@generateNotaCredito')->name('billings.generateNotaCredito')->middleware('auth');
 
 Route::get('/billings/{idTributarydocument}/paymentDetails', 'TributarydocumentsController@paymentDetailsIndex')->name('billings.paymentDetails')->middleware('auth');
-Route::put('/billings/{idTributarydocument}/paymentDetails', 'TributarydocumentsController@paymentDetailsUpdate')->name('billings.paymentDetailsUpdate')->middleware('auth');
+
+Route::get('/billings/{idTributarydocument}/redistribute', 'TributarydocumentsController@redistribute')->name('billings.redistribute')->middleware('auth');
+Route::put('/billings/{idTributarydocument}/generateRedistribucion', 'TributarydocumentsController@generateRedistribucion')->name('billings.generateRedistribucion')->middleware('auth');

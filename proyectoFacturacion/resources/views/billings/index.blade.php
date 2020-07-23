@@ -21,7 +21,7 @@
               </div>
           </div>
       </form>
-      <form method="POST" id="inputDocumentType" action="{{ route('billings.generateDocuments', [$periodo, 'Factura']) }}">
+      <form method="POST" id="inputDocumentType" action="{{ route('billings.generateDocuments', $periodo) }}">
           @csrf
           <div class="form-group row">
               <div class="col-md-6">
@@ -60,13 +60,16 @@
               <td class="text-right">{{$documentosTributario['documentoTributario_MontoTotalIVA']}} UF</td>
               <td>
 
-              @if(in_array(7, $authPermisos))
+                @if(in_array(7, $authPermisos))
                     <a class="btn btn-primary" href="{{ route('billings.paymentDetails', $documentosTributario['id']) }}"
                     role="button">Ver detalles</a>
                 @endif
 
+                @if(in_array(7, $authPermisos))
+                    <a @if ($documentosTributario['tributarydocuments_documentType'] != 'Factura') class="btn btn-warning disabled" @else class="btn btn-warning" href="{{ route('billings.redistribute', $documentosTributario['id']) }}" @endif
+                    role="button">Redistribución</a>
+                @endif
 
-                    <button class="btn btn-warning" type="submit" disabled>Nota de crédito</button>
                   </form>
 
                   <form style="display: inline-block;" action="{{ route('billings.documentDestroy', $documentosTributario['id']) }}"
