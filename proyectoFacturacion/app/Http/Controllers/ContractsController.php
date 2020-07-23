@@ -279,7 +279,7 @@ class ContractsController extends Controller
             'idClient'=> 'required|numeric',
             'contractsConditions_Precio'=> 'required|numeric|min:0',
             'contractsConditions_Modalidad'=> 'required|string|max:100',
-            'contractsConditions_Cantidad'=> 'required|numeric|min:1',
+            'contractsConditions_Cantidad'=> 'required|numeric|min:0',
             'contractsConditions_fechaInicio'=> 'required|date_format:Y-m-d',
             'contractsConditions_fechaTermino'=> 'nullable|date_format:Y-m-d',
         ]);
@@ -320,7 +320,7 @@ class ContractsController extends Controller
             'idClient'=> 'required|numeric',
             'contractsConditions_Precio'=> 'required|numeric|min:0',
             'contractsConditions_Modalidad'=> 'required|string|max:100',
-            'contractsConditions_Cantidad'=> 'required|numeric|min:1',
+            'contractsConditions_Cantidad'=> 'required|numeric|min:0',
             'contractsConditions_fechaInicio'=> 'required|date_format:Y-m-d',
             'contractsConditions_fechaTermino'=> 'nullable|date_format:Y-m-d',
         ]);
