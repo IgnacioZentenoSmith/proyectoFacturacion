@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Permission;
 use App\ContractConditions;
 use App\ContractDistribution;
+use App\ContractPaymentDetails;
 
 use App\Contracts;
 use App\Client;
@@ -218,7 +219,12 @@ class TributarydocumentsController extends Controller
         ->select('tributarydetails.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units')
         ->get();
 
-        return view('billings.paymentDetails', compact('authPermisos', 'tributaryDocument', 'contract', 'tributaryDetails'));
+        $contractPaymentDetails = ContractPaymentDetails::where('idContract', $contract->id)
+        ->join('payment_units', 'payment_units.id', '=', 'contract_payment_details.idPaymentUnit')
+        ->join('clients', 'clients.id', '=', 'contract_payment_details.idClient')
+        ->select('contract_payment_details.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units')
+        ->get();
+        return view('billings.paymentDetails', compact('authPermisos', 'tributaryDocument', 'contract', 'tributaryDetails', 'contractPaymentDetails'));
     }
 
     public function redistribute(Request $request, $idTributarydocument) {
@@ -232,7 +238,12 @@ class TributarydocumentsController extends Controller
         ->select('tributarydetails.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units')
         ->get();
 
-        return view('billings.redistribute', compact('authPermisos', 'tributaryDocument', 'contract', 'tributaryDetails'));
+        $contractPaymentDetails = ContractPaymentDetails::where('idContract', $contract->id)
+        ->join('payment_units', 'payment_units.id', '=', 'contract_payment_details.idPaymentUnit')
+        ->join('clients', 'clients.id', '=', 'contract_payment_details.idClient')
+        ->select('contract_payment_details.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units')
+        ->get();
+        return view('billings.redistribute', compact('authPermisos', 'tributaryDocument', 'contract', 'tributaryDetails', 'contractPaymentDetails'));
 
     }
 

@@ -112,25 +112,29 @@
                         <th scope="col" data-field="ID" data-sortable="true">ID</th>
                         <th scope="col" data-field="idClient" data-sortable="true">Razón social</th>
                         <th scope="col" data-field="idPaymentUnit" data-sortable="true">Unidad de pago</th>
-                        <th scope="col" data-field="tributarydetails_paymentUnitQuantity" data-sortable="true">Cantidad
+                        <th scope="col" data-field="ccontractPaymentDetails_quantity" data-sortable="true">Cantidad
                             de unidades de pago</th>
-                        <th scope="col" data-field="tributarydetails_paymentPercentage" data-sortable="true">Nombre unidad de pago
+                        <th scope="col" data-field="contractPaymentDetails_description" data-sortable="true">Descripción
+                        </th>
+                        <th scope="col" data-field="contractPaymentDetails_recepcionMunicipal" data-sortable="true">Recepción municipal
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-
+                    @foreach($contractPaymentDetails as $contractPaymentDetail)
                     <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>{{$contractPaymentDetail['id']}}</td>
+                        <td>{{$contractPaymentDetail['clientRazonSocial']}}</td>
+                        <td>{{$contractPaymentDetail['payment_units']}}</td>
+                        <td>{{$contractPaymentDetail['ccontractPaymentDetails_quantity']}}</td>
+                        <td>{{$contractPaymentDetail['contractPaymentDetails_description']}}</td>
+                        <td>{{$contractPaymentDetail['contractPaymentDetails_recepcionMunicipal']}}</td>
                     </tr>
-
+                    @endforeach
                 </tbody>
             </table>
         </div>
+
         <br>
         <input type="hidden" id="tributaryDetailsTableLength" name="tributaryDetailsTableLength" required value="0">
         <div class="form-group row">
