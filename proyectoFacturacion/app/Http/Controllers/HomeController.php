@@ -56,8 +56,8 @@ class HomeController extends Controller
                         'idClient' => $res['holding_id_facturacion'],
                         'idContract' => $contract->id,
                         'contractPaymentDetails_period' => $periodo,
-                        'ccontractPaymentDetails_quantity' => $proyecto['total_productos'],
-                        'contractPaymentDetails_description' => $proyecto['glosa_proyecto'] . ' ' .  $proyecto['glosa_etapa'],
+                        'ccontractPaymentDetails_quantity' => 1,
+                        'contractPaymentDetails_description' => $proyecto['glosa_proyecto'] . ' ' .  $proyecto['glosa_etapa'] . ' ' .  $proyecto['glosa_subagrupacion'],
                         'contractPaymentDetails_recepcionMunicipal' => $proyecto['fecha_recepcion_municipal'],
                     ]);
                     $newContractPaymentDetails->save();
@@ -84,8 +84,8 @@ class HomeController extends Controller
                         'idClient' => $res['holding_id_facturacion'],
                         'idContract' => $contract->id,
                         'contractPaymentDetails_period' => $periodo,
-                        'ccontractPaymentDetails_quantity' => $proyecto['numero_unidades'],
-                        'contractPaymentDetails_description' => $proyecto['proyecto_nombre'],
+                        'ccontractPaymentDetails_quantity' => 1,
+                        'contractPaymentDetails_description' => $proyecto['proyecto_nombre'] . ' Unidades: ' . $proyecto['numero_unidades'],
                         'contractPaymentDetails_recepcionMunicipal' => $proyecto['fecha_recepcion_municipal'],
                     ]);
                     $newContractPaymentDetails->save();

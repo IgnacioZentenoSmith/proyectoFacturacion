@@ -243,7 +243,9 @@ class TributarydocumentsController extends Controller
         ->join('clients', 'clients.id', '=', 'contract_payment_details.idClient')
         ->select('contract_payment_details.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units')
         ->get();
-        return view('billings.redistribute', compact('authPermisos', 'tributaryDocument', 'contract', 'tributaryDetails', 'contractPaymentDetails'));
+
+        $razonesSociales = Client::where('clientParentId', $contract->idClient)->get();
+        return view('billings.redistribute', compact('authPermisos', 'tributaryDocument', 'contract', 'tributaryDetails', 'contractPaymentDetails', 'razonesSociales'));
 
     }
 
@@ -258,6 +260,8 @@ class TributarydocumentsController extends Controller
             'tributarydetails_paymentPercentage.*'=> 'required|numeric|between:0,100',
             'tributarydetails_paymentValue'=> 'required|array|min:' . $largoTabla,
             'tributarydetails_paymentValue.*'=> 'required|numeric|between:0,' . $montoTotal,
+            'tributarydetails_discount'=> 'required|array|min:' . $largoTabla,
+            'tributarydetails_discount.*'=> 'required|numeric|between:0,100',
             'porcentajeActual' =>'required|numeric|between:100,100',
             'montoActual' => 'required|numeric|between:' . $montoTotal . ',' . $montoTotal,
         ]);
@@ -292,6 +296,7 @@ class TributarydocumentsController extends Controller
                 'tributarydetails_paymentUnitQuantity' => $request->tributarydetails_paymentUnitQuantity[$i],
                 'tributarydetails_paymentPercentage' => $request->tributarydetails_paymentPercentage[$i],
                 'tributarydetails_paymentValue' => $request->tributarydetails_paymentValue[$i],
+                'tributarydetails_discount' => $request->tributarydetails_discount[$i],
               ]);
             $newTributaryDetail->save();
 
@@ -333,6 +338,7 @@ class TributarydocumentsController extends Controller
                         'tributarydetails_paymentUnitQuantity' => $paymentQuantity,
                         'tributarydetails_paymentPercentage' => $contractDistribution->contractDistribution_percentage,
                         'tributarydetails_paymentValue' => $paymentValue,
+                        'tributarydetails_discount' => $contractDistribution->contractDistribution_discount,
                       ]);
                       $newTributaryDetail->save();
                 }

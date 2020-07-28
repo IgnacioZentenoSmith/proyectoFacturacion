@@ -9,7 +9,7 @@
             </div>
 
             <div class="form-group row">
-                <label for="contractDistribution_massAssign" class="col-auto col-form-label">Asignar a todos</label>
+                <label for="contractDistribution_massAssign" class="col-auto col-form-label">Asignar distribución:</label>
 
                 <div class="col-md-4">
                     <select class="form-control" id="contractDistribution_massAssign" name="contractDistribution_massAssign" onchange="getMassAssign(this);">
@@ -34,6 +34,7 @@
                             <th scope="col" data-field="contractDistribution_clientName" data-sortable="true">Razon social</th>
                             <th scope="col" data-field="contractDistribution_type" data-sortable="true">Tipo de distribución</th>
                             <th scope="col" data-field="contractDistribution_percentage" data-sortable="true">Porcentaje de distribución</th>
+                            <th scope="col" data-field="contractDistribution_discount" data-sortable="true">Porcentaje de descuento</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,16 +48,19 @@
                             <td>{{$contractDistribution['contractDistribution_clientName']}}</td>
 
                             <td>
-                                <select class="form-control" id="contractDistribution_type[{{$contractDistribution['id']}}]" name="contractDistribution_type[]" onchange="getMassAssign(this);">
-                                    <option value="No asignado" @if($contractDistribution['contractDistribution_type'] == "No asignado") selected @endif>No asignado</option>
-                                    <option value="Porcentaje" @if($contractDistribution['contractDistribution_type'] == "Porcentaje") selected @endif>Porcentaje</option>
-                                    <option value="Unidad de cobro" @if($contractDistribution['contractDistribution_type'] == "Unidad de cobro") selected @endif>Unidad de cobro</option>
-                                </select>
+                                <input id="contractDistribution_type[{{$contractDistribution['id']}}]" type="text" class="form-control" name="contractDistribution_type[]"
+                                required readonly value="{{$contractDistribution['contractDistribution_type']}}">
+
                             </td>
                             <td>
                                 <input id="contractDistribution_percentage[{{$contractDistribution['id']}}]" type="number" onchange="getPercentage(this);"
                                 class="form-control" name="contractDistribution_percentage[]" step="0.01" @if($contractDistribution['contractDistribution_type'] != "Porcentaje") readonly @endif
                                 value="{{$contractDistribution['contractDistribution_percentage']}}">
+                            </td>
+                            <td>
+                                <input id="contractDistribution_discount[{{$contractDistribution['id']}}]" type="number" onchange="getDiscount(this);"
+                                class="form-control" name="contractDistribution_discount[]" step="0.01"
+                                value="{{$contractDistribution['contractDistribution_discount']}}">
                             </td>
                         </tr>
                         @endforeach
@@ -179,7 +183,22 @@
         var toggleElement = document.getElementById("totalPercentage");
         toggleElement.style.display = displayValue;
     }
+
+    //Evitar que ponga valores incorrectos
+    function getDiscount(discountInput) {
+        if (parseFloat(discountInput.value) > 100) {
+            discountInput.value = parseFloat(0);
+        }
+        else if (parseFloat(discountInput.value) < 0) {
+            discountInput.value = parseFloat(0);
+        }
+    }
     getTotalPorcentaje();
 
+    //Asignar el valor de los tipos al selector
+    document.getElementsByName('contractDistribution_type[]').forEach(input => {
+        document.getElementById('contractDistribution_massAssign').value = input.value;
+        document.getElementById("distributionsType").value = input.value;
+    });
 </script>
 @endsection

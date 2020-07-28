@@ -14,6 +14,7 @@ class ContractDistribution extends Model
         'idContract',
         'contractDistribution_type',
         'contractDistribution_percentage',
+        'contractDistribution_discount'
     ];
 
   public function client(){

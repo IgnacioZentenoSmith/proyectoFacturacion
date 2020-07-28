@@ -28,6 +28,7 @@
                         <th scope="col" data-field="tributarydetails_paymentPercentage" data-sortable="true">Porcentaje
                         </th>
                         <th scope="col" data-field="tributarydetails_paymentValue" data-sortable="true">Monto</th>
+                        <th scope="col" data-field="tributarydetails_discount" data-sortable="true">Descuento</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -67,6 +68,12 @@
                             <input id="tributarydetails_paymentValue[{{$tributaryDetail['id']}}]" type="number" onchange="getValue(this);"
                             class="form-control" name="tributarydetails_paymentValue[]" step="0.001"
                             value="{{$tributaryDetail['tributarydetails_paymentValue']}}">
+                        </td>
+
+                        <td>
+                            <input id="tributarydetails_discount[{{$tributaryDetail['id']}}]" type="number" onchange="getDiscount(this);"
+                            class="form-control" name="tributarydetails_discount[]" step="0.001"
+                            value="{{$tributaryDetail['tributarydetails_discount']}}">
                         </td>
 
                     </tr>
@@ -124,7 +131,15 @@
                     @foreach($contractPaymentDetails as $contractPaymentDetail)
                     <tr>
                         <td>{{$contractPaymentDetail['id']}}</td>
-                        <td>{{$contractPaymentDetail['clientRazonSocial']}}</td>
+                        <td>
+                            <select class="form-control" id="clientRazonSocial[{{$contractPaymentDetail['id']}}]" name="clientRazonSocial[]">
+                                @foreach($razonesSociales as $razonSocial)
+                                <option value="{{$razonSocial['clientRazonSocial']}}" @if($contractPaymentDetail['clientRazonSocial'] == $razonSocial['clientRazonSocial']) selected @endif>
+                                    {{$razonSocial['clientRazonSocial']}}
+                                </option>
+                                @endforeach
+                            </select>
+                        </td>
                         <td>{{$contractPaymentDetail['payment_units']}}</td>
                         <td>{{$contractPaymentDetail['ccontractPaymentDetails_quantity']}}</td>
                         <td>{{$contractPaymentDetail['contractPaymentDetails_description']}}</td>
@@ -266,6 +281,15 @@
         //Regex
         let inputId = inputElement.id.match(/(\d+)/);
         return inputId[0];
+    }
+
+    function getDiscount(discountInput) {
+        if (parseFloat(discountInput.value) > 100) {
+            discountInput.value = parseFloat(0);
+        }
+        else if (parseFloat(discountInput.value) < 0) {
+            discountInput.value = parseFloat(0);
+        }
     }
 
     getTotalPorcentaje();

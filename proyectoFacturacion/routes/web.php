@@ -29,6 +29,7 @@ Route::get('/home/etdtp', 'HomeController@ETDTP_Api')->name('home.etdtp');
 Route::get('/home/licita', 'HomeController@LICITA_Api')->name('home.licita');
 
 Route::get('/home/fpena', 'ApiclientsController@fepena')->name('home.fpena');
+Route::get('/home/fpena2', 'ApiclientsController@fepena2')->name('home.fpena2');
 
 Route::get('/', 'HomeController@index')->name('home.index');
 

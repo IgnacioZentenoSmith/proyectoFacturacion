@@ -46,6 +46,7 @@ class ContractdistributionController extends Controller
                         'idContract' => $idContrato,
                         'contractDistribution_type' => 'No asignado',
                         'contractDistribution_percentage' => 0,
+                        'contractDistribution_discount' => 0,
                     ]);
                     $newContractDistribution->save();
                 }
@@ -76,6 +77,8 @@ class ContractdistributionController extends Controller
             'contractDistribution_type.*'=> 'required|string|max:50',
             'contractDistribution_percentage'=> 'required|array|min:' . $largoTabla,
             'contractDistribution_percentage.*'=> 'required|numeric|between:0,100',
+            'contractDistribution_discount'=> 'required|array|min:' . $largoTabla,
+            'contractDistribution_discount.*'=> 'required|numeric|between:0,100',
             'distributionsType' => 'required|string|max:50',
         ]);
         //Validaciones extra
@@ -91,6 +94,7 @@ class ContractdistributionController extends Controller
             $distributions = ContractDistribution::find($request->contractDistribution_id[$i]);
             $distributions->contractDistribution_type = $request->contractDistribution_type[$i];
             $distributions->contractDistribution_percentage = $request->contractDistribution_percentage[$i];
+            $distributions->contractDistribution_discount = $request->contractDistribution_discount[$i];
             //Guardar si hay un cambio
             if ($distributions->isDirty()) {
                 $distributions->save();
