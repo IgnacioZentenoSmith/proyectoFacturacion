@@ -65,6 +65,7 @@ class ApiclientsController extends Controller
         return response($razonesSociales, 200);
     }
 
+
     public function fepena() {
         $userId = Auth::user()->id;
         $authPermisos = Permission::where('idUser', $userId)->get();
@@ -88,27 +89,32 @@ class ApiclientsController extends Controller
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
 
         $razonesSociales = Client::whereNotNull('clientParentId')
+        ->select('clients.clientParentId as id_holding', 'clients.id as id_razon_social',
+        'clients.clientRUT as rut_razon_social', 'clients.clientRazonSocial as nombre_razon_social')
+        ->get();
+        /*
         ->join('contracts', 'contracts.idClient', '=', 'clients.clientParentId')
         ->join('modules', 'contracts.idModule', '=', 'modules.id')
-        ->select('clients.clientParentId as id_holding', 'clients.id as id_razon_social',
-        'clients.clientRUT as rut_razon_social', 'clients.clientRazonSocial as nombre_razon_social',
-        'contracts.contractsNumero as n_contrato', 'modules.moduleName as modulo_base_contrato')
-        ->get();
+        'contracts.contractsNumero as n_contrato', 'modules.moduleName as modulo_base_contrato'
+        */
 
         foreach ($razonesSociales as $razonSocial) {
             $holding = Client::where('id', $razonSocial->id_holding)->first();
             $razonSocial = Arr::add($razonSocial, 'nombre_holding', $holding->clientRazonSocial);
+
+            $contract = Contracts::where('idClient', $razonSocial->id_holding)->first();
+            if ($contract != null) {
+                $razonSocial = Arr::add($razonSocial, 'n_contrato', $contract->contractsNumero);
+                $module = Modules::where('id', $contract->idModule)->first();
+                $razonSocial = Arr::add($razonSocial, 'modulo_base_contrato', $module->moduleName);
+            }
+            else {
+                $razonSocial = Arr::add($razonSocial, 'n_contrato', '');
+                $razonSocial = Arr::add($razonSocial, 'modulo_base_contrato', '');
+            }
         }
 
         return view('home.fpena2', compact('razonesSociales', 'authPermisos'));
     }
+
 }
-/*
-id_holding, 		cliente
-nombre_holding, 	cliente
-id_razon_social, 	cliente hijo
-rut_razon_social, 	cliente hijo
-nombre_razon_social, 	cliente hijo
-nº contrato, 		contrato
-módulo base contrato	contrato
-*/
