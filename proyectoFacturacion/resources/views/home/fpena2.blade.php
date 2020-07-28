@@ -31,17 +31,47 @@
                             </thead>
                             <tbody>
                                 @foreach($razonesSociales as $razonSocial)
-                                <tr>
-                                    <td>{{$razonSocial['id_holding']}}</td>
-                                    <td>{{$razonSocial['nombre_holding']}}</td>
-                                    <td>{{$razonSocial['id_razon_social']}}</td>
-                                    <td>{{$razonSocial['rut_razon_social']}}</td>
-                                    <td>{{$razonSocial['nombre_razon_social']}}</td>
 
-                                    <td>{{$razonSocial['n_contrato']}}</td>
-                                    <td>{{$razonSocial['modulo_base_contrato']}}</td>
+                                @if (!in_array($razonSocial['clientParentId'], $contractClientIds))
+                                    <tr>
+                                        <td>{{$razonSocial['clientParentId']}}</td>
+                                        <td>{{$razonSocial['nombre_holding']}}</td>
+                                        <td>{{$razonSocial['id']}}</td>
+                                        <td>{{$razonSocial['clientRUT']}}</td>
+                                        <td>{{$razonSocial['clientRazonSocial']}}</td>
 
-                                </tr>
+                                        <td></td>
+                                        <td></td>
+
+                                    </tr>
+                                    @else
+
+                                    @foreach($contracts as $contract)
+                                    @if ($contract['idClient'] == $razonSocial['clientParentId'])
+
+
+                                        <tr>
+                                            <td>{{$razonSocial['clientParentId']}}</td>
+                                            <td>{{$razonSocial['nombre_holding']}}</td>
+                                            <td>{{$razonSocial['id']}}</td>
+                                            <td>{{$razonSocial['clientRUT']}}</td>
+                                            <td>{{$razonSocial['clientRazonSocial']}}</td>
+
+                                            <td>{{$contract['contractsNumero']}}</td>
+                                            <td>{{$contract['modulo_base_contrato']}}</td>
+
+                                        </tr>
+
+                                    @endif
+                                @endforeach
+
+                                    @endif
+
+
+
+
+
+
                                 @endforeach
                             </tbody>
                         </table>
