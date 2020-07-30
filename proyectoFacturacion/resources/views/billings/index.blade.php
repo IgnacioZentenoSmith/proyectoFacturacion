@@ -50,7 +50,7 @@
         </thead>
         <tbody>
           @foreach ($documentosTributarios as $documentosTributario)
-            <tr>
+            <tr @if ($documentosTributario['tributarydocuments_totalAmount'] == 0) class="bg-light" @endif>
               <td>{{$documentosTributario['id']}}</td>
               <td>{{$documentosTributario['documentoTributario_contractName']}}</td>
               <td>{{$documentosTributario['tributarydocuments_period']}}</td>
@@ -61,12 +61,14 @@
               <td>
 
                 @if(in_array(7, $authPermisos))
-                    <a class="btn btn-primary" href="{{ route('billings.paymentDetails', $documentosTributario['id']) }}"
-                    role="button">Ver detalles</a>
+                <a @if ($documentosTributario['tributarydocuments_totalAmount'] == 0) class="btn btn-primary disabled"
+                @else class="btn btn-primary" href="{{ route('billings.paymentDetails', $documentosTributario['id']) }}" @endif
+                role="button">Ver detalles</a>
                 @endif
 
                 @if(in_array(7, $authPermisos))
-                    <a @if ($documentosTributario['tributarydocuments_documentType'] != 'Factura') class="btn btn-warning disabled" @else class="btn btn-warning" href="{{ route('billings.redistribute', $documentosTributario['id']) }}" @endif
+                    <a @if ($documentosTributario['tributarydocuments_documentType'] != 'Factura' || $documentosTributario['tributarydocuments_totalAmount'] == 0) class="btn btn-warning disabled"
+                    @else class="btn btn-warning" href="{{ route('billings.redistribute', $documentosTributario['id']) }}" @endif
                     role="button">Redistribución</a>
                 @endif
 
