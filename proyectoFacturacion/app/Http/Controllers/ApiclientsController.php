@@ -65,7 +65,7 @@ class ApiclientsController extends Controller
         return response($razonesSociales, 200);
     }
 
-
+    /*
     public function fepena() {
         $userId = Auth::user()->id;
         $authPermisos = Permission::where('idUser', $userId)->get();
@@ -93,14 +93,14 @@ class ApiclientsController extends Controller
         ->join('modules', 'contracts.idModule', '=', 'modules.id')
         ->select('contracts.*' ,'modules.moduleName as modulo_base_contrato')
         ->get();
-        /*
+
         ->select('clients.clientParentId as id_holding', 'clients.id as id_razon_social',
         'clients.clientRUT as rut_razon_social', 'clients.clientRazonSocial as nombre_razon_social')
 
         ->join('contracts', 'contracts.idClient', '=', 'clients.clientParentId')
         ->join('modules', 'contracts.idModule', '=', 'modules.id')
         'contracts.contractsNumero as n_contrato', 'modules.moduleName as modulo_base_contrato'
-        */
+
 
         $contractClientIds = $contracts->pluck('idClient')->toArray();
 
@@ -110,5 +110,6 @@ class ApiclientsController extends Controller
         }
         return view('home.fpena2', compact('razonesSociales', 'contracts', 'authPermisos', 'contractClientIds'));
     }
+    */
 
 }
