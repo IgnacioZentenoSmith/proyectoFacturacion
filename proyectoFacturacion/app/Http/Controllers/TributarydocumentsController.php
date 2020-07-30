@@ -190,8 +190,9 @@ class TributarydocumentsController extends Controller
     {
       $authPermisos = $this->getPermisos();
       $documentoTributario = Tributarydocuments::find($id);
+      $periodo = $documentoTributario->tributarydocuments_period;
       $documentoTributario->delete();
-      return redirect()->action('TributarydocumentsController@index', ['periodo' => 0])->with('success', 'Documento eliminado exitosamente');
+      return redirect()->action('TributarydocumentsController@index', ['periodo' => $periodo])->with('success', 'Documento eliminado exitosamente');
     }/*
     public function generateNotaCredito($id, $periodo) {
       $authPermisos = $this->getPermisos();
@@ -262,6 +263,8 @@ class TributarydocumentsController extends Controller
             'tributarydetails_paymentValue.*'=> 'required|numeric|between:0,' . $montoTotal,
             'tributarydetails_discount'=> 'required|array|min:' . $largoTabla,
             'tributarydetails_discount.*'=> 'required|numeric|between:0,100',
+            'tributarydetails_paymentTotalValue'=> 'required|array|min:' . $largoTabla,
+            'tributarydetails_paymentTotalValue.*'=> 'required|numeric|between:0,' . $montoTotal,
             'porcentajeActual' =>'required|numeric|between:100,100',
             'montoActual' => 'required|numeric|between:' . $montoTotal . ',' . $montoTotal,
         ]);
@@ -297,10 +300,26 @@ class TributarydocumentsController extends Controller
                 'tributarydetails_paymentPercentage' => $request->tributarydetails_paymentPercentage[$i],
                 'tributarydetails_paymentValue' => $request->tributarydetails_paymentValue[$i],
                 'tributarydetails_discount' => $request->tributarydetails_discount[$i],
+                'tributarydetails_paymentTotalValue' => $request->tributarydetails_paymentTotalValue[$i],
               ]);
             $newTributaryDetail->save();
 
         }
+        $largoTablaContractPaymentDetails = $request->contractPaymentDetailsTableLength;
+        $request->validate([
+            'contractPaymentDetail_id' => 'required|array|min:' . $largoTablaContractPaymentDetails,
+            'contractPaymentDetail_id.*' => 'required|numeric|min:0',
+            'contractPaymentDetail_idClient'=> 'required|array|min:' . $largoTablaContractPaymentDetails,
+            'contractPaymentDetail_idClient.*'=> 'required|numeric|min:0',
+        ]);
+        for ($i = 0; $i < $largoTablaContractPaymentDetails; $i++ ) {
+            $contractPaymentDetail = ContractPaymentDetails::find($request->contractPaymentDetail_id[$i]);
+            $contractPaymentDetail->idClient = $request->contractPaymentDetail_idClient[$i];
+            if ($contractPaymentDetail->isDirty()) {
+                $contractPaymentDetail->save();
+            }
+        }
+
         return redirect()->action('TributarydocumentsController@index', ['periodo' => 0])->with('success', 'Nota de crédito generada exitosamente');
 
     }
@@ -330,7 +349,12 @@ class TributarydocumentsController extends Controller
                 if ($contractDistribution->contractDistribution_type == "Porcentaje") {
                     $paymentQuantity = round($thisPeriodData->quantitiesCantidad * $contractDistribution->contractDistribution_percentage/100);
                     $paymentValue = $thisPeriodData->quantitiesMonto * $contractDistribution->contractDistribution_percentage/100 * 1.19;
-
+                    //Si no tiene descuento, es el mismo valor
+                    if ($contractDistribution->contractDistribution_discount == 0) {
+                        $paymentTotalValue = $paymentValue;
+                    } else {
+                        $paymentTotalValue = $paymentValue * $contractDistribution->contractDistribution_discount / 100;
+                    }
                     $newTributaryDetail = new Tributarydetails([
                         'idTributarydocument' => $idTributarydocument,
                         'idClient' => $contractDistribution->idClient,
@@ -339,6 +363,8 @@ class TributarydocumentsController extends Controller
                         'tributarydetails_paymentPercentage' => $contractDistribution->contractDistribution_percentage,
                         'tributarydetails_paymentValue' => $paymentValue,
                         'tributarydetails_discount' => $contractDistribution->contractDistribution_discount,
+                        'tributarydetails_paymentTotalValue' => $paymentTotalValue,
+
                       ]);
                       $newTributaryDetail->save();
                 }
