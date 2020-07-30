@@ -23,8 +23,9 @@
                             de unidades de pago</th>
                         <th scope="col" data-field="tributarydetails_paymentPercentage" data-sortable="true">Porcentaje
                         </th>
-                        <th scope="col" data-field="tributarydetails_paymentValue" data-sortable="true">Monto</th>
+                        <th scope="col" data-field="tributarydetails_paymentValue" data-sortable="true">Monto subtotal</th>
                         <th scope="col" data-field="tributarydetails_discount" data-sortable="true">Descuento</th>
+                        <th scope="col" data-field="tributarydetails_paymentTotalValue" data-sortable="true">Monto total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,6 +38,7 @@
                         <td>{{$tributaryDetail['tributarydetails_paymentPercentage']}}</td>
                         <td>{{$tributaryDetail['tributarydetails_paymentValue']}}</td>
                         <td>{{$tributaryDetail['tributarydetails_discount']}}</td>
+                        <td>{{$tributaryDetail['tributarydetails_paymentTotalValue']}}</td>
                     </tr>
                     @endforeach
                 </tbody>
