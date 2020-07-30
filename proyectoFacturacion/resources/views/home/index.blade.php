@@ -22,6 +22,7 @@
                         <a class="btn btn-secondary" role="button" href="{{ route('home.pvi') }}">PVI</a>
                         <a class="btn btn-warning" role="button" href="{{ route('home.etdtp') }}">ET/DTP</a>
                         <a class="btn btn-success" role="button" href="{{ route('home.licita') }}">LICITA</a>
+                        <a class="btn btn-light" role="button" href="{{ route('home.apiQuantities') }}">apiQuantities</a>
                     @endif
                 </div>
             </div>
