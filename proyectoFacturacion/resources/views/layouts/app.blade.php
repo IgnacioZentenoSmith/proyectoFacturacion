@@ -1,41 +1,47 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
+
     <meta charset="utf-8">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self';
+    style-src 'self' 'unsafe-inline';
+    script-src 'self' 'unsafe-inline';
+    font-src *;">
+
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
   	<!-- CSS STYLES -->
-	<link href='https://fonts.googleapis.com/css?family=Titillium+Web' rel='stylesheet' type='text/css'>
+    <link href="{{ asset('css/libs/familyTitilliumWeb.css') }}" rel="stylesheet">
 	<!-- Bootstrap CSS -->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="{{ asset('css/libs/bootstrap.min.css') }}" rel="stylesheet">
 	<!-- Font Awesome CSS -->
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretty-checkbox/3.0.0/pretty-checkbox.min.css" integrity="sha256-KCHcsGm2E36dSODOtMCcBadNAbEUW5m+1xLId7xgLmw=" crossorigin="anonymous" />
+    <link href="{{ asset('css/libs/fontAwesomeAll.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/libs/pretty-checkbox.min.css') }}" rel="stylesheet">
 	<!-- JS -->
 	<!-- jQuery JS -->
-	<script src="https://code.jquery.com/jquery-3.4.1.min.js" crossorigin="anonymous"></script>
+    <script src="{{ asset('js/libs/jquery-3.4.1.min.js')}}"></script>
 	<!-- Popper JS -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-	<!-- Bootstrap JS -->
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    	<!-- Font Awesome JS -->
-	<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
-	<script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
-
+    <script src="{{ asset('js/libs/popper.min.js')}}"></script>
+    <!-- Bootstrap JS -->
+    <script src="{{ asset('js/libs/bootstrap.min.js')}}"></script>
+    <!-- Font Awesome JS -->
+    <script src="{{ asset('js/libs/solid.js')}}"></script>
+    <script src="{{ asset('js/libs/fontawesome.js')}}"></script>
 	<!-- Bootstrap Tables-->
-	<link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css">
-	<script src="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.js"></script>
+    <link href="{{ asset('css/libs/bootstrap-table.min.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/libs/bootstrap-table.min.js')}}"></script>
 	<!-- Bootstrap Tables Export Extension -->
-	<script src="https://unpkg.com/bootstrap-table@1.15.5/dist/extensions/export/bootstrap-table-export.min.js"></script>
+    <script src="{{ asset('js/libs/bootstrap-table-export.min.js')}}"></script>
 	<!-- JS Exports plugin Bootstrap Tables-->
-	<script src="https://unpkg.com/tableexport.jquery.plugin/tableExport.min.js"></script>
-	<script src="https://unpkg.com/tableexport.jquery.plugin/libs/jsPDF/jspdf.min.js"></script>
-	<script src="https://unpkg.com/tableexport.jquery.plugin/libs/jsPDF-AutoTable/jspdf.plugin.autotable.js"></script>
+    <script src="{{ asset('js/libs/tableExport.min.js')}}"></script>
+    <script src="{{ asset('js/libs/jspdf.min.js')}}"></script>
+    <script src="{{ asset('js/libs/jspdf.plugin.autotable.js')}}"></script>
 
-    
 </head>
 <body>
     <div id="app" class="d-flex flex-column">
@@ -43,9 +49,9 @@
             <div class="container-fluid">
                 <ul class="navbar-nav mr-auto text-center">
                     <a class="navbar-brand">
-                        Proyecto facturaciones
+                        Sistema de facturación
                     </a>
-                </ul>   
+                </ul>
                 <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -55,7 +61,7 @@
                     <ul class="navbar-nav m-auto text-center">
                     @guest
                     @else
-                    
+
                             <li class="nav-item mx-2 {{ (request()->is('/')) ? 'active' : '' }}">
                                 <a class="nav-link" href="{{route('home.index')}}">
                                     <span style="font-size: 1.5em;">
@@ -80,7 +86,7 @@
                                     <span style="font-size: 1.5em;">
                                         <i class="fas fa-user-tie"></i>
                                     </span><br>
-                                    Clientes 
+                                    Clientes
                                 </a>
                             </li>
                         @endif
@@ -100,7 +106,7 @@
                                     <span style="font-size: 1.5em;">
                                         <i class="fas fa-cogs"></i>
                                     </span><br>
-                                    Parametrizaciones 
+                                    Parametrizaciones
                                 </a>
                             </li>
                         @endif
@@ -114,7 +120,19 @@
                                 </a>
                             </li>
                         @endif
-   
+                        @if(in_array(4, $authPermisos))
+                            <li class="nav-item mx-2 {{ (request()->is('binnacle*')) ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('binnacle.index', 0) }}">
+                                    <span style="font-size: 1.5em;">
+                                        <i class="fas fa-book"></i>
+                                    </span><br>
+                                    Bitácora
+                                </a>
+                            </li>
+                        @endif
+
+
+
                     @endguest
                     </ul>
 
@@ -135,7 +153,7 @@
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        <i class="fas fa-sign-out-alt"></i> {{ __('Logout') }} 
+                                        <i class="fas fa-sign-out-alt"></i> {{ __('Logout') }}
                                     </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
@@ -157,7 +175,7 @@
                 @guest
                     <!-- NO ESTA DENTRO DEL SISTEMA -->
                     @yield('content')
-                @else 
+                @else
 
                     <!-- ESTA DENTRO DEL SISTEMA -->
                     @if (Auth::user() && Auth::user()->status == 'Inactivo')
@@ -169,7 +187,7 @@
                     @endif
 
                 @endguest
-                
+
                 </div>
             </div>
         </div>
@@ -204,7 +222,7 @@
                             <div class="col-sm-6">&nbsp;</div>
                                 <div class="col-sm-6">
                                     <p class="mb-1"><img src="{{asset('img/footer/').'/'.'mail.svg'}}" alt=""> Mail de contacto:</p>
-                                    <p class="mt-0">&nbsp;&nbsp;&nbsp;&nbsp;izenteno@planok.com</p>
+                                    <p class="mt-0">izenteno@planok.com</p>
                                 </div>
                             </div>
                         </div>
