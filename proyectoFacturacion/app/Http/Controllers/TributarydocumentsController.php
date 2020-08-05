@@ -6,6 +6,7 @@ use App\Permission;
 use App\ContractConditions;
 use App\ContractDistribution;
 use App\ContractPaymentDetails;
+use App\Binnacle;
 
 use App\Contracts;
 use App\Client;
@@ -370,7 +371,49 @@ class TributarydocumentsController extends Controller
                 }
                 //Por APIs
                 else if ($contractDistribution->contractDistribution_type == "Unidad de cobro") {
+                    //Sacar todos los detalles de este contrato en este periodo
+                    $totalContractPaymentDetails = ContractPaymentDetails::where('contractPaymentDetails_period', $tributaryDocument->tributarydocuments_period)
+                    ->where('idContract', $tributaryDocument->idContract)
+                    ->get();
+                    $totalContractPaymentDetailsQuantity = $totalContractPaymentDetails->count();
+                    //Sacar todos los detalles de esta razon social
+                    $contractPaymentDetails = $totalContractPaymentDetails->where('idClient', $contractDistribution->idClient);
+                    $contractPaymentDetails = $contractPaymentDetails->where('idPaymentUnit', $thisPeriodData->idPaymentUnit);
+                    $paymentQuantity = $contractPaymentDetails->count();
 
+
+                    //Sacar el valor * IVA
+                    $paymentValue = $thisPeriodData->quantitiesMonto * ($tributaryDocument->tributarydocuments_tax / 100 + 1);
+                    //Si no tiene descuento, es el mismo valor, sino, el total es aplicando el dcto
+                    if ($contractDistribution->contractDistribution_discount == 0) {
+                        $paymentTotalValue = $paymentValue;
+                    } else {
+                        $paymentTotalValue = $paymentValue * $contractDistribution->contractDistribution_discount / 100;
+                    }
+
+                    //x% = cantidad * 100 / total
+                    //Si el total es mayor a 0, sacar su porcentaje en base a cantidad
+                    if ($tributaryDocument->tributarydocuments_totalAmountTax > 0) {
+                        $paymentPercentage = $paymentValue * 100 / $tributaryDocument->tributarydocuments_totalAmountTax;
+                    } else {
+                        $paymentPercentage = 0;
+                    }
+                    if ($paymentPercentage > 100) {
+                        $paymentPercentage = 100;
+                    }
+
+                    //Crear el detalle tributario
+                    $newTributaryDetail = new Tributarydetails([
+                        'idTributarydocument' => $idTributarydocument,
+                        'idClient' => $contractDistribution->idClient,
+                        'idPaymentUnit' => $thisPeriodData->idPaymentUnit,
+                        'tributarydetails_paymentUnitQuantity' => $paymentQuantity,
+                        'tributarydetails_paymentPercentage' => $paymentPercentage,
+                        'tributarydetails_paymentValue' => $paymentValue,
+                        'tributarydetails_discount' => $contractDistribution->contractDistribution_discount,
+                        'tributarydetails_paymentTotalValue' => $paymentTotalValue,
+                      ]);
+                      $newTributaryDetail->save();
                 }
             }
         }

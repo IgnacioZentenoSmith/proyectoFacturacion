@@ -19,6 +19,21 @@
         </div>
     </div>
 
+    <div class="form-group row">
+        <label for="contractsRecepcionMunicipal" class="col-md-4 col-form-label text-md-right">Existe recepción municipal</label>
+
+        <div class="col-md-6">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="inlineRadio1" name="contractsRecepcionMunicipal" value="1">
+                <label class="form-check-label" for="inlineRadio1">Si</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="inlineRadio2" name="contractsRecepcionMunicipal" value="0" checked>
+                <label class="form-check-label" for="inlineRadio2">No</label>
+            </div>
+        </div>
+    </div>
+
     <!-- Nombre del contrato -->
     {{-- <div class="form-group row">
         <label for="contractsNombre" class="col-md-4 col-form-label text-md-right">Nombre del contrato</label>
@@ -45,7 +60,7 @@
             </select>
         </div>
     </div>
-    
+
 
     <div class="form-group row">
         <label for="contractsFecha" class="col-md-4 col-form-label text-md-right">Fecha del contrato</label>

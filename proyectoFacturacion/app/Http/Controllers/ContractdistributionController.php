@@ -11,6 +11,7 @@ use App\PaymentUnits;
 use App\User;
 use App\Quantities;
 use App\ContractDistribution;
+use App\Binnacle;
 use Auth;
 
 use Illuminate\Support\Collection;
@@ -49,6 +50,7 @@ class ContractdistributionController extends Controller
                         'contractDistribution_discount' => 0,
                     ]);
                     $newContractDistribution->save();
+                    app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newContractDistribution->getTable(), $newContractDistribution->id, null, $newContractDistribution);
                 }
             }
             //Ya se han creado todas las distribuciones si es que no existen
@@ -92,11 +94,15 @@ class ContractdistributionController extends Controller
 
         for ($i = 0; $i < $largoTabla; $i++ ) {
             $distributions = ContractDistribution::find($request->contractDistribution_id[$i]);
+
+
             $distributions->contractDistribution_type = $request->contractDistribution_type[$i];
             $distributions->contractDistribution_percentage = $request->contractDistribution_percentage[$i];
             $distributions->contractDistribution_discount = $request->contractDistribution_discount[$i];
             //Guardar si hay un cambio
             if ($distributions->isDirty()) {
+                $postDistributions = ContractDistribution::find($request->contractDistribution_id[$i]);
+                app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $distributions->getTable(), $distributions->id, $distributions, $postDistributions);
                 $distributions->save();
             }
         }

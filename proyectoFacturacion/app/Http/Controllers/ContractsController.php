@@ -102,6 +102,7 @@ class ContractsController extends Controller
             'contractsNumero'=> 'required|string|max:100|unique:contracts,contractsNumero',
             'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
+            'contractsRecepcionMunicipal' => 'required|boolean',
         ]);
         //VALIDAR CLIENTE Y MODULO --> COMBINACION UNICA
         $request->validate([
@@ -113,12 +114,6 @@ class ContractsController extends Controller
         $modulo = Modules::find($request->idModule);
         $nombre = $holding->clientRazonSocial . ' ' . $modulo->moduleName;
 
-        if ($modulo->moduleName == 'GCI' || $modulo->moduleName == 'PVI') {
-            $recepcionMunicipal = true;
-        } else {
-            $recepcionMunicipal = false;
-        }
-
 
         $newContract = new Contracts([
             'idClient' => $request->idClient,
@@ -128,7 +123,7 @@ class ContractsController extends Controller
             'contractsFecha' => $request->contractsFecha,
             'contractsEstado' => false,
             'idModule' => $request->idModule,
-            'contractsRecepcionMunicipal' => $recepcionMunicipal,
+            'contractsRecepcionMunicipal' => $request->contractsRecepcionMunicipal,
         ]);
         //Guarda datos
         $newContract->save();
@@ -178,6 +173,7 @@ class ContractsController extends Controller
             'contractsNumero'=> 'required|string|max:100|unique:contracts,contractsNumero,' .$id ,
             'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
+            'contractsRecepcionMunicipal' => 'required|boolean',
         ]);
         //VALIDAR CLIENTE Y MODULO --> COMBINACION UNICA MENOS ESTE ID
         $request->validate([
@@ -185,18 +181,14 @@ class ContractsController extends Controller
             'idModule'=> 'unique:contracts,idModule,' . $id . ',id,idClient,' . $request->idClient,
         ]);
         $modulo = Modules::find($request->idModule);
-        if ($modulo->moduleName == 'GCI' || $modulo->moduleName == 'PVI') {
-            $recepcionMunicipal = true;
-        } else {
-            $recepcionMunicipal = false;
-        }
+
         $contract = Contracts::find($id);
         $contract->idClient = $request->idClient;
         $contract->contractsNumero = $request->contractsNumero;
         $contract->contractsMoneda = $request->contractsMoneda;
         $contract->contractsFecha = $request->contractsFecha;
         $contract->idModule = $request->idModule;
-        $contract->contractsRecepcionMunicipal = $recepcionMunicipal;
+        $contract->contractsRecepcionMunicipal = $request->contractsRecepcionMunicipal;
 
         //Si hay un cambio en el contrato o se cambio al ejecutivo del contrato
         if ($contract->isDirty()) {

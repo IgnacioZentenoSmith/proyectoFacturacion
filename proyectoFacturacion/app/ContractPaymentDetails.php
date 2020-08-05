@@ -17,6 +17,8 @@ class ContractPaymentDetails extends Model
         'ccontractPaymentDetails_quantity',
         'contractPaymentDetails_description',
         'contractPaymentDetails_recepcionMunicipal',
+        'contractPaymentDetails_units',
+        'contractPaymentDetails_glosaProyecto',
     ];
 
   public function paymentUnit(){

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Permission;
 use App\Action;
+use App\Binnacle;
 
 use Auth;
 
@@ -37,7 +38,7 @@ class AdminController extends Controller
     }
     /*
     public function ajaxUpdateUserActions(Request $request) {
-        
+
         $permisosRequest = $request->data;
         Permission::whereNotNull('idPermissions')->delete();
 
@@ -91,7 +92,7 @@ class AdminController extends Controller
             'role'=>'required|string'
         ]);
         $acciones = Action::all();
-        
+
         $newUser = new User([
             'name' => $request->name,
             'email' => $request->email,
@@ -103,6 +104,7 @@ class AdminController extends Controller
         $newUser->sendEmailVerificationNotification();
 
         $user = User::where('email', $request->email)->first();
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $user->getTable(), $user->id, null, $user);
         /*
             ACCIONES
             1 -> Administracion     Menu
@@ -179,11 +181,14 @@ class AdminController extends Controller
         ]);
 
         $user = User::find($id);
+
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
 
         if ($user->isDirty()) {
+            $postUser = User::find($id);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $user->getTable(), $user->id, $user, $postUser);
             $user->save();
             return redirect('admin')->with('success', 'Usuario editado exitosamente.');
         } else {
@@ -231,8 +236,8 @@ class AdminController extends Controller
             $permisos = Permission::where('idUser', $id)->get();
             foreach ($permisos as $permiso) {
                 $permiso->delete();
-                return redirect('admin')->with('success', 'Permisos del usuario eliminadas correctamente.');
             }
+            return redirect('admin')->with('success', 'Permisos del usuario eliminadas correctamente.');
         }
     }
 
@@ -240,6 +245,7 @@ class AdminController extends Controller
     public function changeStatus($id)
     {
         $user = User::find($id);
+        $postUser = $user;
         if ($user->status == 'Activo') {
             $user->status = 'Inactivo';
         }
@@ -248,6 +254,7 @@ class AdminController extends Controller
         } else {
             return redirect('admin')->with('danger', 'Ha ocurrido un error.');
         }
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE STATUS', $user->getTable(), $user->id, $user, $postUser);
         $user->save();
         return redirect('admin')->with('success', 'Status del usuario modificado correctamente.');
     }
@@ -268,6 +275,7 @@ class AdminController extends Controller
     public function destroy($id)
     {
         $user = User::find($id);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $user->getTable(), $user->id, $user, null);
         $user->delete();
         return redirect('admin')->with('success', 'Usuario eliminado exitosamente');
     }

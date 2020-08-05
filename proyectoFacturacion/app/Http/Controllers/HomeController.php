@@ -209,14 +209,21 @@ class HomeController extends Controller
                             else {
                                 $PaymentUnitId = 2;
                             }
-                            //$res['empresas']['identificador']
-                            //$res['empresas']['razon_social_factura']
-                            $client = Client::where('clientRUT', $res['empresas']['identificador'])->first();
-                            if ($client == null) {
-                                $idClient = $res['holding_id_facturacion'];
-                            } else {
-                                $idClient = $client->id;
+                            //Inicializar id con el holding
+                            $idClient = $res['holding_id_facturacion'];
+                            //Ver si existe identificador en el arreglo
+                            if (array_key_exists('identificador', $res['empresas'])) {
+                                //Ver si NO es null, null -> false
+                                if (isset($res['empresas']['identificador'])) {
+                                    //Si existe, verificar si esta razon social existe
+                                    $client = Client::where('clientRUT', $res['empresas']['identificador'])->first();
+                                    if ($client != null) {
+                                        //Si existe, cambiar a razon social en vez de holding
+                                        $idClient = $client->id;
+                                    }
+                                }
                             }
+
                             $newContractPaymentDetails = new ContractPaymentDetails([
                                 'idPaymentUnit' => $PaymentUnitId,
                                 'idClient' => $idClient,
@@ -225,6 +232,8 @@ class HomeController extends Controller
                                 'ccontractPaymentDetails_quantity' => 1,
                                 'contractPaymentDetails_description' => $proyecto['glosa_proyecto'] . ' ' .  $proyecto['glosa_etapa'] . ' ' .  $proyecto['glosa_subagrupacion'],
                                 'contractPaymentDetails_recepcionMunicipal' => $proyecto['fecha_recepcion_municipal'],
+                                'contractPaymentDetails_units' => $proyecto['total_productos'],
+                                'contractPaymentDetails_glosaProyecto' => $proyecto['glosa_proyecto'],
                             ]);
                             $newContractPaymentDetails->save();
 
@@ -410,11 +419,19 @@ class HomeController extends Controller
                                 $PaymentUnitId = 2;
                             }
                             //$res['empresas']['razon_social_empresa']
-                            $client = Client::where('clientRUT', $res['empresas']['identificador'])->first();
-                            if ($client == null) {
-                                $idClient = $res['holding_id_facturacion'];
-                            } else {
-                                $idClient = $client->id;
+                            //Inicializar id con el holding
+                            $idClient = $res['holding_id_facturacion'];
+                            //Ver si existe identificador en el arreglo
+                            if (array_key_exists('identificador', $res['empresas'])) {
+                                //Ver si NO es null, null -> false
+                                if (isset($res['empresas']['identificador'])) {
+                                    //Si existe, verificar si esta razon social existe
+                                    $client = Client::where('clientRUT', $res['empresas']['identificador'])->first();
+                                    if ($client != null) {
+                                        //Si existe, cambiar a razon social en vez de holding
+                                        $idClient = $client->id;
+                                    }
+                                }
                             }
                             $newContractPaymentDetails = new ContractPaymentDetails([
                                 'idPaymentUnit' => $PaymentUnitId,
@@ -422,8 +439,10 @@ class HomeController extends Controller
                                 'idContract' => $contract->id,
                                 'contractPaymentDetails_period' => $periodo,
                                 'ccontractPaymentDetails_quantity' => 1,
-                                'contractPaymentDetails_description' => $proyecto['proyecto_nombre'] . ' Unidades: ' . $proyecto['numero_unidades'],
+                                'contractPaymentDetails_description' => $proyecto['proyecto_nombre'],
                                 'contractPaymentDetails_recepcionMunicipal' => $proyecto['fecha_recepcion_municipal'],
+                                'contractPaymentDetails_units' => $proyecto['numero_unidades'],
+                                'contractPaymentDetails_glosaProyecto' => null,
                             ]);
                             $newContractPaymentDetails->save();
 
@@ -454,11 +473,19 @@ class HomeController extends Controller
                     if ($cantProyectos == null) {
                         $cantProyectos = 0;
                     }
-                    $client = Client::where('clientRUT', $res['empresas']['identificador'])->first();
-                    if ($client == null) {
-                        $idClient = $res['holding_id_facturacion'];
-                    } else {
-                        $idClient = $client->id;
+                    //Inicializar id con el holding
+                    $idClient = $res['holding_id_facturacion'];
+                    //Ver si existe identificador en el arreglo
+                    if (array_key_exists('identificador', $res['empresas'])) {
+                        //Ver si NO es null, null -> false
+                        if (isset($res['empresas']['identificador'])) {
+                            //Si existe, verificar si esta razon social existe
+                            $client = Client::where('clientRUT', $res['empresas']['identificador'])->first();
+                            if ($client != null) {
+                                //Si existe, cambiar a razon social en vez de holding
+                                $idClient = $client->id;
+                            }
+                        }
                     }
 
                     $newContractPaymentDetailsArchivos = new ContractPaymentDetails([
@@ -469,6 +496,8 @@ class HomeController extends Controller
                         'ccontractPaymentDetails_quantity' => $cantArchivos,
                         'contractPaymentDetails_description' => 'Archivos ' . $empresas['razon_social'],
                         'contractPaymentDetails_recepcionMunicipal' => null,
+                        'contractPaymentDetails_units' => null,
+                        'contractPaymentDetails_glosaProyecto' => null,
                     ]);
                     $newContractPaymentDetailsArchivos->save();
 
@@ -480,6 +509,8 @@ class HomeController extends Controller
                         'ccontractPaymentDetails_quantity' => $cantProyectos,
                         'contractPaymentDetails_description' => 'Proyectos ' . $empresas['razon_social'],
                         'contractPaymentDetails_recepcionMunicipal' => null,
+                        'contractPaymentDetails_units' => null,
+                        'contractPaymentDetails_glosaProyecto' => null,
                     ]);
                     $newContractPaymentDetailsProyectos->save();
                 }
@@ -499,11 +530,19 @@ class HomeController extends Controller
             $contract = $this->findHoldingModuleContract($res['holding_id_facturacion'], 5);
             if ($contract != null) {
                 foreach ($res['empresas'] as $empresas) {
-                    $client = Client::where('clientRUT', $res['empresas']['identificador'])->first();
-                    if ($client == null) {
-                        $idClient = $res['holding_id_facturacion'];
-                    } else {
-                        $idClient = $client->id;
+                    //Inicializar id con el holding
+                    $idClient = $res['holding_id_facturacion'];
+                    //Ver si existe identificador en el arreglo
+                    if (array_key_exists('identificador', $res['empresas'])) {
+                        //Ver si NO es null, null -> false
+                        if (isset($res['empresas']['identificador'])) {
+                            //Si existe, verificar si esta razon social existe
+                            $client = Client::where('clientRUT', $res['empresas']['identificador'])->first();
+                            if ($client != null) {
+                                //Si existe, cambiar a razon social en vez de holding
+                                $idClient = $client->id;
+                            }
+                        }
                     }
                     $newContractPaymentDetails = new ContractPaymentDetails([
                         'idPaymentUnit' => 3,
@@ -513,6 +552,8 @@ class HomeController extends Controller
                         'ccontractPaymentDetails_quantity' => $empresas['cant_licitaciones'],
                         'contractPaymentDetails_description' => 'Licitaciones',
                         'contractPaymentDetails_recepcionMunicipal' => null,
+                        'contractPaymentDetails_units' => null,
+                        'contractPaymentDetails_glosaProyecto' => null,
                     ]);
                     $newContractPaymentDetails->save();
                 }
@@ -545,8 +586,24 @@ class HomeController extends Controller
             $contractPaymentDetails = ContractPaymentDetails::where('contractPaymentDetails_period', $periodo)
                 ->where('idContract', $contract->id)
                 ->get();
+
             //Hay al menos 1 detalle -> buscar condiciones contractuales
             if ($contractPaymentDetails->count() > 0) {
+                if ($contract->contractsRecepcionMunicipal == true) {
+                    /*
+                    Si glosa proyecto igual
+                        si fecha igual
+                            no cobrar
+                        else
+                            cobrar
+                    else
+                        cobrar
+                    */
+                    //Saca los que tienen glosa y recep municipal iguales en GCI
+                    $contractPaymentDetails = $contractPaymentDetails->unique(function ($item) {
+                        return $item['contractPaymentDetails_glosaProyecto'].$item['contractPaymentDetails_recepcionMunicipal'];
+                    });
+                }
                 //Sacar las condiciones contractuales validas para este periodo del contrato
                 /*
                 Donde sea en este contrato
@@ -565,7 +622,10 @@ class HomeController extends Controller
 
                 //Donde la modalidad sea fija o variable
                 $contractConditions_FijoVariable = $contractConditions->whereIn('contractsConditions_Modalidad', ['Fijo', 'Variable']);
-
+                //Ver si se cobra por unidades en este contrato
+                if ($contractConditions->contains('payment_units', 'Unidades por proyecto')) {
+                    $cobraUnidades = true;
+                }
                 //Hay al menos 1 -> generar cantidades
                 if ($contractConditions_FijoVariable->count() > 0) {
                     foreach ($contractConditions_FijoVariable as $contractCondition_FijoVariable) {
@@ -586,17 +646,18 @@ class HomeController extends Controller
                             $newQuantities = new Quantities([
                                 'idContractCondition' => $contractCondition_FijoVariable->id,
                                 'quantitiesCantidad' => $cantidadDetalles,
-                                'quantitiesPeriodo' => Carbon::now()->addMonths(1)->format('Y-m'),
+                                'quantitiesPeriodo' => $periodo,
                                 'quantitiesMonto' => $quantityMonto,
                             ]);
                             //Guardar la cantidad
                             $newQuantities->save();
 
+
                             echo $contractCondition_FijoVariable->id;
                             echo '<br>';
                             echo $cantidadDetalles;
                             echo '<br>';
-                            echo Carbon::now()->addMonths(1)->format('Y-m');
+                            echo $periodo;
                             echo '<br>';
                             echo $quantityMonto;
                             echo '<br>';
@@ -668,18 +729,19 @@ class HomeController extends Controller
                             $newQuantities = new Quantities([
                                 'idContractCondition' => $contractCondition_FijoVariable->id,
                                 'quantitiesCantidad' => $cantidadDetalles,
-                                'quantitiesPeriodo' => Carbon::now()->addMonths(1)->format('Y-m'),
+                                'quantitiesPeriodo' => $periodo,
                                 'quantitiesMonto' => $quantityMonto,
                             ]);
                             //Guardar la cantidad
                             $newQuantities->save();
 
 
+
                             echo $contractCondition_FijoVariable->id;
                             echo '<br>';
                             echo $cantidadDetalles;
                             echo '<br>';
-                            echo Carbon::now()->addMonths(1)->format('Y-m');
+                            echo $periodo;
                             echo '<br>';
                             echo $quantityMonto;
                             echo '<br>';

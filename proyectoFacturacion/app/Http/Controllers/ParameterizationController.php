@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Permission;
 use App\Modules;
 use App\PaymentUnits;
+use App\Binnacle;
 use Auth;
 
 use Illuminate\Support\Collection;
@@ -37,7 +38,7 @@ class ParameterizationController extends Controller
       elseif (in_array(12, $authPermisos) && in_array(14, $authPermisos)) {
         return redirect()->action('ParameterizationController@paymentunitsIndex');
       }
-      else { 
+      else {
         return redirect()->action('HomeController@index');
       }
     }
@@ -59,13 +60,13 @@ class ParameterizationController extends Controller
      */
     public function modulesCreate()
     {
-      
+
         $userId = Auth::user()->id;
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
         $modulesPadres = Modules::all();
         return view('parameterization.modulesCreate', compact('authPermisos', 'modulesPadres'));
-        
+
     }
 
     /**
@@ -76,7 +77,7 @@ class ParameterizationController extends Controller
      */
     public function modulesStore(Request $request)
     {
-      
+
         $request->validate([
             'moduleName'=>'required|string|max:100|unique:modules,moduleName' ,
             'moduleParentId' => 'required_if:hasParent,si',
@@ -89,15 +90,16 @@ class ParameterizationController extends Controller
             $moduleParentId = $request->moduleParentId;
         }
 
-        
+
         $newModules = new Modules([
             'moduleName' => $request->moduleName,
             'moduleParentId' => $request->moduleParentId,
         ]);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newModules->getTable(), $newModules->id, null, $newModules);
         $newModules->save();
 
         return redirect()->action('ParameterizationController@modulesIndex')->with('success', 'Módulo agregado exitosamente.');
-        
+
     }
 
     /**
@@ -148,16 +150,19 @@ class ParameterizationController extends Controller
       }
 
         $modulo = Modules::find($id);
+
         $modulo->moduleName = $request->moduleName;
         $modulo->moduleParentId = $request->moduleParentId;
 
         if ($modulo->isDirty()) {
+            $postModulo = Modules::find($id);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $modulo->getTable(), $modulo->id, $modulo, $postModulo);
             $modulo->save();
             return redirect()->action('ParameterizationController@modulesIndex')->with('success', 'Módulo editado exitosamente.');
         } else {
           return redirect()->action('ParameterizationController@modulesIndex');
         }
-        
+
     }
 
     /**
@@ -174,12 +179,13 @@ class ParameterizationController extends Controller
         if ($moduloIDs->count() > 0) {
           return redirect()->action('ParameterizationController@modulesIndex')->with('error', 'Módulos con hijos no pueden ser eliminados, por favor elimine sus hijos primero.');
         } else {
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $modulo->getTable(), $modulo->id, $modulo, null);
             $modulo->delete();
           return redirect()->action('ParameterizationController@modulesIndex')->with('success', 'Módulo eliminado exitosamente');
         }
     }
 
-    public function getAllChildren($id) 
+    public function getAllChildren($id)
     {
         $childrenModulesIds = new Collection();
         $childrens = Modules::where('moduleParentId',$id)->get();
@@ -228,6 +234,7 @@ class ParameterizationController extends Controller
             'payment_units' => $request->payment_units,
         ]);
         $newPaymentUnit->save();
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newPaymentUnit->getTable(), $newPaymentUnit->id, null, $newPaymentUnit);
         return redirect()->action('ParameterizationController@paymentunitsIndex')->with('success', 'Unidad de pago agregado exitosamente.');
     }
 
@@ -260,15 +267,18 @@ class ParameterizationController extends Controller
       ]);
 
         $paymentUnit = PaymentUnits::find($id);
+
         $paymentUnit->payment_units = $request->payment_units;
 
         if ($paymentUnit->isDirty()) {
+            $postPaymentUnit = PaymentUnits::find($id);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $paymentUnit->getTable(), $paymentUnit->id, $paymentUnit, $postPaymentUnit);
             $paymentUnit->save();
             return redirect()->action('ParameterizationController@paymentunitsIndex')->with('success', 'Unidad de pago editada exitosamente.');
         } else {
           return redirect()->action('ParameterizationController@paymentunitsIndex');
         }
-        
+
     }
 
     /**
@@ -280,6 +290,7 @@ class ParameterizationController extends Controller
     public function paymentunitsDestroy($id)
     {
       $paymentUnit = PaymentUnits::find($id);
+      app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $paymentUnit->getTable(), $paymentUnit->id, $paymentUnit, null);
       $paymentUnit->delete();
       return redirect()->action('ParameterizationController@paymentunitsIndex')->with('success', 'Unidad de pago eliminada exitosamente');
     }
