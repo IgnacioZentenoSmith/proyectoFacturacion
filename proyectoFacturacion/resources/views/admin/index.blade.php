@@ -3,7 +3,7 @@
 <div class="row justify-content-center">
     <div class="col-auto">
         <div class="table-responsive">
-            <table id="tablaAdmin" class="table table-hover w-auto text-nowrap" data-show-export="true" data-pagination="true"
+            <table id="tablaAdmin" class="table table-hover w-auto text-nowrap btTable" data-show-export="true" data-pagination="true"
                 data-click-to-select="true" data-show-columns="true" data-sortable="true" data-search="true"
                 data-live-search="true" data-buttons-align="left" data-search-align="right" data-server-sort="false">
                 <thead>
@@ -83,11 +83,5 @@
         </div>
     </div>
 </div>
-<script>
-    //Inicializa la tabla "detalles" del dashboard
-    $('#tablaAdmin').bootstrapTable({
-        pageSize: 25,
-        exportDataType: 'all',
-    });
-</script>
+<script src="{{ asset('js/components/initBTtables.js')}}"></script>
 @endsection

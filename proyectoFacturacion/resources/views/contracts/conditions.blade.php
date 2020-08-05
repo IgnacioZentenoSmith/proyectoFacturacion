@@ -10,7 +10,7 @@
       <a class="btn btn-primary" href="{{ route('contracts.conditionsCreate', $contract['id']) }}"role="button">Nueva condición</a>
     </div>
         <div class="table-responsive">
-            <table id="tablaContractsConditions" class="table table-hover w-auto text-nowrap" data-show-export="true"
+            <table id="tablaContractsConditions" class="table table-hover w-auto text-nowrap btTable" data-show-export="true"
                 data-pagination="true" data-click-to-select="true" data-show-columns="true" data-sortable="true"
                 data-search="true" data-live-search="true" data-buttons-align="left" data-search-align="right"
                 data-server-sort="false">
@@ -67,15 +67,6 @@
     </div>
 </div>
 
-<script>
-    //Inicializa la tabla "detalles" del dashboard
-    $('#tablaContractsConditions').bootstrapTable({
-        pageSize: 25,
-        exportDataType: 'all',
-    });
-    document.onsubmit=function(){
-           return confirm('¿Está seguro de esta operación? Esto es irreversible.');
-       }
-
-</script>
+<script src="{{ asset('js/components/initBTtables.js')}}"></script>
+<script src="{{ asset('js/components/insecureSubmit.js')}}"></script>
 @endsection

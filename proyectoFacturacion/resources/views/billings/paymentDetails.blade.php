@@ -11,7 +11,7 @@
         </div>
 
         <div class="table-responsive">
-            <table id="tablaTributaryDetails" class="table table-hover w-auto text-nowrap" data-show-export="true"
+            <table id="tablaTributaryDetails" class="table table-hover w-auto text-nowrap btTable" data-show-export="true"
                 data-click-to-select="true" data-show-columns="true" data-sortable="true" data-search="true"
                 data-live-search="true" data-buttons-align="left" data-search-align="right">
                 <thead>
@@ -48,7 +48,7 @@
         <br>
 
         <div class="table-responsive">
-            <table id="tablaPaymentDetails" class="table table-hover w-auto text-nowrap" data-show-export="true"
+            <table id="tablaPaymentDetails" class="table table-hover w-auto text-nowrap btTable" data-show-export="true"
                 data-click-to-select="true" data-show-columns="true" data-sortable="true" data-search="true"
                 data-live-search="true" data-buttons-align="left" data-search-align="right">
                 <thead>
@@ -82,17 +82,5 @@
     </div>
 </div>
 
-<script>
-    //Inicializa la tabla "detalles" del dashboard
-    $('#tablaTributaryDetails').bootstrapTable({
-        pageSize: 100,
-        exportDataType: 'all',
-    });
-
-    $('#tablaPaymentDetails').bootstrapTable({
-        pageSize: 100,
-        exportDataType: 'all',
-    });
-
-</script>
+<script src="{{ asset('js/components/initBTtables.js')}}"></script>
 @endsection

@@ -32,7 +32,7 @@
     </div>
 
     <div class="table-responsive">
-      <table id="tablaBillings" class="table table-hover w-auto text-nowrap" data-show-export="true"
+      <table id="btTable" class="table table-hover w-auto text-nowrap btTable" data-show-export="true"
         data-pagination="true" data-click-to-select="true" data-show-columns="true" data-sortable="true"
         data-search="true" data-live-search="true" data-buttons-align="left" data-search-align="right"
         data-server-sort="false">
@@ -56,8 +56,8 @@
               <td>{{$documentosTributario['tributarydocuments_period']}}</td>
               <td class="text-right">{{$documentosTributario['tributarydocuments_documentType']}}</td>
               <td class="text-right">{{$documentosTributario['tributarydocuments_totalAmount']}} UF</td>
-              <td class="text-right">{{$documentosTributario['documentoTributario_IVA']}}%</td>
-              <td class="text-right">{{$documentosTributario['documentoTributario_MontoTotalIVA']}} UF</td>
+              <td class="text-right">{{$documentosTributario['tributarydocuments_tax']}}%</td>
+              <td class="text-right">{{$documentosTributario['tributarydocuments_totalAmountTax']}} UF</td>
               <td>
 
                 @if(in_array(7, $authPermisos))
@@ -89,21 +89,6 @@
   </div>
 </div>
 
-<script>
-    //Inicializa la tabla "detalles" del dashboard
-    $('#tablaBillings').bootstrapTable({
-        pageSize: 25,
-        exportDataType: 'all',
-    });
-
-    function getCurrentDate(inputDate) {
-        //Saca el valor del formulario de la fecha
-        let formAction = document.getElementById('inputPeriodoForm').action;
-        //Elimina su fecha inicial
-        formAction = formAction.slice(0, -7);
-        //Agrega la fecha del input
-        formAction = formAction + inputDate.value;
-        document.getElementById('inputPeriodoForm').action = formAction;
-    }
-</script>
+<script src="{{ asset('js/components/initBTtables.js')}}"></script>
+<script src="{{ asset('js/components/getCurrentDate.js')}}"></script>
 @endsection

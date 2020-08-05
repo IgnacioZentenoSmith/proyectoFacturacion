@@ -17,6 +17,7 @@
 
   	<!-- CSS STYLES -->
     <link href="{{ asset('css/libs/familyTitilliumWeb.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/main.css') }}" rel="stylesheet">
 	<!-- Bootstrap CSS -->
     <link href="{{ asset('css/libs/bootstrap.min.css') }}" rel="stylesheet">
 	<!-- Font Awesome CSS -->
@@ -232,10 +233,6 @@
         </div>
     </footer>
 </div>
-<style>
-#app {
-    min-height: 100vh;
-}
-</style>
+
 </body>
 </html>

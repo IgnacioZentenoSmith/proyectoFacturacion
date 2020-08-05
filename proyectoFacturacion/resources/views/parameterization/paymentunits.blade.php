@@ -4,7 +4,7 @@
 <div class="row justify-content-center">
     <div class="col-auto">
         <div class="table-responsive">
-            <table id="tablaPaymentUnits" class="table table-hover w-auto text-nowrap" data-show-export="true"
+            <table id="tablaPaymentUnits" class="table table-hover w-auto text-nowrap btTable" data-show-export="true"
                 data-pagination="true" data-click-to-select="true" data-show-columns="true" data-sortable="true"
                 data-search="true" data-live-search="true" data-buttons-align="left" data-search-align="right"
                 data-server-sort="false">
@@ -24,7 +24,7 @@
                         <td>{{$paymentUnit['payment_units']}}</td>
                         <td class="text-center">{{$paymentUnit['created_at']}}</td>
                         <td class="text-center">{{$paymentUnit['updated_at']}}</td>
-  
+
                         <td>
                             @if(in_array(19, $authPermisos))
                             <a class="btn btn-secondary" href="{{ route('parameterization.paymentunitsEdit', $paymentUnit['id']) }}"
@@ -46,16 +46,6 @@
         </div>
     </div>
 </div>
-
-<script>
-    //Inicializa la tabla "detalles" del dashboard
-    $('#tablaPaymentUnits').bootstrapTable({
-        pageSize: 25,
-        exportDataType: 'all',
-    });
-    document.onsubmit=function(){
-           return confirm('¿Está seguro de esta operación? Esto es irreversible.');
-       }
-
-</script>
+<script src="{{ asset('js/components/initBTtables.js')}}"></script>
+<script src="{{ asset('js/components/insecureSubmit.js')}}"></script>
 @endsection

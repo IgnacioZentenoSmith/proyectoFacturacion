@@ -39,6 +39,10 @@ Route::get('/', 'HomeController@index')->name('home.index');
 Route::get('/contracts', 'ContractsController@index')->name('contracts.index')->middleware('auth');
 
 
+Route::get('/binnacle', 'BinnacleController@index')->name('binnacle.index');
+
+
+
 // ADMIN ROUTES (RESOURCE CRUD)
 Route::resource('admin', 'AdminController')->middleware('auth');
 Route::get('/admin/{id}/editPermisos', 'AdminController@editPermisos')->name('admin.editPermisos')->middleware('auth');
