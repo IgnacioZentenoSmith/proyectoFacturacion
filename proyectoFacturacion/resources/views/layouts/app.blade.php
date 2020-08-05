@@ -8,7 +8,7 @@
     <meta http-equiv="Content-Security-Policy"
     content="default-src 'self';
     style-src 'self' 'unsafe-inline';
-    script-src 'self' 'unsafe-inline';
+    script-src 'self';
     font-src *;">
 
 
