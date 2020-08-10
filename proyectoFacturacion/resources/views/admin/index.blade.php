@@ -8,73 +8,91 @@
                 data-live-search="true" data-buttons-align="left" data-search-align="right" data-server-sort="false">
                 <thead>
                     <tr>
-                        <th scope="col" data-field="ID" data-sortable="true">ID</th>
                         <th scope="col" data-field="Nombre" data-sortable="true">Nombre</th>
                         <th scope="col" data-field="Email" data-sortable="true">Email</th>
                         <th scope="col" data-field="Role" data-sortable="true">Rol</th>
                         <th scope="col" data-field="Status" data-sortable="true">Status</th>
-                        <th scope="col" data-field="isVerified" data-sortable="true">Email verificado</th>
-                        <th scope="col" data-field="Verified" data-sortable="true">Fecha verificación</th>
+                        <th scope="col" data-field="binnacleNotifications" data-sortable="true">Notificaciones</th>
                         <th scope="col" data-field="Accion" data-sortable="true">Acción</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($usuarios as $usuario)
                     <tr>
-                        <td>{{$usuario['id']}}</td>
                         <td>{{$usuario['name']}}</td>
                         <td>{{$usuario['email']}}</td>
                         <td>{{$usuario['role']}}</td>
-                        @if ($usuario['status'] == 'Activo')
-                            <td class="bg-primary text-center text-white">Activo</td>
-                        @else
-                            <td class="bg-secondary text-center text-white">Inactivo</td>
-                        @endif
-                        @if ($usuario['email_verified_at'])
-                            <td class="bg-success text-center text-white">Si</td>
-                        @else
-                            <td class="bg-info text-center text-white">No</td>
-                        @endif
-                        <td>{{$usuario['email_verified_at']}}</td>
                         <td>
-                        @if(in_array(6, $authPermisos))
-                            <a class="btn btn-secondary" href="{{ route('admin.edit', $usuario['id']) }}"
-                            role="button">Editar</a>
-                        @endif
-                        @if(in_array(7, $authPermisos))
-                            <a class="btn btn-warning" href="{{ route('admin.editPermisos', $usuario['id']) }}"
-                            role="button">Permisos</a>
-                        @endif
-                        @if(in_array(9, $authPermisos))
-                            <form style="display: inline-block;" action="{{ route('admin.changeStatus', $usuario['id']) }}"
-                                method="post">
-                                @csrf
-                                @method('POST')
-                                <button class="btn btn-light" type="submit">
-                                    @if ($usuario['status'] == 'Activo') Desactivar
-                                    @else Activar
+                            @if ($usuario['status'] == 'Activo')
+                                <span class="badge badge-success">Activo</span>
+                            @else
+                                <span class="badge badge-secondary">Inactivo</span>
+                            @endif
+                        </td>
+
+                        <td class="text-center">
+                            @if ($usuario['binnacleNotifications'])
+                               <span class="badge badge-success">Si</span>
+                           @else
+                               <span class="badge badge-dark">No</span>
+                           @endif
+                        </td>
+
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu_acciones{{$usuario['id']}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  Acciones
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu_acciones{{$usuario['id']}}">
+
+
+                                    @if(in_array(6, $authPermisos))
+                                        <a class="dropdown-item" href="{{ route('admin.edit', $usuario['id']) }}"
+                                        role="button">Editar</a>
                                     @endif
-                                </button>
-                            </form>
-                        @endif
-                        @if(in_array(9, $authPermisos))
-                            <form style="display: inline-block;" action="{{ route('admin.resendVerification', $usuario['id']) }}"
-                                method="post">
-                                @csrf
-                                @method('POST')
-                                <button class="btn btn-warning" @if ($usuario['email_verified_at']) disabled @endif type="submit">
-                                    Reenviar verificación
-                                </button>
-                            </form>
-                        @endif
-                        @if(in_array(8, $authPermisos))
-                            <form style="display: inline-block;" action="{{ route('admin.destroy', $usuario['id']) }}"
-                                method="post">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-danger" type="submit">Eliminar(DEBUG)</button>
-                            </form>
-                        @endif
+
+                                    @if(in_array(7, $authPermisos))
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ route('admin.editPermisos', $usuario['id']) }}"
+                                    role="button">Permisos</a>
+                                @endif
+                                @if(in_array(9, $authPermisos))
+                                <div class="dropdown-divider"></div>
+                                    <form action="{{ route('admin.changeStatus', $usuario['id']) }}"
+                                        method="post">
+                                        @csrf
+                                        @method('POST')
+                                        <button class="dropdown-item" type="submit">
+                                            @if ($usuario['status'] == 'Activo') Desactivar
+                                            @else Activar
+                                            @endif
+                                        </button>
+                                    </form>
+                                @endif
+                                @if(in_array(9, $authPermisos))
+                                <div class="dropdown-divider"></div>
+                                    <form action="{{ route('admin.resendVerification', $usuario['id']) }}"
+                                        method="post">
+                                        @csrf
+                                        @method('POST')
+                                        <button class="dropdown-item" @if ($usuario['email_verified_at']) disabled @endif type="submit">
+                                            Reenviar verificación
+                                        </button>
+                                    </form>
+                                @endif
+                                @if(in_array(8, $authPermisos))
+                                <div class="dropdown-divider"></div>
+                                    <form action="{{ route('admin.destroy', $usuario['id']) }}"
+                                        method="post">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="dropdown-item" type="submit">Eliminar(DEBUG)</button>
+                                    </form>
+                                @endif
+
+
+                                </div>
+                              </div>
                         </td>
                     </tr>
                     @endforeach

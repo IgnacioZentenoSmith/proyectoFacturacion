@@ -40,7 +40,7 @@ Route::get('/contracts', 'ContractsController@index')->name('contracts.index')->
 
 
 Route::get('/binnacle', 'BinnacleController@index')->name('binnacle.index');
-
+Route::post('/binnacle', 'BinnacleController@filteredIndex')->name('binnacle.index');
 
 
 // ADMIN ROUTES (RESOURCE CRUD)

@@ -113,6 +113,7 @@ class TributarydocumentsController extends Controller
               'tributarydocuments_totalAmountTax' => $totalAmountTax,
             ]);
             $newTributaryDocument->save();
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newTributaryDocument->getTable(), $contract->contractsNombre, null, $newTributaryDocument);
             $this->createPaymentDetails($newTributaryDocument->id);
           }
         }
@@ -191,7 +192,9 @@ class TributarydocumentsController extends Controller
     {
       $authPermisos = $this->getPermisos();
       $documentoTributario = Tributarydocuments::find($id);
+      $contract = Contracts::find($documentoTributario->idContract);
       $periodo = $documentoTributario->tributarydocuments_period;
+      app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $documentoTributario->getTable(), $contract->contractsNombre, $documentoTributario, null);
       $documentoTributario->delete();
       return redirect()->action('TributarydocumentsController@index', ['periodo' => $periodo])->with('success', 'Documento eliminado exitosamente');
     }/*
@@ -217,8 +220,9 @@ class TributarydocumentsController extends Controller
 
         $tributaryDetails = Tributarydetails::where('idTributarydocument', $tributaryDocument->id)
         ->join('payment_units', 'payment_units.id', '=', 'tributarydetails.idPaymentUnit')
+        ->join('modules', 'modules.id', '=', 'tributarydetails.idModule')
         ->join('clients', 'clients.id', '=', 'tributarydetails.idClient')
-        ->select('tributarydetails.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units')
+        ->select('tributarydetails.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units', 'modules.moduleName')
         ->get();
 
         $contractPaymentDetails = ContractPaymentDetails::where('idContract', $contract->id)
@@ -236,8 +240,9 @@ class TributarydocumentsController extends Controller
 
         $tributaryDetails = Tributarydetails::where('idTributarydocument', $tributaryDocument->id)
         ->join('payment_units', 'payment_units.id', '=', 'tributarydetails.idPaymentUnit')
+        ->join('modules', 'modules.id', '=', 'tributarydetails.idModule')
         ->join('clients', 'clients.id', '=', 'tributarydetails.idClient')
-        ->select('tributarydetails.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units')
+        ->select('tributarydetails.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units', 'modules.moduleName')
         ->get();
 
         $contractPaymentDetails = ContractPaymentDetails::where('idContract', $contract->id)
@@ -275,6 +280,17 @@ class TributarydocumentsController extends Controller
         $contract = Contracts::find($tributaryDocument->idContract);
         //Crear nota de credito
         $tributaryDocument->tributarydocuments_documentType = 'Factura anulada';
+        if ($tributaryDocument->tributarydocuments_totalAmountTax != $montoTotal) {
+            $totalAmount = $montoTotal / 1.19;
+            $totalAmountTax = $montoTotal;
+        } else {
+            $totalAmount = $tributaryDocument->tributarydocuments_totalAmount;
+            $totalAmountTax = $tributaryDocument->tributarydocuments_totalAmountTax;
+        }
+
+        $preTributary = Client::find($idTributarydocument);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $tributaryDocument->getTable(), $contract->contractsNombre, $preTributary, $tributaryDocument);
+
         $tributaryDocument->save();
 
         //Generar la factura
@@ -283,11 +299,12 @@ class TributarydocumentsController extends Controller
             'idContract' => $tributaryDocument->idContract,
             'tributarydocuments_period' => $tributaryDocument->tributarydocuments_period,
             'tributarydocuments_documentType' => 'Factura',
-            'tributarydocuments_totalAmount' => $tributaryDocument->tributarydocuments_totalAmount,
+            'tributarydocuments_totalAmount' => $totalAmount,
             'tributarydocuments_tax' => $tributaryDocument->tributarydocuments_tax,
-            'tributarydocuments_totalAmountTax' => $tributaryDocument->tributarydocuments_totalAmountTax,
+            'tributarydocuments_totalAmountTax' => $totalAmountTax,
           ]);
           $newTributaryDocument->save();
+          app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newTributaryDocument->getTable(), $contract->contractsNombre, null, $newTributaryDocument);
 
 
         //Crear los nuevos detalles con los datos antiguos, adjuntandolos a la nueva factura con los datos nuevos
@@ -297,6 +314,7 @@ class TributarydocumentsController extends Controller
                 'idTributarydocument' => $newTributaryDocument->id,
                 'idClient' => $request->idClient[$i],
                 'idPaymentUnit' => $request->idPaymentUnit[$i],
+                'idModule' => $request->idModule[$i],
                 'tributarydetails_paymentUnitQuantity' => $request->tributarydetails_paymentUnitQuantity[$i],
                 'tributarydetails_paymentPercentage' => $request->tributarydetails_paymentPercentage[$i],
                 'tributarydetails_paymentValue' => $request->tributarydetails_paymentValue[$i],
@@ -332,10 +350,11 @@ class TributarydocumentsController extends Controller
         //Sacar todas las condiciones, cantidades y unidades de pago correspondientes a este periodo
         $thisPeriod_contractConditions_quantities_paymentUnits = ContractConditions::where('idContract', $contract->id)
         ->join('payment_units', 'payment_units.id', '=', 'contract_conditions.idPaymentUnit')
+        ->join('modules', 'modules.id', '=', 'contract_conditions.idModule')
         ->join('quantities', 'quantities.idContractCondition', '=', 'contract_conditions.id')
         ->where('quantities.quantitiesPeriodo', $tributaryDocument->tributarydocuments_period)
         ->whereNotNull('quantities.quantitiesMonto')
-        ->select('contract_conditions.*', 'payment_units.payment_units', 'quantities.id as idQuantities', 'quantities.quantitiesCantidad', 'quantities.quantitiesPeriodo', 'quantities.quantitiesMonto')
+        ->select('contract_conditions.*', 'payment_units.payment_units', 'quantities.id as idQuantities', 'quantities.quantitiesCantidad', 'quantities.quantitiesPeriodo', 'quantities.quantitiesMonto', 'modules.moduleName')
         ->get();
 
         //Sacar las distribuciones de cada una de las razones sociales del contrato
@@ -348,7 +367,13 @@ class TributarydocumentsController extends Controller
             foreach ($thisPeriod_contractConditions_quantities_paymentUnits as $thisPeriodData) {
 
                 if ($contractDistribution->contractDistribution_type == "Porcentaje") {
-                    $paymentQuantity = round($thisPeriodData->quantitiesCantidad * $contractDistribution->contractDistribution_percentage/100);
+                    $paymentQuantity = $thisPeriodData->quantitiesCantidad * $contractDistribution->contractDistribution_percentage/100;
+                    if ($paymentQuantity > 0 && $paymentQuantity < 1) {
+                        $paymentQuantity = 1;
+                    } else {
+                        $paymentQuantity = round($paymentQuantity);
+                    }
+
                     $paymentValue = $thisPeriodData->quantitiesMonto * $contractDistribution->contractDistribution_percentage/100 * 1.19;
                     //Si no tiene descuento, es el mismo valor
                     if ($contractDistribution->contractDistribution_discount == 0) {
@@ -360,6 +385,7 @@ class TributarydocumentsController extends Controller
                         'idTributarydocument' => $idTributarydocument,
                         'idClient' => $contractDistribution->idClient,
                         'idPaymentUnit' => $thisPeriodData->idPaymentUnit,
+                        'idModule' => $thisPeriodData->idModule,
                         'tributarydetails_paymentUnitQuantity' => $paymentQuantity,
                         'tributarydetails_paymentPercentage' => $contractDistribution->contractDistribution_percentage,
                         'tributarydetails_paymentValue' => $paymentValue,
@@ -407,6 +433,7 @@ class TributarydocumentsController extends Controller
                         'idTributarydocument' => $idTributarydocument,
                         'idClient' => $contractDistribution->idClient,
                         'idPaymentUnit' => $thisPeriodData->idPaymentUnit,
+                        'idModule' => $thisPeriodData->idModule,
                         'tributarydetails_paymentUnitQuantity' => $paymentQuantity,
                         'tributarydetails_paymentPercentage' => $paymentPercentage,
                         'tributarydetails_paymentValue' => $paymentValue,

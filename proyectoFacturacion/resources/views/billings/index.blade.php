@@ -9,7 +9,7 @@
           {{ method_field('GET') }}
           <div class="form-group row">
               <div class="col-md-3">
-                  <input id="inputPeriodo" type="month" class="form-control" name="inputPeriodo" required value="{{$periodo}}" onchange="getCurrentDate(this);">
+                  <input id="inputPeriodo" type="month" class="form-control" name="inputPeriodo" required value="{{$periodo}}">
               </div>
           </div>
 
@@ -38,7 +38,6 @@
         data-server-sort="false">
         <thead>
           <tr>
-            <th scope="col" data-field="ID" data-sortable="true">ID</th>
             <th scope="col" data-field="contractNumber" data-sortable="true">Contrato</th>
             <th scope="col" data-field="tributarydocuments_period" data-sortable="true">Periodo</th>
             <th scope="col" data-field="tributarydocuments_documentType" data-sortable="true">Tipo de documento</th>
@@ -51,7 +50,6 @@
         <tbody>
           @foreach ($documentosTributarios as $documentosTributario)
             <tr @if ($documentosTributario['tributarydocuments_totalAmount'] == 0) class="bg-light" @endif>
-              <td>{{$documentosTributario['id']}}</td>
               <td>{{$documentosTributario['documentoTributario_contractName']}}</td>
               <td>{{$documentosTributario['tributarydocuments_period']}}</td>
               <td class="text-right">{{$documentosTributario['tributarydocuments_documentType']}}</td>
@@ -60,26 +58,39 @@
               <td class="text-right">{{$documentosTributario['tributarydocuments_totalAmountTax']}} UF</td>
               <td>
 
-                @if(in_array(7, $authPermisos))
-                <a @if ($documentosTributario['tributarydocuments_totalAmount'] == 0) class="btn btn-primary disabled"
-                @else class="btn btn-primary" href="{{ route('billings.paymentDetails', $documentosTributario['id']) }}" @endif
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu_acciones{{$documentosTributario['id']}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Acciones
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenu_acciones{{$documentosTributario['id']}}">
+                        @if(in_array(7, $authPermisos))
+                <a @if ($documentosTributario['tributarydocuments_totalAmount'] == 0) class="dropdown-item disabled"
+                @else class="dropdown-item" href="{{ route('billings.paymentDetails', $documentosTributario['id']) }}" @endif
                 role="button">Ver detalles</a>
                 @endif
 
                 @if(in_array(7, $authPermisos))
-                    <a @if ($documentosTributario['tributarydocuments_documentType'] != 'Factura' || $documentosTributario['tributarydocuments_totalAmount'] == 0) class="btn btn-warning disabled"
-                    @else class="btn btn-warning" href="{{ route('billings.redistribute', $documentosTributario['id']) }}" @endif
+                <div class="dropdown-divider"></div>
+                    <a @if ($documentosTributario['tributarydocuments_documentType'] != 'Factura' || $documentosTributario['tributarydocuments_totalAmount'] == 0) class="dropdown-item disabled"
+                    @else class="dropdown-item" href="{{ route('billings.redistribute', $documentosTributario['id']) }}" @endif
                     role="button">Redistribución</a>
                 @endif
 
-                  </form>
-
+                @if(in_array(7, $authPermisos))
+                <div class="dropdown-divider"></div>
                   <form style="display: inline-block;" action="{{ route('billings.documentDestroy', $documentosTributario['id']) }}"
                     method="post">
                     @csrf
                     @method('DELETE')
-                    <button class="btn btn-danger" type="submit">Eliminar(DEBUG)</button>
+                    <button class="dropdown-item" type="submit">Eliminar(DEBUG)</button>
                   </form>
+                @endif
+
+
+                    </div>
+                </div>
+
+
             </tr>
           @endforeach
         </tbody>

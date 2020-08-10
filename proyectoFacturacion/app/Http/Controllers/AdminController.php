@@ -89,7 +89,8 @@ class AdminController extends Controller
         $request->validate([
             'name'=>'required|string|max:255',
             'email'=>'required|email:rfc|unique:users,email',
-            'role'=>'required|string'
+            'role'=>'required|string',
+            'binnacleNotifications' => 'required|boolean',
         ]);
         $acciones = Action::all();
 
@@ -98,13 +99,14 @@ class AdminController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->email),
             'role' => $request->role,
-            'status' => 'Activo'
+            'status' => 'Activo',
+            'binnacleNotifications' => $request->binnacleNotifications,
         ]);
         $newUser->save();
         $newUser->sendEmailVerificationNotification();
 
         $user = User::where('email', $request->email)->first();
-        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $user->getTable(), $user->id, null, $user);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $user->getTable(), $user->name, null, $user);
         /*
             ACCIONES
             1 -> Administracion     Menu
@@ -176,8 +178,9 @@ class AdminController extends Controller
     {
         $request->validate([
             'name'=>'required|string|max:255',
-            'email'=>'required|email:rfc,dns,spoof|unique:users,email,'.$id,
-            'role'=>'required|string'
+            'email'=>'required|email:rfc|unique:users,email,'.$id,
+            'role'=>'required|string',
+            'binnacleNotifications' => 'required|boolean',
         ]);
 
         $user = User::find($id);
@@ -185,10 +188,12 @@ class AdminController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
+        $user->binnacleNotifications = $request->binnacleNotifications;
+
 
         if ($user->isDirty()) {
             $postUser = User::find($id);
-            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $user->getTable(), $user->id, $user, $postUser);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $user->getTable(), $user->name, $user, $postUser);
             $user->save();
             return redirect('admin')->with('success', 'Usuario editado exitosamente.');
         } else {
@@ -254,7 +259,7 @@ class AdminController extends Controller
         } else {
             return redirect('admin')->with('danger', 'Ha ocurrido un error.');
         }
-        app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE STATUS', $user->getTable(), $user->id, $user, $postUser);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE STATUS', $user->getTable(), $user->name, $user, $postUser);
         $user->save();
         return redirect('admin')->with('success', 'Status del usuario modificado correctamente.');
     }
@@ -275,7 +280,7 @@ class AdminController extends Controller
     public function destroy($id)
     {
         $user = User::find($id);
-        app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $user->getTable(), $user->id, $user, null);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $user->getTable(), $user->name, $user, null);
         $user->delete();
         return redirect('admin')->with('success', 'Usuario eliminado exitosamente');
     }

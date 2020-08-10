@@ -10,14 +10,10 @@
                 data-server-sort="false">
                 <thead>
                     <tr>
-                        <th scope="col" data-field="ID" data-sortable="true">ID</th>
-                        <th scope="col" data-field="clientRazonSocial" data-sortable="true">Nombre del holding</th>
-                        <th scope="col" data-field="ejecutivoNombre" data-sortable="true">Ejecutivo asociado</th>
+                        <th scope="col" data-field="clientRazonSocial" data-sortable="true">Nombre</th>
+                        <th scope="col" data-field="ejecutivoNombre" data-sortable="true">Ejecutivo</th>
                         <th scope="col" data-field="clientContactEmail" data-sortable="true">Email de contacto</th>
-                        <th scope="col" data-field="clientPhone" data-sortable="true">Teléfono del holding</th>
-                        <th scope="col" data-field="clientDirection" data-sortable="true">Dirección del holding</th>
-                        <th scope="col" data-field="clientBusinessActivity" data-sortable="true">Giro del holding</th>
-                        <th scope="col" data-field="clientChildrenCount" data-sortable="true">Cantidad de clientes</th>
+
                         <th scope="col" data-field="Accion" data-sortable="true">Acción</th>
 
                     </tr>
@@ -25,31 +21,42 @@
                 <tbody>
                     @foreach($clientes as $cliente)
                     <tr>
-                        <td>{{$cliente['id']}}</td>
                         <td>{{$cliente['clientRazonSocial']}}</td>
                         <td>{{$cliente['ejecutivoNombre']}}</td>
                         <td>{{$cliente['clientContactEmail']}}</td>
-                        <td>{{$cliente['clientPhone']}}</td>
-                        <td>{{$cliente['clientDirection']}}</td>
-                        <td>{{$cliente['clientBusinessActivity']}}</td>
-                        <td class="text-right">{{$cliente['clientChildrenCount']}}</td>
                         <td>
-                            <!-- ver detalle del holding -> sus clientes -->
-                            <a class="btn btn-primary" href="{{ route('clients.childrenIndex', $cliente['id']) }}"
-                                role="button">Razones sociales</a>
 
-                            @if(in_array(10, $authPermisos))
-                            <a class="btn btn-secondary" href="{{ route('clients.edit', $cliente['id']) }}"
-                                role="button">Editar</a>
-                            @endif
-                            @if(in_array(11, $authPermisos))
-                            <form style="display: inline-block;" action="{{ route('clients.destroy', $cliente['id']) }}"
-                                method="post">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-danger" type="submit">Eliminar(DEBUG)</button>
-                            </form>
-                            @endif
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button"
+                                    id="dropdownMenu_acciones{{$cliente['id']}}" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    Acciones
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu_acciones{{$cliente['id']}}">
+
+
+                                    <!-- ver detalle del holding -> sus clientes -->
+                                    <a class="dropdown-item" href="{{ route('clients.childrenIndex', $cliente['id']) }}"
+                                        role="button">Razones sociales <span
+                                            class="badge badge-secondary">{{$cliente['clientChildrenCount']}}</span>
+                                    </a>
+
+                                    @if(in_array(10, $authPermisos))
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ route('clients.edit', $cliente['id']) }}"
+                                        role="button">Editar</a>
+                                    @endif
+                                    @if(in_array(11, $authPermisos))
+                                    <div class="dropdown-divider"></div>
+                                    <form style="display: inline-block;"
+                                        action="{{ route('clients.destroy', $cliente['id']) }}" method="post">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="dropdown-item" type="submit">Eliminar(DEBUG)</button>
+                                    </form>
+                                    @endif
+                                </div>
+                            </div>
                         </td>
                     </tr>
                     @endforeach

@@ -98,7 +98,7 @@ class ClientsController extends Controller
             'clientTipoEmpresa' => 'Holding',
         ]);
         $newClient->save();
-        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newClient->getTable(), $newClient->id, null, $newClient);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newClient->getTable(), $newClient->clientRazonSocial, null, $newClient);
 
         return redirect('clients')->with('success', 'Holding agregado exitosamente.');
     }
@@ -162,7 +162,7 @@ class ClientsController extends Controller
 
         if ($cliente->isDirty()) {
             $preCliente = Client::find($id);
-            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $cliente->getTable(), $cliente->id, $preCliente, $cliente);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $cliente->getTable(), $cliente->clientRazonSocial, $preCliente, $cliente);
 
             $cliente->save();
             return redirect('clients')->with('success', 'Holding editado exitosamente.');
@@ -185,7 +185,7 @@ class ClientsController extends Controller
         if ($clientsIDs->count() > 0) {
             return redirect('clients')->with('error', 'Este holding no ha podido ser eliminado, por favor elimine todas sus razones sociales dependientes primero.');
         } else {
-            app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $cliente->getTable(), $cliente->id, $cliente, null);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $cliente->getTable(), $cliente->clientRazonSocial, $cliente, null);
             $cliente->delete();
             return redirect('clients')->with('success', 'Cliente eliminado exitosamente');
         }
@@ -226,7 +226,7 @@ class ClientsController extends Controller
             'clientTipoEmpresa' => 'Empresa',
         ]);
         $newClient->save();
-        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newClient->getTable(), $newClient->id, null, $newClient);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newClient->getTable(), $newClient->clientRazonSocial, null, $newClient);
         return redirect()->action('ClientsController@childrenIndex', ['idCliente' => $idCliente])->with('success', 'Cliente agregado exitosamente.');
     }
 
@@ -260,7 +260,7 @@ class ClientsController extends Controller
         $hijo->clientTipoEmpresa = 'Empresa';
         if ($hijo->isDirty()) {
             $preHijo = Client::find($idHijo);
-            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $hijo->getTable(), $hijo->id, $preHijo, $hijo);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $hijo->getTable(), $hijo->clientRazonSocial, $preHijo, $hijo);
             $hijo->save();
             return redirect()->action('ClientsController@childrenIndex', ['idCliente' => $idCliente])->with('success', 'Cliente editado exitosamente.');
         } else {
@@ -272,7 +272,7 @@ class ClientsController extends Controller
         //DIE
         $authPermisos = $this->getPermisos();
         $hijo = Client::find($idHijo);
-        app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $hijo->getTable(), $hijo->id, $hijo, null);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $hijo->getTable(), $hijo->clientRazonSocial, $hijo, null);
         $hijo->delete();
         return redirect()->action('ClientsController@childrenIndex', ['idCliente' => $idCliente])->with('success', 'Cliente eliminado exitosamente.');
     }

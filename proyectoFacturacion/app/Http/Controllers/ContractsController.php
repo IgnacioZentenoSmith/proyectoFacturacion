@@ -103,6 +103,7 @@ class ContractsController extends Controller
             'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
             'contractsRecepcionMunicipal' => 'required|boolean',
+            'contractsManualContract' => 'required|boolean',
         ]);
         //VALIDAR CLIENTE Y MODULO --> COMBINACION UNICA
         $request->validate([
@@ -124,9 +125,11 @@ class ContractsController extends Controller
             'contractsEstado' => false,
             'idModule' => $request->idModule,
             'contractsRecepcionMunicipal' => $request->contractsRecepcionMunicipal,
+            'contractsManualContract' => $request->contractsManualContract,
         ]);
         //Guarda datos
         $newContract->save();
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newContract->getTable(), $nombre, null, $newContract);
         return redirect('contracts')->with('success', 'Contrato agregado exitosamente.');
     }
 
@@ -174,6 +177,7 @@ class ContractsController extends Controller
             'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
             'contractsRecepcionMunicipal' => 'required|boolean',
+            'contractsManualContract' => 'required|boolean',
         ]);
         //VALIDAR CLIENTE Y MODULO --> COMBINACION UNICA MENOS ESTE ID
         $request->validate([
@@ -189,6 +193,7 @@ class ContractsController extends Controller
         $contract->contractsFecha = $request->contractsFecha;
         $contract->idModule = $request->idModule;
         $contract->contractsRecepcionMunicipal = $request->contractsRecepcionMunicipal;
+        $contract->contractsManualContract = $request->contractsManualContract;
 
         //Si hay un cambio en el contrato o se cambio al ejecutivo del contrato
         if ($contract->isDirty()) {
@@ -197,6 +202,10 @@ class ContractsController extends Controller
             $modulo = Modules::find($contract->idModule);
             $nombre = $holding->clientRazonSocial . ' ' . $modulo->moduleName;
             $contract->contractsNombre = $nombre;
+
+            $precontrato = Contracts::find($id);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $contract->getTable(), $nombre, $contract, $precontrato);
+
             $contract->save();
             return redirect('contracts')->with('success', 'Contrato editado exitosamente.');
         } else {
@@ -211,6 +220,8 @@ class ContractsController extends Controller
         $contractConditions = ContractConditions::where('idContract', $contract->id)->get();
         if ($contractConditions->count() > 0) {
             $contract->contractsEstado = !$contract->contractsEstado;
+            $precontrato = Contracts::find($id);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE STATUS', $contract->getTable(), $contract->contractsNombre, $contract, $precontrato);
             $contract->save();
             return redirect('contracts')->with('success', 'Status del contrato modificado correctamente.');
         } else {
@@ -227,6 +238,7 @@ class ContractsController extends Controller
     public function destroy($id)
     {
         $contract = Contracts::find($id);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $contract->getTable(), $contract->contractsNombre, $contract, null);
         $contract->delete();
         return redirect('contracts')->with('success', 'Contrato eliminado exitosamente.');
     }
@@ -265,6 +277,7 @@ class ContractsController extends Controller
     }
     //RECIBE ID DE CONTRATO
     public function conditionsStore(Request $request, $id) {
+        $contract = Contracts::find($id);
         $request->validate([
             'idModule'=> 'required|numeric',
             'idPaymentUnit'=> 'required|numeric',
@@ -289,6 +302,7 @@ class ContractsController extends Controller
         ]);
         //Guarda datos
         $newContractConditions->save();
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newContractConditions->getTable(), $contract->contractsNombre, null, $newContractConditions);
         return redirect()->action('ContractsController@conditionsIndex', ['id' => $id])->with('success', 'Condicion contractual agregada exitosamente.');
     }
     //RECIBE ID DE CONDICION CONTRACTUAL
@@ -341,6 +355,7 @@ class ContractsController extends Controller
         $contractId = $contractConditions->idContract;
 
         if ($contractConditions->isDirty()) {
+            $contract = Contracts::find($contractConditions->idContract);
             //Si ha habido algun cambio distinto de la fecha de termino, crear una nueva condicion contractual
             $newContractConditions = new ContractConditions([
                 'idModule' => $request->idModule,
@@ -353,7 +368,9 @@ class ContractsController extends Controller
                 'contractsConditions_fechaInicio' => $request->contractsConditions_fechaInicio,
                 'contractsConditions_fechaTermino' => $request->contractsConditions_fechaTermino,
             ]);
-             $newContractConditions->save();
+            $preConditions = ContractConditions::find($id);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $newContractConditions->getTable(), $contract->contractsNombre, $newContractConditions, $preConditions);
+            $newContractConditions->save();
              return redirect()->action('ContractsController@conditionsIndex', ['id' => $contractId])->with('success', 'Condicion contractual editada exitosamente.');
         } else {
             return redirect()->action('ContractsController@conditionsIndex', ['id' => $contractId]);
@@ -363,6 +380,8 @@ class ContractsController extends Controller
     public function conditionsDestroy($id) {
         $contractCondition = ContractConditions::find($id);
         $contractId = $contractCondition->idContract;
+        $contract = Contracts::find($contractId);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $contractCondition->getTable(), $contract->contractsNombre, $contractCondition, null);
         $contractCondition->delete();
         return redirect()->action('ContractsController@conditionsIndex', ['id' => $contractId])->with('success', 'Condicion contractual eliminada exitosamente.');
     }
@@ -436,6 +455,9 @@ class ContractsController extends Controller
             $quantity->quantitiesMonto = $request->quantitiesMonto[$i];
             //Guardar si hay un cambio
             if ($quantity->isDirty()) {
+
+                $preQuantity = Quantities::find($request->quantitiesId[$i]);
+                app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $quantity->getTable(), $quantity->id, $quantity, $preQuantity);
                 $quantity->save();
             }
         }

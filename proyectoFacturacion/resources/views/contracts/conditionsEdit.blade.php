@@ -59,7 +59,7 @@
         <label for="contractsConditions_Modalidad" class="col-md-4 col-form-label text-md-right">Modalidad</label>
 
         <div class="col-md-6">
-            <select class="form-control" id="contractsConditions_Modalidad" name="contractsConditions_Modalidad" onchange="getCurrentModalidad(this);>
+            <select class="form-control" id="contractsConditions_Modalidad" name="contractsConditions_Modalidad">
                 <option value="">Ninguno seleccionado</option>
                 <option value="Fijo" @if ($contractConditions['contractsConditions_Modalidad'] == 'Fijo') selected @endif>Fijo</option>
                 <option value="Variable" @if ($contractConditions['contractsConditions_Modalidad'] == 'Variable') selected @endif>Variable</option>

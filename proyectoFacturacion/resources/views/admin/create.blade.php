@@ -30,6 +30,25 @@
         </div>
     </div>
 
+    <div class="form-group row">
+        <label for="binnacleNotifications" class="col-md-4 col-form-label text-md-right">Recibe notificaciones</label>
+        <div class="col-md-6">
+            <div class="pretty p-switch p-fill">
+                <input type="radio" name="binnacleNotifications" value="1"/>
+                <div class="state p-success">
+                    <label>Si</label>
+                </div>
+            </div>
+
+            <div class="pretty p-switch p-fill">
+                <input type="radio" name="binnacleNotifications" value="0" checked/>
+                <div class="state p-success">
+                    <label>No</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="form-group row mb-0">
         <div class="col-md-6 offset-md-4">
             <button type="submit" class="btn btn-primary">

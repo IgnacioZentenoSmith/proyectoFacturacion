@@ -17,6 +17,7 @@ use Illuminate\Support\Carbon;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Laravel\Ui\Presets\React;
 
 class BinnacleController extends Controller
 {
@@ -42,7 +43,7 @@ class BinnacleController extends Controller
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
         $binnacles = Binnacle::whereNotNull('binnacle_action')
         ->join('users', 'users.id', '=', 'binnacle.idUser')
-        ->select('binnacle.*', 'users.name as userName', 'users.email as userEmail')
+        ->select('binnacle.*', 'users.name as userName')
         ->get();
         foreach ($binnacles as $binnacle) {
             if ($binnacle->binnacle_tablePreValues != null) {
@@ -58,7 +59,80 @@ class BinnacleController extends Controller
                 $binnacle->binnacle_tablePostValues = collect($arrayPostValues);
             }
         }
-        return view('binnacle.index', compact('authPermisos', 'binnacles'));
+        $uniqueUsers = $binnacles->unique(function ($item) {
+            return $item['userName'];
+        });
+
+        $uniqueActions = $binnacles->unique(function ($item) {
+            return $item['binnacle_action'];
+        });
+
+        $uniqueTables = $binnacles->unique(function ($item) {
+            return $item['binnacle_tableName'];
+        });
+
+        return view('binnacle.index', compact('authPermisos', 'binnacles', 'uniqueUsers', 'uniqueActions', 'uniqueTables'));
+    }
+
+    public function filteredIndex(Request $request) {
+        $userId = Auth::user()->id;
+        $authPermisos = Permission::where('idUser', $userId)->get();
+        $authPermisos = $authPermisos->pluck('idActions')->toArray();
+        $binnacles = Binnacle::whereNotNull('binnacle_action')
+        ->join('users', 'users.id', '=', 'binnacle.idUser')
+        ->select('binnacle.*', 'users.name as userName')
+        ->get();
+        foreach ($binnacles as $binnacle) {
+            if ($binnacle->binnacle_tablePreValues != null) {
+                // convert json to array
+                $arrayPreValues = json_decode($binnacle->binnacle_tablePreValues, true);
+                //  create a new collection instance from the array
+                $binnacle->binnacle_tablePreValues = collect($arrayPreValues);
+            }
+            if ($binnacle->binnacle_tablePostValues != null) {
+                // convert json to array
+                $arrayPostValues = json_decode($binnacle->binnacle_tablePostValues, true);
+                //  create a new collection instance from the array
+                $binnacle->binnacle_tablePostValues = collect($arrayPostValues);
+            }
+        }
+        $uniqueUsers = $binnacles->unique(function ($item) {
+            return $item['userName'];
+        });
+
+        $uniqueActions = $binnacles->unique(function ($item) {
+            return $item['binnacle_action'];
+        });
+
+        $uniqueTables = $binnacles->unique(function ($item) {
+            return $item['binnacle_tableName'];
+        });
+
+
+        $request->validate([
+            'filter_usuarios'=> 'numeric|nullable',
+            'filter_actions'=> 'string|max:50|nullable',
+            'filter_tables'=> 'string|max:50|nullable',
+            'filter_fecha_desde'=> 'date|nullable',
+            'filter_fecha_hasta'=> 'date|nullable',
+        ]);
+        if (!is_null($request->filter_usuarios)) {
+            $binnacles = $binnacles->where('idUser', $request->filter_usuarios);
+        }
+        if (!is_null($request->filter_actions)) {
+            $binnacles = $binnacles->where('binnacle_action', $request->filter_actions);
+        }
+        if (!is_null($request->filter_tables)) {
+            $binnacles = $binnacles->where('binnacle_tableName', $request->filter_tables);
+        }
+        if (!is_null($request->filter_fecha_desde)) {
+            $binnacles = $binnacles->where('created_at', '>=', $request->filter_fecha_desde);
+        }
+        if (!is_null($request->filter_fecha_hasta)) {
+            $binnacles = $binnacles->where('created_at', '<=', $request->filter_fecha_hasta);
+        }
+
+        return view('binnacle.index', compact('authPermisos', 'binnacles', 'uniqueUsers', 'uniqueActions', 'uniqueTables'));
     }
 
     /**

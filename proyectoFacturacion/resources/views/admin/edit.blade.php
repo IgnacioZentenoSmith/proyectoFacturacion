@@ -1,6 +1,10 @@
 @extends('admin.layout')
 @section('adminContent')
 
+<div class="alert alert-info" role="alert">
+    Verificado: <strong>{{$usuario['email_verified_at']}}</strong>
+</div>
+
 
 <form method="POST" action="{{route('admin.update', $usuario['id'])}}">
     @csrf
@@ -31,6 +35,25 @@
                 <option value="Vendedor" @if ($usuario['role']==='Vendedor' ) selected @endif>Vendedor</option>
                 <option value="Ejecutivo" @if ($usuario['role']==='Ejecutivo' ) selected @endif>Ejecutivo</option>
             </select>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="binnacleNotifications" class="col-md-4 col-form-label text-md-right">Recibe notificaciones</label>
+        <div class="col-md-6">
+            <div class="pretty p-switch p-fill">
+                <input type="radio" name="binnacleNotifications" value="1" @if (!$usuario['binnacleNotifications']) checked @endif/>
+                <div class="state p-success">
+                    <label>Si</label>
+                </div>
+            </div>
+
+            <div class="pretty p-switch p-fill">
+                <input type="radio" name="binnacleNotifications" value="0" @if (!$usuario['binnacleNotifications']) checked @endif/>
+                <div class="state p-success">
+                    <label>No</label>
+                </div>
+            </div>
         </div>
     </div>
 

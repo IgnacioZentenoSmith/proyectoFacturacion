@@ -12,7 +12,7 @@
                 <label for="contractDistribution_massAssign" class="col-auto col-form-label">Asignar distribución:</label>
 
                 <div class="col-md-4">
-                    <select class="form-control" id="contractDistribution_massAssign" name="contractDistribution_massAssign" onchange="getMassAssign(this);">
+                    <select class="form-control" id="contractDistribution_massAssign" name="contractDistribution_massAssign">
                         <option value="No asignado" selected>No asignado</option>
                         <option value="Porcentaje">Porcentaje</option>
                         <option value="Unidad de cobro">Unidad de cobro</option>
@@ -53,12 +53,12 @@
 
                             </td>
                             <td>
-                                <input id="contractDistribution_percentage[{{$contractDistribution['id']}}]" type="number" onchange="getPercentage(this);"
+                                <input id="contractDistribution_percentage[{{$contractDistribution['id']}}]" type="number"
                                 class="form-control" name="contractDistribution_percentage[]" step="0.01" @if($contractDistribution['contractDistribution_type'] != "Porcentaje") readonly @endif
                                 value="{{$contractDistribution['contractDistribution_percentage']}}">
                             </td>
                             <td>
-                                <input id="contractDistribution_discount[{{$contractDistribution['id']}}]" type="number" onchange="getDiscount(this);"
+                                <input id="contractDistribution_discount[{{$contractDistribution['id']}}]" type="number"
                                 class="form-control" name="contractDistribution_discount[]" step="0.01"
                                 value="{{$contractDistribution['contractDistribution_discount']}}">
                             </td>

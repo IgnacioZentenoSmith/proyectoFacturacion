@@ -5,6 +5,73 @@
   <div class="col-auto">
     <div class="col-12">
 
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Filtros</h5>
+            </div>
+            <div class="card-body">
+
+
+                <form method="POST" action="{{route('binnacle.index')}}">
+                    @csrf
+
+                    <div class="form-group row">
+                        <label for="filter_usuarios" class="col-md-4 col-form-label text-md-right">Usuario: </label>
+                        <div class="col-md-6">
+                            <select class="form-control" id="filter_usuarios" name="filter_usuarios">
+                                <option value="" selected>Ninguno seleccionado</option>
+                                <!-- Permitir solo clientes padres desde Backend -->
+                                @foreach($uniqueUsers as $uniqueUser)
+                                <option value="{{$uniqueUser['idUser']}}">{{$uniqueUser['userName']}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="filter_actions" class="col-md-4 col-form-label text-md-right">Acción: </label>
+                        <div class="col-md-6">
+                            <select class="form-control" id="filter_actions" name="filter_actions">
+                                <option value="" selected>Ninguno seleccionado</option>
+                                <!-- Permitir solo clientes padres desde Backend -->
+                                @foreach($uniqueActions as $uniqueAction)
+                                <option value="{{$uniqueAction['binnacle_action']}}">{{$uniqueAction['binnacle_action']}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="filter_tables" class="col-md-4 col-form-label text-md-right">Tabla: </label>
+                        <div class="col-md-6">
+                            <select class="form-control" id="filter_tables" name="filter_tables">
+                                <option value="" selected>Ninguno seleccionado</option>
+                                <!-- Permitir solo clientes padres desde Backend -->
+                                @foreach($uniqueTables as $uniqueTable)
+                                <option value="{{$uniqueTable['binnacle_tableName']}}">{{$uniqueTable['binnacle_tableName']}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="filter_fecha_desde" class="col-md-4 col-form-label text-md-right">Desde: </label>
+                        <div class="col-md-6">
+                            <input id="inputPeriodo" type="date" class="form-control" name="filter_fecha_desde">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="filter_fecha_hasta" class="col-md-4 col-form-label text-md-right">Hasta: </label>
+                        <div class="col-md-6">
+                            <input id="inputPeriodo" type="date" class="form-control" name="filter_fecha_hasta">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <div class="table-responsive">
@@ -14,13 +81,11 @@
         data-server-sort="false">
         <thead>
           <tr>
-            <th scope="col" data-field="ID" data-sortable="true">ID</th>
-            <th scope="col" data-field="userName" data-sortable="true">Nombre usuario</th>
-            <th scope="col" data-field="userEmail" data-sortable="true">Email usuario</th>
+            <th scope="col" data-field="userName" data-sortable="true">Usuario</th>
             <th scope="col" data-field="created_at" data-sortable="true">Fecha</th>
             <th scope="col" data-field="binnacle_action" data-sortable="true">Acción</th>
-            <th scope="col" data-field="binnacle_tableName" data-sortable="true">Nombre tabla</th>
-            <th scope="col" data-field="binnacle_tableId" data-sortable="true">ID alterado</th>
+            <th scope="col" data-field="binnacle_tableName" data-sortable="true">Tabla</th>
+            <th scope="col" data-field="binnacle_tableId" data-sortable="true">Identificador</th>
             <!-- <th scope="col" data-field="binnacle_tablePreValues" data-sortable="true">Valores anteriores</th> -->
             <!-- <th scope="col" data-field="binnacle_tablePostValues" data-sortable="true">Valores posteriores</th> -->
             <th scope="col" data-field="action" data-sortable="true">Acciónes</th>
@@ -31,9 +96,7 @@
         <tbody>
           @foreach ($binnacles as $binnacle)
             <tr>
-              <td>{{$binnacle['id']}}</td>
               <td>{{$binnacle['userName']}}</td>
-              <td>{{$binnacle['userEmail']}}</td>
               <td>{{$binnacle['created_at']}}</td>
               <td>{{$binnacle['binnacle_action']}}</td>
               <td>{{$binnacle['binnacle_tableName']}}</td>

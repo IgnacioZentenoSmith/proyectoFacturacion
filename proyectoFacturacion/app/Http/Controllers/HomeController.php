@@ -205,6 +205,9 @@ class HomeController extends Controller
                                     $PaymentUnitId = 26;
                                 }
                             }
+                            else if ($conditionsPaymentUnits->contains('payment_units', 'Unidades por proyecto'))  {
+                                $PaymentUnitId = 30;
+                            }
                             //cualquier otro id
                             else {
                                 $PaymentUnitId = 2;
@@ -414,6 +417,9 @@ class HomeController extends Controller
                                     $PaymentUnitId = 26;
                                 }
                             }
+                            else if ($conditionsPaymentUnits->contains('payment_units', 'Unidades por proyecto'))  {
+                                $PaymentUnitId = 30;
+                            }
                             //cualquier otro id
                             else {
                                 $PaymentUnitId = 2;
@@ -452,6 +458,11 @@ class HomeController extends Controller
             }
         }
     }
+    /*
+    la de DTP acá:
+    https://www.pok.cl/api_facturacion/
+    key: 35328fcd1b8cf9e101fc0e398de0be08
+    */
 
 
     public function ETDTP_Api() {
@@ -459,7 +470,7 @@ class HomeController extends Controller
 
         $response = Http::withHeaders([
             'key' => '35328fcd1b8cf9e101fc0e398de0be08',
-        ])->get('https://www.pok.cl/apirest/post.php');
+        ])->get('https://www.pok.cl/api_facturacion/');
 
         foreach ($response->json() as $res) {
             $contract = $this->findHoldingModuleContract($res['holding_id_facturacion'], 3);
@@ -524,7 +535,7 @@ class HomeController extends Controller
 
         $response = Http::withHeaders([
             'key' => '3d524a53c110e4c22463b10ed32cef9d',
-        ])->get('http://10.33.51.203/v3/restapi_licita_v1/post.php');
+        ])->get('https://planoksecure.licitaok.cl/api_facturacion/');
 
         foreach ($response->json() as $res) {
             $contract = $this->findHoldingModuleContract($res['holding_id_facturacion'], 5);
@@ -622,137 +633,244 @@ class HomeController extends Controller
 
                 //Donde la modalidad sea fija o variable
                 $contractConditions_FijoVariable = $contractConditions->whereIn('contractsConditions_Modalidad', ['Fijo', 'Variable']);
-                //Ver si se cobra por unidades en este contrato
-                if ($contractConditions->contains('payment_units', 'Unidades por proyecto')) {
-                    $cobraUnidades = true;
-                }
+
                 //Hay al menos 1 -> generar cantidades
                 if ($contractConditions_FijoVariable->count() > 0) {
                     foreach ($contractConditions_FijoVariable as $contractCondition_FijoVariable) {
-                        //Sacar los de esta unidad de pago
+                        //Sacar los detalles de esta unidad de pago
                         $detalles = $contractPaymentDetails->where('idPaymentUnit', $contractCondition_FijoVariable->idPaymentUnit);
-                        $cantidadDetalles = $detalles->count();
-                        //Fijo
-                        if ($contractCondition_FijoVariable->contractsConditions_Modalidad == 'Fijo') {
-                            if ($cantidadDetalles > 0) {
-                                //Generar cantidad con el valor de la condicion contractual
+
+                        //Unidades por proyecto
+                        if ($contractCondition_FijoVariable->payment_units == 'Unidades por proyecto') {
+                            $unidadesPorProyectoConditions = $contractConditions->where('payment_units', 'Unidades por proyecto');
+                            $this->calculate_UnidadesPorProyectoQuantity($unidadesPorProyectoConditions, $detalles, $periodo);
+                        }
+                        //Otras unidades de cobro
+
+                        else {
+                            $cantidadDetalles = $detalles->count();
+                            //Fijo
+                            if ($contractCondition_FijoVariable->contractsConditions_Modalidad == 'Fijo') {
                                 $quantityMonto = $contractCondition_FijoVariable->contractsConditions_Precio;
-                            } else {
-                                //Generar cantidad con valor igual a 0
+
+
+                                $newQuantities = new Quantities([
+                                    'idContractCondition' => $contractCondition_FijoVariable->id,
+                                    'quantitiesCantidad' => 1,
+                                    'quantitiesPeriodo' => $periodo,
+                                    'quantitiesMonto' => $quantityMonto,
+                                ]);
+                                //Guardar la cantidad
+                                $newQuantities->save();
+
+
+                                echo $contractCondition_FijoVariable->id;
+                                echo '<br>';
+                                echo $cantidadDetalles;
+                                echo '<br>';
+                                echo $periodo;
+                                echo '<br>';
+                                echo $quantityMonto;
+                                echo '<br>';
+                                echo '<br>';
+                                echo '<br>';
+
+                            }
+                            //Variable
+                            else if ($contractCondition_FijoVariable->contractsConditions_Modalidad == 'Variable')  {
+                                //Ordenar las condiciones -> variable / escalonados ... (de menor a mayor precio)  / adicional
+                                $variableConditions = $contractConditions->where('idPaymentUnit', $contractCondition_FijoVariable->idPaymentUnit);
+                                if ($variableConditions->where('contractsConditions_Modalidad', 'Adicional')) {
+                                    $adicional = $variableConditions->where('contractsConditions_Modalidad', 'Adicional');
+                                    $variableConditions = $variableConditions->where('contractsConditions_Modalidad', '!=', 'Adicional');
+                                    $sortedVariableConditions = $variableConditions->sortBy('contractsConditions_Precio');
+                                    $maxCantidad = $sortedVariableConditions->max('contractsConditions_Cantidad');
+                                    $sortedVariableConditions = $sortedVariableConditions->concat($adicional);
+                                }
+                                else {
+                                    $sortedVariableConditions = $variableConditions->sortBy('contractsConditions_Precio');
+                                    $maxCantidad = $sortedVariableConditions->max('contractsConditions_Cantidad');
+                                }
+                                //Descuentos
+                                if ($variableConditions->where('contractsConditions_Modalidad', 'Descuento')) {
+                                    $descuento = $sortedVariableConditions->where('contractsConditions_Modalidad', 'Descuento');
+                                    $sortedVariableConditions = $sortedVariableConditions->where('contractsConditions_Modalidad', '!=', 'Descuento');
+                                    $sortedVariableConditions = $sortedVariableConditions->concat($descuento);
+                                }
                                 $quantityMonto = 0;
+                                $escalonAnterior = 0;
+
+                                foreach ($sortedVariableConditions as $sortedVariableCondition) {
+                                    //Variable
+                                    if ($sortedVariableCondition->contractsConditions_Modalidad == 'Variable') {
+                                        $cantidadCondicion = $sortedVariableCondition->contractsConditions_Cantidad;
+                                        $escalonAnterior = $cantidadCondicion;
+                                        if ($cantidadDetalles - $cantidadCondicion >= 0) {
+                                            $quantityMonto = $sortedVariableCondition->contractsConditions_Precio;
+                                        }
+                                    }
+                                    //Escalonado
+                                    else if ($sortedVariableCondition->contractsConditions_Modalidad == 'Escalonado') {
+                                        $cantidadCondicion = $sortedVariableCondition->contractsConditions_Cantidad;
+                                        //Si es mayor
+                                        if ($cantidadDetalles >= $cantidadCondicion) {
+                                            $quantityMonto = $sortedVariableCondition->contractsConditions_Precio;
+                                        }
+                                        //Si es mayor al anterior y menor a este escalon
+                                        else if ($cantidadDetalles > $escalonAnterior && $cantidadDetalles <= $cantidadCondicion) {
+                                            $quantityMonto = $sortedVariableCondition->contractsConditions_Precio;
+                                        }
+                                        $escalonAnterior = $cantidadCondicion;
+                                    }
+
+                                    //Adicional
+                                    else if ($sortedVariableCondition->contractsConditions_Modalidad == 'Adicional') {
+                                        if ($cantidadDetalles - $maxCantidad >= 1) {
+                                            $quantityMonto += ($cantidadDetalles - $maxCantidad) * $sortedVariableCondition->contractsConditions_Precio;
+                                        }
+                                    }
+                                    //Descuento
+                                    else if ($sortedVariableCondition->contractsConditions_Modalidad == 'Descuento') {
+                                        $quantityMonto = round($quantityMonto * (100 - $sortedVariableCondition->contractsConditions_Precio) / 100, 2);
+                                    }
+                                }
+
+
+
+                                $newQuantities = new Quantities([
+                                    'idContractCondition' => $contractCondition_FijoVariable->id,
+                                    'quantitiesCantidad' => $cantidadDetalles,
+                                    'quantitiesPeriodo' => $periodo,
+                                    'quantitiesMonto' => $quantityMonto,
+                                ]);
+                                //Guardar la cantidad
+                                $newQuantities->save();
+
+                                echo $contractCondition_FijoVariable->id;
+                                echo '<br>';
+                                echo $cantidadDetalles;
+                                echo '<br>';
+                                echo $periodo;
+                                echo '<br>';
+                                echo $quantityMonto;
+                                echo '<br>';
+                                echo '<br>';
+                                echo '<br>';
                             }
-                            //Agregar 1 mes de testing
-
-                            $newQuantities = new Quantities([
-                                'idContractCondition' => $contractCondition_FijoVariable->id,
-                                'quantitiesCantidad' => $cantidadDetalles,
-                                'quantitiesPeriodo' => $periodo,
-                                'quantitiesMonto' => $quantityMonto,
-                            ]);
-                            //Guardar la cantidad
-                            $newQuantities->save();
-
-
-                            echo $contractCondition_FijoVariable->id;
-                            echo '<br>';
-                            echo $cantidadDetalles;
-                            echo '<br>';
-                            echo $periodo;
-                            echo '<br>';
-                            echo $quantityMonto;
-                            echo '<br>';
-                            echo '<br>';
-                            echo '<br>';
-
                         }
-                        //Variable
-                        else if ($contractCondition_FijoVariable->contractsConditions_Modalidad == 'Variable')  {
-                            //Ordenar las condiciones -> variable / escalonados ... (de menor a mayor precio)  / adicional
-                            $variableConditions = $contractConditions->where('idPaymentUnit', $contractCondition_FijoVariable->idPaymentUnit);
-                            if ($variableConditions->where('contractsConditions_Modalidad', 'Adicional')) {
-                                $adicional = $variableConditions->where('contractsConditions_Modalidad', 'Adicional');
-                                $variableConditions = $variableConditions->where('contractsConditions_Modalidad', '!=', 'Adicional');
-                                $sortedVariableConditions = $variableConditions->sortBy('contractsConditions_Precio');
-                                $maxCantidad = $sortedVariableConditions->max('contractsConditions_Cantidad');
-                                $sortedVariableConditions = $sortedVariableConditions->concat($adicional);
-                            }
-                            else {
-                                $sortedVariableConditions = $variableConditions->sortBy('contractsConditions_Precio');
-                                $maxCantidad = $sortedVariableConditions->max('contractsConditions_Cantidad');
-                            }
-                            //Descuentos
-                            if ($variableConditions->where('contractsConditions_Modalidad', 'Descuento')) {
-                                $descuento = $sortedVariableConditions->where('contractsConditions_Modalidad', 'Descuento');
-                                $sortedVariableConditions = $sortedVariableConditions->where('contractsConditions_Modalidad', '!=', 'Descuento');
-                                $sortedVariableConditions = $sortedVariableConditions->concat($descuento);
-                            }
-                            $quantityMonto = 0;
-                            $escalonAnterior = 0;
 
-                            foreach ($sortedVariableConditions as $sortedVariableCondition) {
-                                //Variable
-                                if ($sortedVariableCondition->contractsConditions_Modalidad == 'Variable') {
-                                    $cantidadCondicion = $sortedVariableCondition->contractsConditions_Cantidad;
-                                    $escalonAnterior = $cantidadCondicion;
-                                    if ($cantidadDetalles - $cantidadCondicion >= 0) {
-                                        $quantityMonto = $sortedVariableCondition->contractsConditions_Precio;
-                                    }
-                                }
-                                //Escalonado
-                                else if ($sortedVariableCondition->contractsConditions_Modalidad == 'Escalonado') {
-                                    $cantidadCondicion = $sortedVariableCondition->contractsConditions_Cantidad;
-                                    //Si es mayor
-                                    if ($cantidadDetalles >= $cantidadCondicion) {
-                                        $quantityMonto = $sortedVariableCondition->contractsConditions_Precio;
-                                    }
-                                    //Si es mayor al anterior y menor a este escalon
-                                    else if ($cantidadDetalles > $escalonAnterior && $cantidadDetalles <= $cantidadCondicion) {
-                                        $quantityMonto = $sortedVariableCondition->contractsConditions_Precio;
-                                    }
-                                    $escalonAnterior = $cantidadCondicion;
-                                }
-
-                                //Adicional
-                                else if ($sortedVariableCondition->contractsConditions_Modalidad == 'Adicional') {
-                                    if ($cantidadDetalles - $maxCantidad >= 1) {
-                                        $quantityMonto += ($cantidadDetalles - $maxCantidad) * $sortedVariableCondition->contractsConditions_Precio;
-                                    }
-                                }
-                                //Descuento
-                                else if ($sortedVariableCondition->contractsConditions_Modalidad == 'Descuento') {
-                                    $quantityMonto = round($quantityMonto * (100 - $sortedVariableCondition->contractsConditions_Precio) / 100, 2);
-                                }
-                            }
-
-
-
-                            $newQuantities = new Quantities([
-                                'idContractCondition' => $contractCondition_FijoVariable->id,
-                                'quantitiesCantidad' => $cantidadDetalles,
-                                'quantitiesPeriodo' => $periodo,
-                                'quantitiesMonto' => $quantityMonto,
-                            ]);
-                            //Guardar la cantidad
-                            $newQuantities->save();
-
-
-
-                            echo $contractCondition_FijoVariable->id;
-                            echo '<br>';
-                            echo $cantidadDetalles;
-                            echo '<br>';
-                            echo $periodo;
-                            echo '<br>';
-                            echo $quantityMonto;
-                            echo '<br>';
-                            echo '<br>';
-                            echo '<br>';
-
-
-                        }
                     }
                 }
             }
         }
+    }
+
+    public function calculate_UnidadesPorProyectoQuantity($unidadesPorProyectoConditions, $detalles, $periodo) {
+        $variableConditions = $unidadesPorProyectoConditions;
+        //Ordenar las condiciones -> variable / escalonados ... (de menor a mayor precio)  / adicional
+        if ($variableConditions->where('contractsConditions_Modalidad', 'Adicional')) {
+            $adicional = $variableConditions->where('contractsConditions_Modalidad', 'Adicional');
+            $variableConditions = $variableConditions->where('contractsConditions_Modalidad', '!=', 'Adicional');
+            $sortedVariableConditions = $variableConditions->sortBy('contractsConditions_Precio');
+            $maxCantidad = $sortedVariableConditions->max('contractsConditions_Cantidad');
+            $sortedVariableConditions = $sortedVariableConditions->concat($adicional);
+        }
+        else {
+            $sortedVariableConditions = $variableConditions->sortBy('contractsConditions_Precio');
+            $maxCantidad = $sortedVariableConditions->max('contractsConditions_Cantidad');
+        }
+        //Descuentos
+        if ($variableConditions->where('contractsConditions_Modalidad', 'Descuento')) {
+            $descuento = $sortedVariableConditions->where('contractsConditions_Modalidad', 'Descuento');
+            $sortedVariableConditions = $sortedVariableConditions->where('contractsConditions_Modalidad', '!=', 'Descuento');
+            $sortedVariableConditions = $sortedVariableConditions->concat($descuento);
+        }
+        $quantityMonto = 0;
+        $escalonAnterior = 0;
+
+        foreach ($sortedVariableConditions as $sortedVariableCondition) {
+            $cantidadCondicion = $sortedVariableCondition->contractsConditions_Cantidad;
+            //Variable
+            if ($sortedVariableCondition->contractsConditions_Modalidad == 'Variable') {
+                $detallesVariable = $detalles->where('contractPaymentDetails_units', '<=', $cantidadCondicion);
+                $cantidadDetalles = $detallesVariable->count();
+                $escalonAnterior = $cantidadCondicion;
+                //Si hay al menos 1 proyecto q cumpla con esta condicion, cobrar
+                if ($cantidadDetalles > 0) {
+                    $quantityMonto = $sortedVariableCondition->contractsConditions_Precio * $cantidadDetalles;
+                }
+                //De lo contrario, no cobrar
+                else {
+                    $quantityMonto = null;
+                }
+            }
+            //Escalonado
+            else if ($sortedVariableCondition->contractsConditions_Modalidad == 'Escalonado') {
+                //Buscar donde esten entre este escalon
+                $detallesVariable = $detalles->where('contractPaymentDetails_units', '<=', $cantidadCondicion)
+                ->where('contractPaymentDetails_units', '>=', $escalonAnterior);
+                $cantidadDetalles = $detallesVariable->count();
+
+                //Si hay al menos 1 proyecto q cumpla con esta condicion, cobrar
+                if ($cantidadDetalles > 0) {
+                    $quantityMonto = $sortedVariableCondition->contractsConditions_Precio * $cantidadDetalles;
+                }
+                //De lo contrario, no cobrar
+                else {
+                    $quantityMonto = null;
+                }
+                $escalonAnterior = $cantidadCondicion;
+            }
+            //Adicional
+            /*
+            else if ($sortedVariableCondition->contractsConditions_Modalidad == 'Adicional') {
+                if ($cantidadDetalles - $maxCantidad >= 1) {
+                    $quantityMonto += ($cantidadDetalles - $maxCantidad) * $sortedVariableCondition->contractsConditions_Precio;
+                }
+            }
+            */
+            //Descuento
+            /*
+            else if ($sortedVariableCondition->contractsConditions_Modalidad == 'Descuento') {
+                if ($quantityMonto != null) {
+                    $quantityMonto = round($quantityMonto * (100 - $sortedVariableCondition->contractsConditions_Precio) / 100, 2);
+                }
+            }
+            */
+            if ($quantityMonto != null) {
+                $newQuantities = new Quantities([
+                    'idContractCondition' => $sortedVariableCondition->id,
+                    'quantitiesCantidad' => $cantidadDetalles,
+                    'quantitiesPeriodo' => $periodo,
+                    'quantitiesMonto' => $quantityMonto,
+                ]);
+                //Guardar la cantidad
+                $newQuantities->save();
+            }
+        }
+
+
+    }
+
+    public function sortVariableConditions($variableConditions) {
+        //Ordenar las condiciones -> variable / escalonados ... (de menor a mayor precio)  / adicional
+        if ($variableConditions->where('contractsConditions_Modalidad', 'Adicional')) {
+            $adicional = $variableConditions->where('contractsConditions_Modalidad', 'Adicional');
+            $variableConditions = $variableConditions->where('contractsConditions_Modalidad', '!=', 'Adicional');
+            $sortedVariableConditions = $variableConditions->sortBy('contractsConditions_Precio');
+            $maxCantidad = $sortedVariableConditions->max('contractsConditions_Cantidad');
+            $sortedVariableConditions = $sortedVariableConditions->concat($adicional);
+        }
+        else {
+            $sortedVariableConditions = $variableConditions->sortBy('contractsConditions_Precio');
+            $maxCantidad = $sortedVariableConditions->max('contractsConditions_Cantidad');
+        }
+        //Descuentos
+        if ($variableConditions->where('contractsConditions_Modalidad', 'Descuento')) {
+            $descuento = $sortedVariableConditions->where('contractsConditions_Modalidad', 'Descuento');
+            $sortedVariableConditions = $sortedVariableConditions->where('contractsConditions_Modalidad', '!=', 'Descuento');
+            $sortedVariableConditions = $sortedVariableConditions->concat($descuento);
+        }
+        return $sortedVariableConditions;
     }
 }

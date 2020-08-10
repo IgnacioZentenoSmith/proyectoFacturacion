@@ -6,8 +6,26 @@ $('#tablaDistributions').bootstrapTable({
 const distributionsTableLength = $('#tablaDistributions').bootstrapTable('getData').length;
 document.getElementById('distributionsTableLength').value = distributionsTableLength;
 
-function getMassAssign(massAssignInput) {
-    let massValue = massAssignInput.value;
+
+function appendFunctions() {
+    //tributarydetails_paymentTotalValue[] getMontoTotal(this)
+    //tributarydetails_discount[] getDiscount(this)
+    //tributarydetails_paymentValue[] getValue(this)
+    //tributarydetails_paymentPercentage[] getPercentage(this)
+    document.getElementById('contractDistribution_massAssign').addEventListener("change", getMassAssign, false);
+
+    document.getElementsByName('contractDistribution_percentage[]').forEach(input => {
+        document.getElementById(input.id).addEventListener("change", getPercentage, false);
+    });
+    document.getElementsByName('contractDistribution_discount[]').forEach(input => {
+        document.getElementById(input.id).addEventListener("change", getDiscount, false);
+    });
+}
+appendFunctions();
+
+
+function getMassAssign() {
+    let massValue = this.value;
     //NO ASIGNADO
     if (massValue === "No asignado") {
         //Asignar a los tipos
@@ -45,23 +63,23 @@ function getMassAssign(massAssignInput) {
     }
 }
 
-function getPercentage(percentageInput) {
+function getPercentage() {
     //Entradas no validas
     toggleTotalPercentage("block");
-    if (parseFloat(percentageInput.value) > 100) {
-        percentageInput.value = parseFloat(0);
+    if (parseFloat(this.value) > 100) {
+        this.value = parseFloat(0);
     }
-    else if (parseFloat(percentageInput.value) < 0) {
-        percentageInput.value = parseFloat(0);
+    else if (parseFloat(this.value) < 0) {
+        this.value = parseFloat(0);
     }
     //Entradas validas
     else {
         if (getTotalPorcentaje() > 100) {
-            percentageInput.value = parseFloat(0);
+            this.value = parseFloat(0);
             getTotalPorcentaje();
         }
         else if (getTotalPorcentaje() < 0) {
-            percentageInput.value = parseFloat(0);
+            this.value = parseFloat(0);
             getTotalPorcentaje();
         }
     }
@@ -89,12 +107,12 @@ function toggleTotalPercentage(displayValue) {
 }
 
 //Evitar que ponga valores incorrectos
-function getDiscount(discountInput) {
-    if (parseFloat(discountInput.value) > 100) {
-        discountInput.value = parseFloat(0);
+function getDiscount() {
+    if (parseFloat(this.value) > 100) {
+        this.value = parseFloat(0);
     }
-    else if (parseFloat(discountInput.value) < 0) {
-        discountInput.value = parseFloat(0);
+    else if (parseFloat(this.value) < 0) {
+        this.value = parseFloat(0);
     }
 }
 getTotalPorcentaje();

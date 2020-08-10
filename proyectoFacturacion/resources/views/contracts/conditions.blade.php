@@ -16,7 +16,6 @@
                 data-server-sort="false">
                 <thead>
                     <tr>
-                        <th scope="col" data-field="ID" data-sortable="true">ID</th>
                         <th scope="col" data-field="idModule" data-sortable="true">Módulo</th>
                         <th scope="col" data-field="idPaymentUnit" data-sortable="true">Unidad de pago</th>
                         <th scope="col" data-field="idClient" data-sortable="true">Cliente</th>
@@ -33,7 +32,6 @@
                 <tbody>
                     @foreach($contractConditions as $contractCondition)
                     <tr>
-                        <td>{{$contractCondition['id']}}</td>
                         <td>{{$contractCondition['contractCondition_moduleName']}}</td>
                         <td>{{$contractCondition['contractCondition_paymentUnitName']}}</td>
                         <td>{{$contractCondition['contractCondition_clientName']}}</td>
@@ -44,20 +42,33 @@
                         <td>{{$contractCondition['contractsConditions_fechaInicio']}}</td>
                         <td>{{$contractCondition['contractsConditions_fechaTermino']}}</td>
                         <td>
+
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button"
+                                    id="dropdownMenu_acciones{{$contractCondition['id']}}" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    Acciones
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu_acciones{{$contractCondition['id']}}">
+
+
                             @if(in_array(10, $authPermisos))
                             <!-- ID de la condicion -->
-                            <a class="btn btn-secondary" href="{{ route('contracts.conditionsEdit', $contractCondition['id']) }}"
+                            <a class="dropdown-item" href="{{ route('contracts.conditionsEdit', $contractCondition['id']) }}"
                                 role="button">Editar</a>
                             @endif
                             @if(in_array(11, $authPermisos))
+                            <div class="dropdown-divider"></div>
                             <!-- ID de la condicion -->
                             <form style="display: inline-block;" action="{{ route('contracts.conditionsDestroy', $contractCondition['id']) }}"
                                 method="post">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-danger" type="submit">Eliminar(DEBUG)</button>
+                                <button class="dropdown-item" type="submit">Eliminar(DEBUG)</button>
                             </form>
                             @endif
+                                </div>
+                            </div>
                         </td>
                     </tr>
                     @endforeach

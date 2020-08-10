@@ -21,7 +21,7 @@
                       <th scope="col" data-field="actionName" data-sortable="true">Nombre</th>
                       <th scope="col" data-field="actionType" data-sortable="true">Tipo</th>
                       <th scope="col" data-field="id" data-sortable="true">Codigo</th>
-                      <th scope="col" data-field="actionParentId" data-sortable="true">Codigo padre</th>
+                      <th scope="col" data-field="actionParentId" data-sortable="true">Codigo principal</th>
                       <th scope="col" data-field="permission" data-sortable="true">Permiso</th>
                   </tr>
               </thead>
@@ -34,7 +34,7 @@
                       <td>{{$accion['actionParentId']}}</td>
                       <td class="text-left">
                         <div class="pretty p-switch p-fill">
-                          <input type="checkbox" name="acciones[]" value="{{$accion['id']}}" class="form-check" 
+                          <input type="checkbox" name="acciones[]" value="{{$accion['id']}}" class="form-check"
                           @if (in_array($accion['id'], $permisosUsuario)) checked @endif/>
                           <div class="state p-success">
                             <label>{{$accion['actionName']}}</label>

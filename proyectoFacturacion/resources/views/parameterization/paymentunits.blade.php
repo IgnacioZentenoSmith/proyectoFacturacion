@@ -10,34 +10,42 @@
                 data-server-sort="false">
                 <thead>
                     <tr>
-                        <th scope="col" data-field="ID" data-sortable="true">ID</th>
-                        <th scope="col" data-field="payment_units" data-sortable="true">Nombre de la unidad de pago</th>
-                        <th scope="col" data-field="created_at" data-sortable="true">Fecha creacion</th>
-                        <th scope="col" data-field="updated_at" data-sortable="true">Fecha modificacion</th>
+                        <th scope="col" data-field="payment_units" data-sortable="true">Nombre</th>
                         <th scope="col" data-field="Accion" data-sortable="true">Acción</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($paymentUnits as $paymentUnit)
                     <tr>
-                        <td>{{$paymentUnit['id']}}</td>
                         <td>{{$paymentUnit['payment_units']}}</td>
-                        <td class="text-center">{{$paymentUnit['created_at']}}</td>
-                        <td class="text-center">{{$paymentUnit['updated_at']}}</td>
 
                         <td>
-                            @if(in_array(19, $authPermisos))
-                            <a class="btn btn-secondary" href="{{ route('parameterization.paymentunitsEdit', $paymentUnit['id']) }}"
-                                role="button">Editar</a>
-                            @endif
-                            @if(in_array(20, $authPermisos))
-                            <form style="display: inline-block;" action="{{ route('parameterization.paymentunitsDestroy', $paymentUnit['id']) }}"
-                                method="post">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-danger" type="submit">Eliminar(DEBUG)</button>
-                            </form>
-                            @endif
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button"
+                                    id="dropdownMenu_acciones{{$paymentUnit['id']}}" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    Acciones
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenu_acciones{{$paymentUnit['id']}}">
+
+                                    @if(in_array(19, $authPermisos))
+                                    <a class="dropdown-item"
+                                        href="{{ route('parameterization.paymentunitsEdit', $paymentUnit['id']) }}"
+                                        role="button">Editar</a>
+                                    @endif
+                                    @if(in_array(20, $authPermisos))
+                                    <div class="dropdown-divider"></div>
+                                    <form style="display: inline-block;"
+                                        action="{{ route('parameterization.paymentunitsDestroy', $paymentUnit['id']) }}"
+                                        method="post">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="dropdown-item" type="submit">Eliminar(DEBUG)</button>
+                                    </form>
+                                    @endif
+                                </div>
+                            </div>
+
                         </td>
                     </tr>
                     @endforeach

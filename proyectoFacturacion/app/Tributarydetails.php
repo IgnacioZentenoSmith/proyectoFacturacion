@@ -13,6 +13,7 @@ class Tributarydetails extends Model
         'idTributarydocument',
         'idClient',
         'idPaymentUnit',
+        'idModule',
         'tributarydetails_paymentUnitQuantity',
         'tributarydetails_paymentPercentage',
         'tributarydetails_paymentValue',

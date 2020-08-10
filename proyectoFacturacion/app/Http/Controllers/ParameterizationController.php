@@ -95,7 +95,7 @@ class ParameterizationController extends Controller
             'moduleName' => $request->moduleName,
             'moduleParentId' => $request->moduleParentId,
         ]);
-        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newModules->getTable(), $newModules->id, null, $newModules);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newModules->getTable(), $newModules->moduleName, null, $newModules);
         $newModules->save();
 
         return redirect()->action('ParameterizationController@modulesIndex')->with('success', 'Módulo agregado exitosamente.');
@@ -156,7 +156,7 @@ class ParameterizationController extends Controller
 
         if ($modulo->isDirty()) {
             $postModulo = Modules::find($id);
-            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $modulo->getTable(), $modulo->id, $modulo, $postModulo);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $modulo->getTable(), $modulo->moduleName, $modulo, $postModulo);
             $modulo->save();
             return redirect()->action('ParameterizationController@modulesIndex')->with('success', 'Módulo editado exitosamente.');
         } else {
@@ -179,7 +179,7 @@ class ParameterizationController extends Controller
         if ($moduloIDs->count() > 0) {
           return redirect()->action('ParameterizationController@modulesIndex')->with('error', 'Módulos con hijos no pueden ser eliminados, por favor elimine sus hijos primero.');
         } else {
-            app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $modulo->getTable(), $modulo->id, $modulo, null);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $modulo->getTable(), $modulo->moduleName, $modulo, null);
             $modulo->delete();
           return redirect()->action('ParameterizationController@modulesIndex')->with('success', 'Módulo eliminado exitosamente');
         }
@@ -234,7 +234,7 @@ class ParameterizationController extends Controller
             'payment_units' => $request->payment_units,
         ]);
         $newPaymentUnit->save();
-        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newPaymentUnit->getTable(), $newPaymentUnit->id, null, $newPaymentUnit);
+        app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newPaymentUnit->getTable(), $newPaymentUnit->payment_units, null, $newPaymentUnit);
         return redirect()->action('ParameterizationController@paymentunitsIndex')->with('success', 'Unidad de pago agregado exitosamente.');
     }
 
@@ -272,7 +272,7 @@ class ParameterizationController extends Controller
 
         if ($paymentUnit->isDirty()) {
             $postPaymentUnit = PaymentUnits::find($id);
-            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $paymentUnit->getTable(), $paymentUnit->id, $paymentUnit, $postPaymentUnit);
+            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $paymentUnit->getTable(), $paymentUnit->payment_units, $paymentUnit, $postPaymentUnit);
             $paymentUnit->save();
             return redirect()->action('ParameterizationController@paymentunitsIndex')->with('success', 'Unidad de pago editada exitosamente.');
         } else {
@@ -290,7 +290,7 @@ class ParameterizationController extends Controller
     public function paymentunitsDestroy($id)
     {
       $paymentUnit = PaymentUnits::find($id);
-      app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $paymentUnit->getTable(), $paymentUnit->id, $paymentUnit, null);
+      app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $paymentUnit->getTable(), $paymentUnit->payment_units, $paymentUnit, null);
       $paymentUnit->delete();
       return redirect()->action('ParameterizationController@paymentunitsIndex')->with('success', 'Unidad de pago eliminada exitosamente');
     }

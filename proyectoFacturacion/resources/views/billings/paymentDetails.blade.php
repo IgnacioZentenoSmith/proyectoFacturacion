@@ -16,7 +16,6 @@
                 data-live-search="true" data-buttons-align="left" data-search-align="right">
                 <thead>
                     <tr>
-                        <th scope="col" data-field="ID" data-sortable="true">ID</th>
                         <th scope="col" data-field="idClient" data-sortable="true">Razón social</th>
                         <th scope="col" data-field="idPaymentUnit" data-sortable="true">Unidad de pago</th>
                         <th scope="col" data-field="tributarydetails_paymentUnitQuantity" data-sortable="true">Cantidad
@@ -31,9 +30,8 @@
                 <tbody>
                     @foreach($tributaryDetails as $tributaryDetail)
                     <tr>
-                        <td>{{$tributaryDetail['id']}}</td>
                         <td>{{$tributaryDetail['clientRazonSocial']}}</td>
-                        <td>{{$tributaryDetail['payment_units']}}</td>
+                        <td>{{$tributaryDetail['payment_units']}} {{$tributaryDetail['moduleName']}}</td>
                         <td>{{$tributaryDetail['tributarydetails_paymentUnitQuantity']}}</td>
                         <td>{{$tributaryDetail['tributarydetails_paymentPercentage']}}</td>
                         <td>{{$tributaryDetail['tributarydetails_paymentValue']}}</td>
@@ -53,7 +51,6 @@
                 data-live-search="true" data-buttons-align="left" data-search-align="right">
                 <thead>
                     <tr>
-                        <th scope="col" data-field="ID" data-sortable="true">ID</th>
                         <th scope="col" data-field="idClient" data-sortable="true">Razón social</th>
                         <th scope="col" data-field="idPaymentUnit" data-sortable="true">Unidad de pago</th>
                         <th scope="col" data-field="ccontractPaymentDetails_quantity" data-sortable="true">Cantidad
@@ -67,7 +64,6 @@
                 <tbody>
                     @foreach($contractPaymentDetails as $contractPaymentDetail)
                     <tr>
-                        <td>{{$contractPaymentDetail['id']}}</td>
                         <td>{{$contractPaymentDetail['clientRazonSocial']}}</td>
                         <td>{{$contractPaymentDetail['payment_units']}}</td>
                         <td>{{$contractPaymentDetail['ccontractPaymentDetails_quantity']}}</td>

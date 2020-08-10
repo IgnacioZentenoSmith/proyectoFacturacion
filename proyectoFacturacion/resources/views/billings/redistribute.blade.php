@@ -48,7 +48,7 @@
                         </td>
 
                         <td>
-                            {{$tributaryDetail['payment_units']}}
+                            {{$tributaryDetail['payment_units']}} {{$tributaryDetail['moduleName']}}
                                 <input type="hidden" name="idPaymentUnit[]" required
                                 value="{{$tributaryDetail['idPaymentUnit']}}">
                         </td>
@@ -60,25 +60,25 @@
                         </td>
 
                         <td>
-                            <input id="tributarydetails_paymentPercentage[{{$tributaryDetail['id']}}]" type="number" onchange="getPercentage(this);"
+                            <input id="tributarydetails_paymentPercentage[{{$tributaryDetail['id']}}]" type="number"
                             class="form-control" name="tributarydetails_paymentPercentage[]" step="0.01"
                             value="{{$tributaryDetail['tributarydetails_paymentPercentage']}}">
                         </td>
 
                         <td>
-                            <input id="tributarydetails_paymentValue[{{$tributaryDetail['id']}}]" type="number" onchange="getValue(this);"
+                            <input id="tributarydetails_paymentValue[{{$tributaryDetail['id']}}]" type="number"
                             class="form-control" name="tributarydetails_paymentValue[]" step="0.001"
                             value="{{$tributaryDetail['tributarydetails_paymentValue']}}">
                         </td>
 
                         <td>
-                            <input id="tributarydetails_discount[{{$tributaryDetail['id']}}]" type="number" onchange="getDiscount(this);"
+                            <input id="tributarydetails_discount[{{$tributaryDetail['id']}}]" type="number"
                             class="form-control" name="tributarydetails_discount[]" step="0.001"
                             value="{{$tributaryDetail['tributarydetails_discount']}}">
                         </td>
 
                         <td>
-                            <input id="tributarydetails_paymentTotalValue[{{$tributaryDetail['id']}}]" type="number" onchange="getMontoTotal(this);"
+                            <input id="tributarydetails_paymentTotalValue[{{$tributaryDetail['id']}}]" type="number"
                             class="form-control" name="tributarydetails_paymentTotalValue[]" step="0.001"
                             value="{{$tributaryDetail['tributarydetails_paymentTotalValue']}}">
                         </td>
@@ -111,7 +111,7 @@
 
             <div class="col-auto">
                 <input id="montoTotal" type="number"
-                    class="form-control" name="montoTotal" step="0.01" readonly
+                    class="form-control" name="montoTotal" step="0.01" @if (!$contract['contractsManualContract']) readonly @endif
                     value="{{$tributaryDocument['tributarydocuments_totalAmountTax']}}">
             </div>
         </div>
