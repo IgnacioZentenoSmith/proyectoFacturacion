@@ -23,13 +23,13 @@
                         <th scope="col" data-field="ID" data-sortable="true">ID</th>
                         <th scope="col" data-field="idClient" data-sortable="true">Razón social</th>
                         <th scope="col" data-field="idPaymentUnit" data-sortable="true">Unidad de pago</th>
-                        <th scope="col" data-field="tributarydetails_paymentUnitQuantity" data-sortable="true">Cantidad
-                            de unidades de pago</th>
+                        <th scope="col" data-field="tributarydetails_paymentUnitQuantity" data-sortable="true">Cantidad</th>
                         <th scope="col" data-field="tributarydetails_paymentPercentage" data-sortable="true">Porcentaje
                         </th>
-                        <th scope="col" data-field="tributarydetails_paymentValue" data-sortable="true">Monto subtotal</th>
+                        <th scope="col" data-field="tributarydetails_paymentValue" data-sortable="true">Subtotal</th>
                         <th scope="col" data-field="tributarydetails_discount" data-sortable="true">Descuento</th>
-                        <th scope="col" data-field="tributarydetails_paymentTotalValue" data-sortable="true">Monto total</th>
+                        <th scope="col" data-field="tributarydetails_paymentTotalValue" data-sortable="true">Total</th>
+                        <th scope="col" data-field="tributarydetails_paymentTotalTaxValue" data-sortable="true">Neto</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -81,6 +81,12 @@
                             <input id="tributarydetails_paymentTotalValue[{{$tributaryDetail['id']}}]" type="number"
                             class="form-control" name="tributarydetails_paymentTotalValue[]" step="0.001"
                             value="{{$tributaryDetail['tributarydetails_paymentTotalValue']}}">
+                        </td>
+
+                        <td>
+                            <input id="tributarydetails_paymentTotalTaxValue[{{$tributaryDetail['id']}}]" type="number"
+                            class="form-control" name="tributarydetails_paymentTotalTaxValue[]" step="0.001" readonly
+                            value="{{$tributaryDetail['tributarydetails_paymentTotalTaxValue']}}">
                         </td>
 
 
