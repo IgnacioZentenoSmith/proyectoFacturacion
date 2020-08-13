@@ -320,6 +320,7 @@ class TributarydocumentsController extends Controller
                 'tributarydetails_paymentValue' => $request->tributarydetails_paymentValue[$i],
                 'tributarydetails_discount' => $request->tributarydetails_discount[$i],
                 'tributarydetails_paymentTotalValue' => $request->tributarydetails_paymentTotalValue[$i],
+                'tributarydetails_paymentTotalTaxValue' => $request->tributarydetails_paymentTotalTaxValue[$i],
               ]);
             $newTributaryDetail->save();
 
@@ -374,13 +375,16 @@ class TributarydocumentsController extends Controller
                         $paymentQuantity = round($paymentQuantity);
                     }
 
-                    $paymentValue = $thisPeriodData->quantitiesMonto * $contractDistribution->contractDistribution_percentage/100 * 1.19;
+                    $paymentValue = $thisPeriodData->quantitiesMonto * $contractDistribution->contractDistribution_percentage/100;
+
                     //Si no tiene descuento, es el mismo valor
                     if ($contractDistribution->contractDistribution_discount == 0) {
                         $paymentTotalValue = $paymentValue;
                     } else {
-                        $paymentTotalValue = $paymentValue * $contractDistribution->contractDistribution_discount / 100;
+                        $paymentTotalValue = $paymentValue * (1 - $contractDistribution->contractDistribution_discount / 100);
                     }
+                    $paymentTotalTaxValue = $paymentTotalValue * 1.19;
+
                     $newTributaryDetail = new Tributarydetails([
                         'idTributarydocument' => $idTributarydocument,
                         'idClient' => $contractDistribution->idClient,
@@ -391,6 +395,7 @@ class TributarydocumentsController extends Controller
                         'tributarydetails_paymentValue' => $paymentValue,
                         'tributarydetails_discount' => $contractDistribution->contractDistribution_discount,
                         'tributarydetails_paymentTotalValue' => $paymentTotalValue,
+                        'tributarydetails_paymentTotalTaxValue' => $paymentTotalTaxValue,
 
                       ]);
                       $newTributaryDetail->save();
@@ -401,32 +406,33 @@ class TributarydocumentsController extends Controller
                     $totalContractPaymentDetails = ContractPaymentDetails::where('contractPaymentDetails_period', $tributaryDocument->tributarydocuments_period)
                     ->where('idContract', $tributaryDocument->idContract)
                     ->get();
-                    $totalContractPaymentDetailsQuantity = $totalContractPaymentDetails->count();
+                    //totalContractPaymentDetailsQuantity representa el 100%
+                    $totalContractPaymentDetailsQuantity = $thisPeriod_contractConditions_quantities_paymentUnits->sum('quantitiesCantidad');
                     //Sacar todos los detalles de esta razon social
-                    $contractPaymentDetails = $totalContractPaymentDetails->where('idClient', $contractDistribution->idClient);
-                    $contractPaymentDetails = $contractPaymentDetails->where('idPaymentUnit', $thisPeriodData->idPaymentUnit);
-                    $paymentQuantity = $contractPaymentDetails->count();
+                    //$contractPaymentDetails = $totalContractPaymentDetails->where('idClient', $contractDistribution->idClient);
+                    //$contractPaymentDetails = $contractPaymentDetails->where('idPaymentUnit', $thisPeriodData->idPaymentUnit);
+                    //cantidad de esta razon social y de esta unidad de pago en especifico
+                    $paymentQuantity = $thisPeriodData->quantitiesCantidad;
+                    //Evitar division por 0, Transformar cantidad a porcentaje respecto del total
+                    if ($totalContractPaymentDetailsQuantity > 0) {
+                        $paymentPercentage = $paymentQuantity * 100 / $totalContractPaymentDetailsQuantity;
+                    } else {
+                        $paymentPercentage = 0;
+                    }
 
+                    //Sacar monto respecto del porcentaje
+                    $paymentValue = $thisPeriodData->quantitiesMonto * $paymentPercentage / 100;
 
-                    //Sacar el valor * IVA
-                    $paymentValue = $thisPeriodData->quantitiesMonto * ($tributaryDocument->tributarydocuments_tax / 100 + 1);
                     //Si no tiene descuento, es el mismo valor, sino, el total es aplicando el dcto
                     if ($contractDistribution->contractDistribution_discount == 0) {
                         $paymentTotalValue = $paymentValue;
                     } else {
-                        $paymentTotalValue = $paymentValue * $contractDistribution->contractDistribution_discount / 100;
+                        $paymentTotalValue = $paymentValue * (1 - $contractDistribution->contractDistribution_discount / 100);
                     }
 
-                    //x% = cantidad * 100 / total
-                    //Si el total es mayor a 0, sacar su porcentaje en base a cantidad
-                    if ($tributaryDocument->tributarydocuments_totalAmountTax > 0) {
-                        $paymentPercentage = $paymentValue * 100 / $tributaryDocument->tributarydocuments_totalAmountTax;
-                    } else {
-                        $paymentPercentage = 0;
-                    }
-                    if ($paymentPercentage > 100) {
-                        $paymentPercentage = 100;
-                    }
+                    //Sacar monto con IVA
+                    $paymentTotalTaxValue = $paymentTotalValue * ($tributaryDocument->tributarydocuments_tax / 100 + 1);
+
 
                     //Crear el detalle tributario
                     $newTributaryDetail = new Tributarydetails([
@@ -439,6 +445,7 @@ class TributarydocumentsController extends Controller
                         'tributarydetails_paymentValue' => $paymentValue,
                         'tributarydetails_discount' => $contractDistribution->contractDistribution_discount,
                         'tributarydetails_paymentTotalValue' => $paymentTotalValue,
+                        'tributarydetails_paymentTotalTaxValue' => $paymentTotalTaxValue,
                       ]);
                       $newTributaryDetail->save();
                 }
