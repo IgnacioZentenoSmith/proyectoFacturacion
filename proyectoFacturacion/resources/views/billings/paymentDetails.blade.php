@@ -5,8 +5,9 @@
     <div class="col-auto">
         <div class="col-12">
             <div class="alert alert-info" role="alert">
-                Detalles de la factura del contrato: <strong>{{$contract['contractsNombre']}}</strong> de número:
-                <strong>{{$contract['contractsNumero']}}</strong>
+                <p>Detalles de la factura del contrato: <strong>{{$contract['contractsNombre']}}</strong> de número:
+                <strong>{{$contract['contractsNumero']}}</strong></p>
+                <p class="my-1">Total: <strong>{{$tributaryDocument['tributarydocuments_totalAmount']}} UF</strong> Neto: <strong>{{$tributaryDocument['tributarydocuments_totalAmountTax']}} UF</strong></p>
             </div>
         </div>
 
@@ -22,9 +23,10 @@
                             de unidades de pago</th>
                         <th scope="col" data-field="tributarydetails_paymentPercentage" data-sortable="true">Porcentaje
                         </th>
-                        <th scope="col" data-field="tributarydetails_paymentValue" data-sortable="true">Monto subtotal</th>
+                        <th scope="col" data-field="tributarydetails_paymentValue" data-sortable="true">Subtotal</th>
                         <th scope="col" data-field="tributarydetails_discount" data-sortable="true">Descuento</th>
-                        <th scope="col" data-field="tributarydetails_paymentTotalValue" data-sortable="true">Monto total</th>
+                        <th scope="col" data-field="tributarydetails_paymentTotalValue" data-sortable="true">Total</th>
+                        <th scope="col" data-field="tributarydetails_paymentTotalTaxValue" data-sortable="true">Neto</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -37,6 +39,7 @@
                         <td>{{$tributaryDetail['tributarydetails_paymentValue']}}</td>
                         <td>{{$tributaryDetail['tributarydetails_discount']}}</td>
                         <td>{{$tributaryDetail['tributarydetails_paymentTotalValue']}}</td>
+                        <td>{{$tributaryDetail['tributarydetails_paymentTotalTaxValue']}}</td>
                     </tr>
                     @endforeach
                 </tbody>
