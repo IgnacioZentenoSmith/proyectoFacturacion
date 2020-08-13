@@ -55,6 +55,7 @@ function getPercentage() {
         let valueInput = document.getElementById('tributarydetails_paymentValue[' + inputId + ']');
         let montoTotalInput = document.getElementById('tributarydetails_paymentTotalValue[' + inputId + ']');
         let discountInput = document.getElementById('tributarydetails_discount[' + inputId + ']');
+        let montoNeto = document.getElementById('tributarydetails_paymentTotalTaxValue[' + inputId + ']');
         //Si el total supera 100
         if (getTotalPorcentaje() > 100) {
             this.value = parseFloat(0);
@@ -79,6 +80,7 @@ function getPercentage() {
             valueInput.value = parseFloat(value).toFixed(3);
             montoTotalInput.value = (parseFloat(valueInput.value) * (100 - parseFloat(discountInput.value)) / 100).toFixed(3);
         }
+        montoNeto.value = parseFloat(montoTotalInput.value * 1.19).toFixed(3);
     }
     getTotalPorcentaje();
     getTotalValue();
@@ -101,6 +103,7 @@ function getValue() {
         let percentageInput = document.getElementById('tributarydetails_paymentPercentage[' + inputId + ']');
         let montoTotalInput = document.getElementById('tributarydetails_paymentTotalValue[' + inputId + ']');
         let discountInput = document.getElementById('tributarydetails_discount[' + inputId + ']');
+        let montoNeto = document.getElementById('tributarydetails_paymentTotalTaxValue[' + inputId + ']');
         //Verificar el total
         //Si el total supera el monto total
         if (getTotalValue() > parseFloat(montoTotal)) {
@@ -125,6 +128,7 @@ function getValue() {
             percentageInput.value = parseFloat(percentage).toFixed(2);
             montoTotalInput.value = (parseFloat(this.value) * (100 - parseFloat(discountInput.value)) / 100).toFixed(3);
         }
+        montoNeto.value = parseFloat(montoTotalInput.value * 1.19).toFixed(3);
     }
     getTotalPorcentaje();
     getTotalValue();
@@ -140,12 +144,13 @@ function getTotalPorcentaje() {
 }
 
 //this -> input
-function getMontoTotal(montoTotalInput) {
+function getMontoTotal() {
     let inputId = getInputId(this);
     let valueInput = document.getElementById('tributarydetails_paymentValue[' + inputId + ']');
     let discountInput = document.getElementById('tributarydetails_discount[' + inputId + ']');
     let percentageInput = document.getElementById('tributarydetails_paymentPercentage[' + inputId + ']');
     let montoTotal = document.getElementById('montoTotal').value;
+    let montoNeto = document.getElementById('tributarydetails_paymentTotalTaxValue[' + inputId + ']');
     //Si pone valor 0 o elimina el valor
     if (parseFloat(this.value) == 0 || this.value == '') {
         percentageInput.value = parseFloat(0);
@@ -182,6 +187,7 @@ function getMontoTotal(montoTotalInput) {
             percentageInput.value = parseFloat(percentage).toFixed(2);
         }
     }
+    montoNeto.value = parseFloat(this.value * 1.19).toFixed(3);
     getTotalPorcentaje();
     getTotalValue();
 }
@@ -211,6 +217,7 @@ function getDiscount() {
         let inputId = getInputId(this);
         let valueInput = document.getElementById('tributarydetails_paymentValue[' + inputId + ']');
         let montoTotal = document.getElementById('tributarydetails_paymentTotalValue[' + inputId + ']');
+        let montoNeto = document.getElementById('tributarydetails_paymentTotalTaxValue[' + inputId + ']');
         //Le quita el descuento, subtotal es el mismo q el total
         if (parseFloat(this.value) == 0) {
             montoTotal.value = parseFloat(valueInput.value);
@@ -218,6 +225,7 @@ function getDiscount() {
         } else {
             montoTotal.value = (parseFloat(valueInput.value) * (100 - parseFloat(this.value)) / 100).toFixed(3);
         }
+        montoNeto.value = parseFloat(montoTotalInput.value * 1.19).toFixed(3);
     }
 }
 
@@ -237,6 +245,9 @@ function reDistributeMontoTotal() {
         input.value = parseFloat(0);
     });
     document.getElementsByName('tributarydetails_paymentTotalValue[]').forEach(input => {
+        input.value = parseFloat(0);
+    });
+    document.getElementsByName('tributarydetails_paymentTotalTaxValue[]').forEach(input => {
         input.value = parseFloat(0);
     });
     getTotalPorcentaje();
