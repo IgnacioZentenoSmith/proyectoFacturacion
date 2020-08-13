@@ -19,5 +19,6 @@ class Tributarydetails extends Model
         'tributarydetails_paymentValue',
         'tributarydetails_discount',
         'tributarydetails_paymentTotalValue',
+        'tributarydetails_paymentTotalTaxValue',
     ];
 }
