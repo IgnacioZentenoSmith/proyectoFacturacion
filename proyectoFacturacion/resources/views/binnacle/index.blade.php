@@ -77,11 +77,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-md-12 mt-3">
-                            <button type="submit" class="btn btn-primary">Filtrar</button>
-                        </div>
+
+                    <div class="col-md-12 mt-3">
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
                     </div>
+
                 </form>
             </div>
         </div>

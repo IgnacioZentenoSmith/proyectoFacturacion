@@ -36,6 +36,13 @@ class ContractdistributionController extends Controller
         $contract = Contracts::find($idContrato);
         //Sacar todas las razones sociales del holding
         $razonesSociales = Client::where('clientParentId', $contract->idClient)->get();
+        //Ver si existen, si existen, asignar el mismo tipo de distribucion
+        $contractDistributions = ContractDistribution::where('idContract', $idContrato)->get();
+        if ($contractDistributions->count() > 0) {
+            $type = $contractDistributions[0]->contractDistribution_type;
+        } else {
+            $type = 'No asignado';
+        }
         //Si tiene razones sociales
         if ($razonesSociales->count() > 0) {
             //Por cada razon social, crear elemento si no existe
@@ -45,7 +52,7 @@ class ContractdistributionController extends Controller
                     $newContractDistribution = new ContractDistribution([
                         'idClient' => $razonSocial->id,
                         'idContract' => $idContrato,
-                        'contractDistribution_type' => 'No asignado',
+                        'contractDistribution_type' => $type,
                         'contractDistribution_percentage' => 0,
                         'contractDistribution_discount' => 0,
                     ]);

@@ -80,10 +80,12 @@
 
             <input type="hidden" id="distributionsTableLength" name="distributionsTableLength" required value="0">
             <div class="form-group row">
-                <input type="hidden" id="distributionsType" name="distributionsType" required>
-            <div class="form-group row">
-                <div class="col-md-3">
-                    <button type="submit" class="btn btn-primary">
+                <div class="col-md-6 mt-4">
+                    <input type="hidden" id="distributionsType" name="distributionsType" required>
+                </div>
+
+                <div class="col-md-6 mt-4">
+                    <button type="submit" class="btn btn-primary float-right">
                         Guardar
                     </button>
                 </div>

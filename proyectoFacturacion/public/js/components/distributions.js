@@ -72,6 +72,9 @@ function getPercentage() {
     else if (parseFloat(this.value) < 0) {
         this.value = parseFloat(0);
     }
+    else if (parseFloat(this.value) == '') {
+        this.value = parseFloat(0);
+    }
     //Entradas validas
     else {
         if (getTotalPorcentaje() > 100) {
@@ -114,6 +117,9 @@ function getDiscount() {
     else if (parseFloat(this.value) < 0) {
         this.value = parseFloat(0);
     }
+    else if (parseFloat(this.value) == '') {
+        this.value = parseFloat(0);
+    }
 }
 getTotalPorcentaje();
 
@@ -122,3 +128,7 @@ document.getElementsByName('contractDistribution_type[]').forEach(input => {
     document.getElementById('contractDistribution_massAssign').value = input.value;
     document.getElementById("distributionsType").value = input.value;
 });
+
+if (document.getElementById("distributionsType").value == "Porcentaje") {
+    toggleTotalPercentage("block");
+}
