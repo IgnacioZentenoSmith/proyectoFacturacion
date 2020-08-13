@@ -43,22 +43,9 @@ class BinnacleController extends Controller
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
         $binnacles = Binnacle::whereNotNull('binnacle_action')
         ->join('users', 'users.id', '=', 'binnacle.idUser')
-        ->select('binnacle.*', 'users.name as userName')
+        ->select('binnacle.binnacle_action', 'binnacle.binnacle_tableName', 'users.name as userName')
         ->get();
-        foreach ($binnacles as $binnacle) {
-            if ($binnacle->binnacle_tablePreValues != null) {
-                // convert json to array
-                $arrayPreValues = json_decode($binnacle->binnacle_tablePreValues, true);
-                //  create a new collection instance from the array
-                $binnacle->binnacle_tablePreValues = collect($arrayPreValues);
-            }
-            if ($binnacle->binnacle_tablePostValues != null) {
-                // convert json to array
-                $arrayPostValues = json_decode($binnacle->binnacle_tablePostValues, true);
-                //  create a new collection instance from the array
-                $binnacle->binnacle_tablePostValues = collect($arrayPostValues);
-            }
-        }
+
         $uniqueUsers = $binnacles->unique(function ($item) {
             return $item['userName'];
         });
@@ -70,6 +57,7 @@ class BinnacleController extends Controller
         $uniqueTables = $binnacles->unique(function ($item) {
             return $item['binnacle_tableName'];
         });
+        $binnacles = Binnacle::whereNull('binnacle.idUser');
 
         return view('binnacle.index', compact('authPermisos', 'binnacles', 'uniqueUsers', 'uniqueActions', 'uniqueTables'));
     }
@@ -96,6 +84,7 @@ class BinnacleController extends Controller
                 $binnacle->binnacle_tablePostValues = collect($arrayPostValues);
             }
         }
+
         $uniqueUsers = $binnacles->unique(function ($item) {
             return $item['userName'];
         });
