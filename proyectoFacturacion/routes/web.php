@@ -23,10 +23,10 @@ Route::get('email/resend', 'Auth\VerificationController@resend')->name('verifica
 Route::put('email/{id}/setPassword', 'Auth\VerificationController@setPassword')->name('email.setPassword')->middleware('auth');
 
 Route::get('/home', 'HomeController@index')->name('home.index');
-Route::get('/home/gci', 'HomeController@GCI_Api')->name('home.gci');
-Route::get('/home/pvi', 'HomeController@PVI_Api')->name('home.pvi');
-Route::get('/home/etdtp', 'HomeController@ETDTP_Api')->name('home.etdtp');
-Route::get('/home/licita', 'HomeController@LICITA_Api')->name('home.licita');
+Route::get('/home/gci', 'HomeController@getGCI')->name('home.gci');
+Route::get('/home/pvi', 'HomeController@getPVI')->name('home.pvi');
+Route::get('/home/etdtp', 'HomeController@getDTP')->name('home.etdtp');
+Route::get('/home/licita', 'HomeController@getLICITA')->name('home.licita');
 Route::get('/home/apiQuantities', 'HomeController@apiQuantities')->name('home.apiQuantities');
 
 /*
