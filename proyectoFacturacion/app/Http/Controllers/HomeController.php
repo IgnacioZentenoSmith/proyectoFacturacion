@@ -108,15 +108,22 @@ class HomeController extends Controller
                             if ($contractCondition_FijoVariable->contractsConditions_Modalidad == 'Fijo') {
                                 $quantityMonto = $contractCondition_FijoVariable->contractsConditions_Precio;
 
+                                $checkQuantity = Quantities::where('idContractCondition', $contractCondition_FijoVariable->id)
+                                ->where('quantitiesCantidad', 1)
+                                ->where('quantitiesPeriodo', $periodo)
+                                ->where('quantitiesMonto', $quantityMonto)
+                                ->first();
 
-                                $newQuantities = new Quantities([
-                                    'idContractCondition' => $contractCondition_FijoVariable->id,
-                                    'quantitiesCantidad' => 1,
-                                    'quantitiesPeriodo' => $periodo,
-                                    'quantitiesMonto' => $quantityMonto,
-                                ]);
-                                //Guardar la cantidad
-                                $newQuantities->save();
+                                if ($checkQuantity == null) {
+                                    $newQuantities = new Quantities([
+                                        'idContractCondition' => $contractCondition_FijoVariable->id,
+                                        'quantitiesCantidad' => 1,
+                                        'quantitiesPeriodo' => $periodo,
+                                        'quantitiesMonto' => $quantityMonto,
+                                    ]);
+                                    //Guardar la cantidad
+                                    $newQuantities->save();
+                                }
 
 
                                 echo $contractCondition_FijoVariable->id;
@@ -191,15 +198,22 @@ class HomeController extends Controller
                                 }
 
 
+                                $checkQuantity = Quantities::where('idContractCondition', $contractCondition_FijoVariable->id)
+                                ->where('quantitiesCantidad', $cantidadDetalles)
+                                ->where('quantitiesPeriodo', $periodo)
+                                ->where('quantitiesMonto', $quantityMonto)
+                                ->first();
 
-                                $newQuantities = new Quantities([
-                                    'idContractCondition' => $contractCondition_FijoVariable->id,
-                                    'quantitiesCantidad' => $cantidadDetalles,
-                                    'quantitiesPeriodo' => $periodo,
-                                    'quantitiesMonto' => $quantityMonto,
-                                ]);
-                                //Guardar la cantidad
-                                $newQuantities->save();
+                                if ($checkQuantity == null) {
+                                    $newQuantities = new Quantities([
+                                        'idContractCondition' => $contractCondition_FijoVariable->id,
+                                        'quantitiesCantidad' => $cantidadDetalles,
+                                        'quantitiesPeriodo' => $periodo,
+                                        'quantitiesMonto' => $quantityMonto,
+                                    ]);
+                                    //Guardar la cantidad
+                                    $newQuantities->save();
+                                }
 
                                 echo $contractCondition_FijoVariable->id;
                                 echo '<br>';
@@ -253,11 +267,14 @@ class HomeController extends Controller
 
     private function getAPIClientID($holdingID, $apiClientId) {
         //El ID existe
+
         if ($apiClientId != "SIN INFORMACIÓN" && $apiClientId != null) {
             //Si tiene el formato incorrecto, corregir (Si no tiene guion)
-            if (Str::substr($apiClientId, Str::length($apiClientId) - 2, Str::length($apiClientId) - 1) != '-') {
+            // Str::substr(start, length)
+            $getGuion = Str::substr($apiClientId, Str::length($apiClientId) - 2, 1);
+            if ($getGuion != '-') {
                 $rutSinIdentificador = Str::substr($apiClientId, 0, Str::length($apiClientId) - 1);
-                $rutIdentificador = Str::substr($apiClientId, Str::length($apiClientId) - 1, Str::length($apiClientId));
+                $rutIdentificador = Str::substr($apiClientId, Str::length($apiClientId) - 1, 1);
                 $apiClientId = $rutSinIdentificador . '-' . $rutIdentificador;
             }
 
@@ -467,6 +484,7 @@ class HomeController extends Controller
                         if ($proyecto['fecha_recepcion_municipal'] == '0000-00-00') {
                             $proyecto['fecha_recepcion_municipal'] = null;
                         }
+
                         $newContractPaymentDetails = new ContractPaymentDetails([
                             'idPaymentUnit' => $paymentUnitID,
                             'idClient' => $clientID,
@@ -673,14 +691,23 @@ class HomeController extends Controller
                 $cantidadDetallesTotal += $cantidadDetalles;
             }
         }
-        $newQuantities = new Quantities([
-            'idContractCondition' => $variableCondition[0]->id,
-            'quantitiesCantidad' => $cantidadDetallesTotal,
-            'quantitiesPeriodo' => $periodo,
-            'quantitiesMonto' => $montoTotal,
-        ]);
-        //Guardar la cantidad
-        $newQuantities->save();
+
+        $checkQuantity = Quantities::where('idContractCondition', $variableCondition[0]->id)
+        ->where('quantitiesCantidad', $cantidadDetallesTotal)
+        ->where('quantitiesPeriodo', $periodo)
+        ->where('quantitiesMonto', $montoTotal)
+        ->first();
+
+        if ($checkQuantity == null) {
+            $newQuantities = new Quantities([
+                'idContractCondition' => $variableCondition[0]->id,
+                'quantitiesCantidad' => $cantidadDetallesTotal,
+                'quantitiesPeriodo' => $periodo,
+                'quantitiesMonto' => $montoTotal,
+            ]);
+            //Guardar la cantidad
+            $newQuantities->save();
+        }
     }
 
     public function sortVariableConditions($variableConditions) {

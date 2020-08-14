@@ -72,7 +72,7 @@ function getPercentage() {
     else if (parseFloat(this.value) < 0) {
         this.value = parseFloat(0);
     }
-    else if (parseFloat(this.value) == '') {
+    else if (this.value == '') {
         this.value = parseFloat(0);
     }
     //Entradas validas
@@ -117,7 +117,7 @@ function getDiscount() {
     else if (parseFloat(this.value) < 0) {
         this.value = parseFloat(0);
     }
-    else if (parseFloat(this.value) == '') {
+    else if (this.value == '') {
         this.value = parseFloat(0);
     }
 }

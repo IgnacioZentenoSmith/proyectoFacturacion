@@ -41,9 +41,9 @@
             <th scope="col" data-field="contractNumber" data-sortable="true">Contrato</th>
             <th scope="col" data-field="tributarydocuments_period" data-sortable="true">Periodo</th>
             <th scope="col" data-field="tributarydocuments_documentType" data-sortable="true">Documento</th>
-            <th scope="col" data-field="tributarydocuments_totalAmount" data-sortable="true">Total</th>
+            <th scope="col" data-field="tributarydocuments_totalAmount" data-sortable="true">Neto</th>
             <th scope="col" data-field="tributarydocuments_IVA" data-sortable="true">IVA</th>
-            <th scope="col" data-field="tributarydocuments_AmountIVA" data-sortable="true">Neto</th>
+            <th scope="col" data-field="tributarydocuments_AmountIVA" data-sortable="true">Total</th>
             <th scope="col" data-field="Accion" data-sortable="true">Acción</th>
           </tr>
         </thead>
@@ -85,11 +85,9 @@
                     <button class="dropdown-item" type="submit">Eliminar(DEBUG)</button>
                   </form>
                 @endif
-
-
                     </div>
                 </div>
-
+              </td>
 
             </tr>
           @endforeach

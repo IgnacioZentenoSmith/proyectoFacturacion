@@ -28,8 +28,8 @@
                         </th>
                         <th scope="col" data-field="tributarydetails_paymentValue" data-sortable="true">Subtotal</th>
                         <th scope="col" data-field="tributarydetails_discount" data-sortable="true">Descuento</th>
-                        <th scope="col" data-field="tributarydetails_paymentTotalValue" data-sortable="true">Total</th>
-                        <th scope="col" data-field="tributarydetails_paymentTotalTaxValue" data-sortable="true">Neto</th>
+                        <th scope="col" data-field="tributarydetails_paymentTotalValue" data-sortable="true">Neto</th>
+                        <th scope="col" data-field="tributarydetails_paymentTotalTaxValue" data-sortable="true">Total</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -118,7 +118,7 @@
             <div class="col-auto">
                 <input id="montoTotal" type="number"
                     class="form-control" name="montoTotal" step="0.01" @if (!$contract['contractsManualContract']) readonly @endif
-                    value="{{$tributaryDocument['tributarydocuments_totalAmountTax']}}">
+                    value="{{$tributaryDocument['tributarydocuments_totalAmount']}}">
             </div>
         </div>
 

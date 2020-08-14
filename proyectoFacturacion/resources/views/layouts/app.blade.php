@@ -151,9 +151,7 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                    <a class="dropdown-item" href="{{ route('logout') }}" id="logout">
                                         <i class="fas fa-sign-out-alt"></i> {{ __('Logout') }}
                                     </a>
 
@@ -233,6 +231,6 @@
         </div>
     </footer>
 </div>
-
+<script src="{{ asset('js/components/logout.js')}}"></script>
 </body>
 </html>
