@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Jobs\SendNotifications;
+
 use App\Permission;
 use App\ContractConditions;
 use App\ContractDistribution;
@@ -53,6 +56,7 @@ class TributarydocumentsController extends Controller
           $getContract = Contracts::where('id', $documentoTributario['idContract'])->first();
           $documentoTributario = Arr::add($documentoTributario, 'documentoTributario_contractName', $getContract->contractsNombre);
           $documentoTributario = Arr::add($documentoTributario, 'documentoTributario_IVA', 19);
+          $documentoTributario = Arr::add($documentoTributario, 'documentoTributario_isManual', $getContract->contractsManualContract);
           $montoTotalIva = $documentoTributario['tributarydocuments_totalAmount'] * 1.19;
           $documentoTributario = Arr::add($documentoTributario, 'documentoTributario_MontoTotalIVA', $montoTotalIva);
         }
@@ -61,6 +65,7 @@ class TributarydocumentsController extends Controller
 
     public function generateDocumentos($periodo) {
       $authPermisos = $this->getPermisos();
+      app('App\Http\Controllers\ApiquantitiesController')->apiQuantities();
       //HACER FACTURAS
         //Saca todos los contratos que ya han sido creados este periodo
         $getThisPeriodTributarydocuments = Tributarydocuments::where('tributarydocuments_period', $periodo)->get()->pluck('idContract');
@@ -195,6 +200,7 @@ class TributarydocumentsController extends Controller
       $contract = Contracts::find($documentoTributario->idContract);
       $periodo = $documentoTributario->tributarydocuments_period;
       app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $documentoTributario->getTable(), $contract->contractsNombre, $documentoTributario, null);
+      SendNotifications::dispatch('Facturas, ' . $contract->contractsNombre, 'Eliminación de factura')->onQueue('emails');
       $documentoTributario->delete();
       return redirect()->action('TributarydocumentsController@index', ['periodo' => $periodo])->with('success', 'Documento eliminado exitosamente');
     }/*
@@ -290,7 +296,7 @@ class TributarydocumentsController extends Controller
 
         $preTributary = Client::find($idTributarydocument);
         app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $tributaryDocument->getTable(), $contract->contractsNombre, $preTributary, $tributaryDocument);
-
+        SendNotifications::dispatch('Facturas, ' . $contract->contractsNombre, 'Redistribución de factura')->onQueue('emails');
         $tributaryDocument->save();
 
         //Generar la factura

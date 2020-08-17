@@ -34,20 +34,6 @@
     </div>
 
     <div class="form-group row">
-        <label for="idClient" class="col-md-4 col-form-label text-md-right">Cliente</label>
-
-        <div class="col-md-6">
-            <select class="form-control" id="idClient" name="idClient">
-                <option value="" selected>Ninguno seleccionado</option>
-                <!-- Permitir solo clientes padres desde Backend -->
-                @foreach($clients as $client)
-                <option value="{{$client['id']}}"@if ($contract['idClient'] == $client['id']) selected @endif>{{$client['clientRazonSocial']}}</option>
-                @endforeach
-            </select>
-        </div>
-    </div>
-
-    <div class="form-group row">
         <label id="labelPrecio" for="contractsConditions_Precio" class="col-md-4 col-form-label text-md-right">Precio</label>
         <div class="col-md-6">
             <input id="contractsConditions_Precio" type="number" step="0.01" class="form-control" name="contractsConditions_Precio" required>

@@ -51,6 +51,8 @@
                             {{$tributaryDetail['payment_units']}} {{$tributaryDetail['moduleName']}}
                                 <input type="hidden" name="idPaymentUnit[]" required
                                 value="{{$tributaryDetail['idPaymentUnit']}}">
+                                <input type="hidden" name="idModule[]" required
+                                value="{{$tributaryDetail['idModule']}}">
                         </td>
 
                         <td>

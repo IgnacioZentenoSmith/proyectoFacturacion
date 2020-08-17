@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendNotifications;
+
 use App\Permission;
 use App\Client;
 use App\ContractConditions;
@@ -78,6 +80,7 @@ class ContractdistributionController extends Controller
     }
 
     public function distributionsUpdate(Request $request, $idContrato) {
+        $contract = Contracts::find($idContrato);
         $largoTabla = $request->distributionsTableLength;
         $request->validate([
             'contractDistribution_id' => 'required|array|min:' . $largoTabla,
@@ -113,6 +116,7 @@ class ContractdistributionController extends Controller
                 $distributions->save();
             }
         }
+        SendNotifications::dispatch('Contratos, ' . $contract->contractsNombre, 'Actualización de distribución de cobro')->onQueue('emails');
         return redirect()->action('ContractdistributionController@distributionsIndex', ['idContrato' => $idContrato])->with('success', 'Distribución de cobros guardados exitosamente.');
 
     }

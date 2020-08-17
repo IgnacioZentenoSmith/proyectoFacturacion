@@ -39,6 +39,7 @@
         <thead>
           <tr>
             <th scope="col" data-field="contractNumber" data-sortable="true">Contrato</th>
+            <th scope="col" data-field="documentoTributario_isManual" data-sortable="true">Manual</th>
             <th scope="col" data-field="tributarydocuments_period" data-sortable="true">Periodo</th>
             <th scope="col" data-field="tributarydocuments_documentType" data-sortable="true">Documento</th>
             <th scope="col" data-field="tributarydocuments_totalAmount" data-sortable="true">Neto</th>
@@ -51,6 +52,9 @@
           @foreach ($documentosTributarios as $documentosTributario)
             <tr @if ($documentosTributario['tributarydocuments_totalAmount'] == 0) class="bg-light" @endif>
               <td>{{$documentosTributario['documentoTributario_contractName']}}</td>
+              <td>
+                <span class="badge @if ($documentosTributario['documentoTributario_isManual']) badge-warning @else badge-secondary @endif">Manual</span>
+              </td>
               <td>{{$documentosTributario['tributarydocuments_period']}}</td>
               <td class="text-right">{{$documentosTributario['tributarydocuments_documentType']}}</td>
               <td class="text-right">{{$documentosTributario['tributarydocuments_totalAmount']}} UF</td>

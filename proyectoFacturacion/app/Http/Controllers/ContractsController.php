@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Jobs\SendNotifications;
+
 use App\Permission;
 use App\Client;
 use App\ContractConditions;
@@ -130,6 +133,7 @@ class ContractsController extends Controller
         //Guarda datos
         $newContract->save();
         app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newContract->getTable(), $nombre, null, $newContract);
+        SendNotifications::dispatch('Contratos, ' . $nombre, 'Creación de contrato')->onQueue('emails');
         return redirect('contracts')->with('success', 'Contrato agregado exitosamente.');
     }
 
@@ -205,7 +209,7 @@ class ContractsController extends Controller
 
             $precontrato = Contracts::find($id);
             app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $contract->getTable(), $nombre, $contract, $precontrato);
-
+            SendNotifications::dispatch('Contratos, ' . $nombre, 'Actualización de contrato')->onQueue('emails');
             $contract->save();
             return redirect('contracts')->with('success', 'Contrato editado exitosamente.');
         } else {
@@ -239,6 +243,7 @@ class ContractsController extends Controller
     {
         $contract = Contracts::find($id);
         app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $contract->getTable(), $contract->contractsNombre, $contract, null);
+        SendNotifications::dispatch('Contratos, ' . $contract->contractsNombre, 'Eliminación de contrato')->onQueue('emails');
         $contract->delete();
         return redirect('contracts')->with('success', 'Contrato eliminado exitosamente.');
     }
@@ -281,7 +286,6 @@ class ContractsController extends Controller
         $request->validate([
             'idModule'=> 'required|numeric',
             'idPaymentUnit'=> 'required|numeric',
-            'idClient'=> 'required|numeric',
             'contractsConditions_Precio'=> 'required|numeric|min:0',
             'contractsConditions_Modalidad'=> 'required|string|max:100',
             'contractsConditions_Cantidad'=> 'required|numeric|min:0',
@@ -292,7 +296,7 @@ class ContractsController extends Controller
         $newContractConditions = new ContractConditions([
             'idModule' => $request->idModule,
             'idPaymentUnit' => $request->idPaymentUnit,
-            'idClient' => $request->idClient,
+            'idClient' => $contract->idClient,
             'idContract' => $id,
             'contractsConditions_Precio' => $request->contractsConditions_Precio,
             'contractsConditions_Modalidad' => $request->contractsConditions_Modalidad,
@@ -303,6 +307,7 @@ class ContractsController extends Controller
         //Guarda datos
         $newContractConditions->save();
         app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newContractConditions->getTable(), $contract->contractsNombre, null, $newContractConditions);
+        SendNotifications::dispatch('Contratos, ' . $contract->contractsNombre, 'Creación de condición contractual')->onQueue('emails');
         return redirect()->action('ContractsController@conditionsIndex', ['id' => $id])->with('success', 'Condicion contractual agregada exitosamente.');
     }
     //RECIBE ID DE CONDICION CONTRACTUAL
@@ -323,7 +328,6 @@ class ContractsController extends Controller
         $request->validate([
             'idModule'=> 'required|numeric',
             'idPaymentUnit'=> 'required|numeric',
-            'idClient'=> 'required|numeric',
             'contractsConditions_Precio'=> 'required|numeric|min:0',
             'contractsConditions_Modalidad'=> 'required|string|max:100',
             'contractsConditions_Cantidad'=> 'required|numeric|min:0',
@@ -345,7 +349,6 @@ class ContractsController extends Controller
         $contractConditions = ContractConditions::find($id);
         $contractConditions->idModule = $request->idModule;
         $contractConditions->idPaymentUnit = $request->idPaymentUnit;
-        $contractConditions->idClient = $request->idClient;
         //ID del contrato es el mismo
         $contractConditions->contractsConditions_Precio = $request->contractsConditions_Precio;
         $contractConditions->contractsConditions_Modalidad = $request->contractsConditions_Modalidad;
@@ -360,7 +363,7 @@ class ContractsController extends Controller
             $newContractConditions = new ContractConditions([
                 'idModule' => $request->idModule,
                 'idPaymentUnit' => $request->idPaymentUnit,
-                'idClient' => $request->idClient,
+                'idClient' => $contractConditions->idClient,
                 'idContract' => $contractConditions->idContract,
                 'contractsConditions_Precio' => $request->contractsConditions_Precio,
                 'contractsConditions_Modalidad' => $request->contractsConditions_Modalidad,
@@ -370,6 +373,7 @@ class ContractsController extends Controller
             ]);
             $preConditions = ContractConditions::find($id);
             app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $newContractConditions->getTable(), $contract->contractsNombre, $newContractConditions, $preConditions);
+            SendNotifications::dispatch('Contratos, ' . $contract->contractsNombre, 'Actualización de condición contractual')->onQueue('emails');
             $newContractConditions->save();
              return redirect()->action('ContractsController@conditionsIndex', ['id' => $contractId])->with('success', 'Condicion contractual editada exitosamente.');
         } else {
@@ -382,6 +386,7 @@ class ContractsController extends Controller
         $contractId = $contractCondition->idContract;
         $contract = Contracts::find($contractId);
         app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $contractCondition->getTable(), $contract->contractsNombre, $contractCondition, null);
+        SendNotifications::dispatch('Contratos, ' . $contract->contractsNombre, 'Eliminación de condición contractual')->onQueue('emails');
         $contractCondition->delete();
         return redirect()->action('ContractsController@conditionsIndex', ['id' => $contractId])->with('success', 'Condicion contractual eliminada exitosamente.');
     }
