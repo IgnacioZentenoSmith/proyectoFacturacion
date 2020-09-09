@@ -240,7 +240,7 @@ class ProcessApis implements ShouldQueue
             }
         }
         else if ($uniqueConditions->contains('payment_units', 'Unidades por proyecto'))  {
-            $PaymentUnitId = 30;
+            $PaymentUnitId = 41;
         }
         //cualquier otro id
         else {

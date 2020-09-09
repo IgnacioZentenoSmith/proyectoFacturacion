@@ -53,7 +53,8 @@ class ApiquantitiesController extends Controller
                         ->orWhere('contractsConditions_fechaTermino', '>=', $periodo . '-25');
                 })
                 ->join('payment_units', 'payment_units.id', '=', 'contract_conditions.idPaymentUnit')
-                ->select('contract_conditions.*', 'payment_units.payment_units')
+                ->join('modules', 'modules.id', '=', 'contract_conditions.idModule')
+                ->select('contract_conditions.*', 'payment_units.payment_units', 'modules.moduleParentId')
                 ->get();
 
                 //Donde la modalidad sea fija o variable
@@ -62,10 +63,14 @@ class ApiquantitiesController extends Controller
                 //Hay al menos 1 -> generar cantidades
                 if ($contractConditions_FijoVariable->count() > 0) {
                     foreach ($contractConditions_FijoVariable as $contractCondition_FijoVariable) {
-                        if ($contractCondition_FijoVariable->idModule == 1 || $contractCondition_FijoVariable->idModule == 2) {
+                        //Modulo padre o el modulo es GCI / PVI
+                        if ($contractCondition_FijoVariable->idModule == 1 || $contractCondition_FijoVariable->idModule == 2 ||
+                            $contractCondition_FijoVariable->moduleParentId == 1 || $contractCondition_FijoVariable->moduleParentId == 2) {
                             $this->calculate_GCIPVIquantities($periodo, $contractCondition_FijoVariable, $contractPaymentDetails, $contractConditions);
                         }
-                        else if ($contractCondition_FijoVariable->idModule == 3 || $contractCondition_FijoVariable->idModule == 12) {
+                        //Modulo padre o el modulo es DTP / LICITA
+                        else if ($contractCondition_FijoVariable->idModule == 3 || $contractCondition_FijoVariable->idModule == 12 ||
+                                $contractCondition_FijoVariable->moduleParentId == 3 || $contractCondition_FijoVariable->moduleParentId == 12) {
                             $this->calculate_DTPLICITAquantities($periodo, $contractCondition_FijoVariable, $contractPaymentDetails, $contractConditions);
                         }
                     }
@@ -215,23 +220,12 @@ class ApiquantitiesController extends Controller
             else if ($contractCondition_FijoVariable->contractsConditions_Modalidad == 'Variable')  {
                 //Ordenar las condiciones -> variable / escalonados ... (de menor a mayor precio)  / adicional
                 $variableConditions = $contractConditions->where('idPaymentUnit', $contractCondition_FijoVariable->idPaymentUnit);
-                if ($variableConditions->where('contractsConditions_Modalidad', 'Adicional')) {
-                    $adicional = $variableConditions->where('contractsConditions_Modalidad', 'Adicional');
-                    $variableConditions = $variableConditions->where('contractsConditions_Modalidad', '!=', 'Adicional');
-                    $sortedVariableConditions = $variableConditions->sortBy('contractsConditions_Precio');
-                    $maxCantidad = $sortedVariableConditions->max('contractsConditions_Cantidad');
-                    $sortedVariableConditions = $sortedVariableConditions->concat($adicional);
-                }
-                else {
-                    $sortedVariableConditions = $variableConditions->sortBy('contractsConditions_Precio');
-                    $maxCantidad = $sortedVariableConditions->max('contractsConditions_Cantidad');
-                }
-                //Descuentos
-                if ($variableConditions->where('contractsConditions_Modalidad', 'Descuento')) {
-                    $descuento = $sortedVariableConditions->where('contractsConditions_Modalidad', 'Descuento');
-                    $sortedVariableConditions = $sortedVariableConditions->where('contractsConditions_Modalidad', '!=', 'Descuento');
-                    $sortedVariableConditions = $sortedVariableConditions->concat($descuento);
-                }
+                //Ordenar
+                $sortedVariableConditions = $this->sortVariableConditions($variableConditions);
+                //Sacar la cantidad maxima
+                $maxCantidad = $sortedVariableConditions->whereIn('contractsConditions_Modalidad', ['Variable', 'Escalonado'])
+                ->max('contractsConditions_Cantidad');
+
                 $quantityMonto = 0;
                 $escalonAnterior = 0;
 
@@ -240,7 +234,11 @@ class ApiquantitiesController extends Controller
                     if ($sortedVariableCondition->contractsConditions_Modalidad == 'Variable') {
                         $cantidadCondicion = $sortedVariableCondition->contractsConditions_Cantidad;
                         $escalonAnterior = $cantidadCondicion;
-                        if ($cantidadDetalles - $cantidadCondicion >= 0) {
+
+                        if ($cantidadDetalles > 0 && $cantidadDetalles <= $cantidadCondicion) {
+                            $quantityMonto = $sortedVariableCondition->contractsConditions_Precio;
+                        }
+                        if ($cantidadDetalles >= $cantidadCondicion) {
                             $quantityMonto = $sortedVariableCondition->contractsConditions_Precio;
                         }
                     }
@@ -260,9 +258,18 @@ class ApiquantitiesController extends Controller
 
                     //Adicional
                     else if ($sortedVariableCondition->contractsConditions_Modalidad == 'Adicional') {
-                        if ($cantidadDetalles - $maxCantidad >= 1) {
-                            $quantityMonto += ($cantidadDetalles - $maxCantidad) * $sortedVariableCondition->contractsConditions_Precio;
+                        //Si la cantidad de detalles menos el mayor escalon es mayor que 0
+                        if ($cantidadDetalles - $maxCantidad > 0) {
+                            $cantidadCondicion = $sortedVariableCondition->contractsConditions_Cantidad;
+                            //Si la cantidad del adicional es mayor a 1, sacar division entera
+                            if ($cantidadCondicion > 1) {
+                                //Redondea hacia arriba
+                                $quantityMonto += round(($cantidadDetalles - $maxCantidad) / $cantidadCondicion) * $sortedVariableCondition->contractsConditions_Precio;
+                            } else if ($cantidadCondicion == 1) {
+                                $quantityMonto += ($cantidadDetalles - $maxCantidad) * $sortedVariableCondition->contractsConditions_Precio;
+                            }
                         }
+
                     }
                     //Descuento
                     else if ($sortedVariableCondition->contractsConditions_Modalidad == 'Descuento') {

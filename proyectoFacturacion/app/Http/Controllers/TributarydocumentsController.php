@@ -232,6 +232,7 @@ class TributarydocumentsController extends Controller
         ->get();
 
         $contractPaymentDetails = ContractPaymentDetails::where('idContract', $contract->id)
+        ->where('contractPaymentDetails_period', $tributaryDocument->tributarydocuments_period)
         ->join('payment_units', 'payment_units.id', '=', 'contract_payment_details.idPaymentUnit')
         ->join('clients', 'clients.id', '=', 'contract_payment_details.idClient')
         ->select('contract_payment_details.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units')
@@ -252,6 +253,7 @@ class TributarydocumentsController extends Controller
         ->get();
 
         $contractPaymentDetails = ContractPaymentDetails::where('idContract', $contract->id)
+        ->where('contractPaymentDetails_period', $tributaryDocument->tributarydocuments_period)
         ->join('payment_units', 'payment_units.id', '=', 'contract_payment_details.idPaymentUnit')
         ->join('clients', 'clients.id', '=', 'contract_payment_details.idClient')
         ->select('contract_payment_details.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units')
