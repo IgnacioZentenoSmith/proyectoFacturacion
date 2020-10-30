@@ -22,11 +22,10 @@ use Illuminate\Support\Facades\Http;
 class ApiquantitiesController extends Controller
 {
 
-    public function apiQuantities() {
-        $periodo = Carbon::now()->format('Y-m');
-
+    public function apiQuantities($periodo) {
         $contracts = Contracts::all();
         foreach ($contracts as $contract) {
+            $unidadDePagoDescuento = false;
             //Saca todos los detalles del contrato de este periodo
             $contractPaymentDetails = ContractPaymentDetails::where('contractPaymentDetails_period', $periodo)
                 ->where('idContract', $contract->id)
@@ -63,18 +62,36 @@ class ApiquantitiesController extends Controller
                 //Hay al menos 1 -> generar cantidades
                 if ($contractConditions_FijoVariable->count() > 0) {
                     foreach ($contractConditions_FijoVariable as $contractCondition_FijoVariable) {
-                        //Modulo padre o el modulo es GCI / PVI
-                        if ($contractCondition_FijoVariable->idModule == 1 || $contractCondition_FijoVariable->idModule == 2 ||
+                        //Existe la unidad de pago "Descuento"
+                        /*
+                            Se separa para que no cobre el monto que existe en esta unidad de pago
+                            Con esta condicion, sabemos si existe, y si existe, se le aplica a todas
+                            las cantidades que genere este contrato, los cuales se habran generado despues
+                            de este foreach.
+                        */
+                        if ($contractCondition_FijoVariable->payment_units == 'Descuento') {
+                            $unidadDePagoDescuento = true;
+                        }
+                        //No existe la unidad de pago descuento
+                        else
+                        {
+                            //Modulo padre o el modulo es GCI / PVI
+                            if ($contractCondition_FijoVariable->idModule == 1 || $contractCondition_FijoVariable->idModule == 2 ||
                             $contractCondition_FijoVariable->moduleParentId == 1 || $contractCondition_FijoVariable->moduleParentId == 2) {
                             $this->calculate_GCIPVIquantities($periodo, $contractCondition_FijoVariable, $contractPaymentDetails, $contractConditions);
-                        }
-                        //Modulo padre o el modulo es DTP / LICITA
-                        else if ($contractCondition_FijoVariable->idModule == 3 || $contractCondition_FijoVariable->idModule == 12 ||
-                                $contractCondition_FijoVariable->moduleParentId == 3 || $contractCondition_FijoVariable->moduleParentId == 12) {
-                            $this->calculate_DTPLICITAquantities($periodo, $contractCondition_FijoVariable, $contractPaymentDetails, $contractConditions);
+                            }
+                            //Modulo padre o el modulo es DTP / LICITA
+                            else if ($contractCondition_FijoVariable->idModule == 3 || $contractCondition_FijoVariable->idModule == 12 ||
+                                    $contractCondition_FijoVariable->moduleParentId == 3 || $contractCondition_FijoVariable->moduleParentId == 12) {
+                                $this->calculate_DTPLICITAquantities($periodo, $contractCondition_FijoVariable, $contractPaymentDetails, $contractConditions);
+                            }
                         }
                     }
                 }
+            }
+            //Aplicar el descuento si es que existe
+            if ($unidadDePagoDescuento) {
+                $this->applyUnidadDePagoDescuento($contract, $periodo);
             }
         }
     }
@@ -382,5 +399,26 @@ class ApiquantitiesController extends Controller
             $sortedVariableConditions = $sortedVariableConditions->concat($descuento);
         }
         return $sortedVariableConditions;
+    }
+
+    private function applyUnidadDePagoDescuento($contract, $periodo) {
+        //Sacamos todas las condiciones contractuales de este contrato
+        $contractConditions = ContractConditions::where('idContract', $contract->id)->get();
+        //Condicion contractual de unidad de pago = descuento -> ID = 5
+        $descuento = $contractConditions->where('idPaymentUnit', 5)->first();
+        $descuento = $descuento->contractsConditions_Precio;
+        //$descuento = $descuento->
+        //Ya que estamos buscando las cantidades que fueron creadas, no debemos verificar la fecha de las condiciones
+        foreach ($contractConditions as $contractCondition) {
+            //Aqui obtenemos las cantidades que fueron generadas en este periodo por este contrato
+            $quantities = Quantities::where('idContractCondition', $contractCondition->id)
+            ->where('quantitiesPeriodo', $periodo)
+            ->get();
+            foreach ($quantities as $quantity) {
+                //Aqui aplicamos el descuento a esta cantidad y la guardamos
+                $quantity->quantitiesMonto = $quantity->quantitiesMonto * (100 - $descuento) / 100;
+                $quantity->save();
+            }
+        }
     }
 }

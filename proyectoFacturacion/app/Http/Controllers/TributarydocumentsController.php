@@ -65,7 +65,7 @@ class TributarydocumentsController extends Controller
 
     public function generateDocumentos($periodo) {
       $authPermisos = $this->getPermisos();
-      app('App\Http\Controllers\ApiquantitiesController')->apiQuantities();
+      app('App\Http\Controllers\ApiquantitiesController')->apiQuantities($periodo);
       //HACER FACTURAS
         //Saca todos los contratos que ya han sido creados este periodo
         $getThisPeriodTributarydocuments = Tributarydocuments::where('tributarydocuments_period', $periodo)->get()->pluck('idContract');
@@ -199,11 +199,29 @@ class TributarydocumentsController extends Controller
       $documentoTributario = Tributarydocuments::find($id);
       $contract = Contracts::find($documentoTributario->idContract);
       $periodo = $documentoTributario->tributarydocuments_period;
+      $this->destroyDocumentQuantities($contract, $periodo);
       app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $documentoTributario->getTable(), $contract->contractsNombre, $documentoTributario, null);
       SendNotifications::dispatch('Facturas, ' . $contract->contractsNombre, 'Eliminación de factura')->onQueue('emails');
       $documentoTributario->delete();
       return redirect()->action('TributarydocumentsController@index', ['periodo' => $periodo])->with('success', 'Documento eliminado exitosamente');
-    }/*
+    }
+
+    //Sacar las cantidades de este contrato $contract en este periodo $periodo
+    private function destroyDocumentQuantities($contract, $periodo) {
+        //Saca todas las condiciones contractuales de este contrato
+        $contractConditions = ContractConditions::where('idContract', $contract->id)->get();
+        //Revisa y elimina todas las cantidades de las condiciones contractuales
+        //de este contrato en este periodo
+        foreach ($contractConditions as $contractCondition) {
+            $quantities = Quantities::where('idContractCondition', $contractCondition->id)
+            ->where('quantitiesPeriodo', $periodo)
+            ->first();
+            if ($quantities != null) {
+                $quantities->delete();
+            }
+        }
+    }
+    /*
     public function generateNotaCredito($id, $periodo) {
       $authPermisos = $this->getPermisos();
       $documentoTributario = Tributarydocuments::find($id);
