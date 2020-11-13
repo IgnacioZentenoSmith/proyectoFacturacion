@@ -29,7 +29,7 @@ function getCurrentPaymentUnit() {
         toggleDisableOptions('idModule', 1, true);
         document.getElementById('contractsConditions_Cantidad').readOnly = true;
         //Texto
-        document.getElementById('labelPrecio').innerHTML = 'Porcentaje de descuento';
+        document.getElementById('labelPrecio').innerHTML = 'Descuento';
     } else {
         //Set values
         document.getElementById('contractsConditions_Modalidad').options[0].selected = true;
