@@ -69,12 +69,8 @@ class ApiquantitiesController extends Controller
                             las cantidades que genere este contrato, los cuales se habran generado despues
                             de este foreach.
                         */
-                        if ($contractCondition_FijoVariable->payment_units == 'Descuento') {
-                            $unidadDePagoDescuento = true;
-                        }
-                        //No existe la unidad de pago descuento
-                        else
-                        {
+
+
                             //Modulo padre o el modulo es GCI / PVI
                             if ($contractCondition_FijoVariable->idModule == 1 || $contractCondition_FijoVariable->idModule == 2 ||
                             $contractCondition_FijoVariable->moduleParentId == 1 || $contractCondition_FijoVariable->moduleParentId == 2) {
@@ -85,14 +81,11 @@ class ApiquantitiesController extends Controller
                                     $contractCondition_FijoVariable->moduleParentId == 3 || $contractCondition_FijoVariable->moduleParentId == 12) {
                                 $this->calculate_DTPLICITAquantities($periodo, $contractCondition_FijoVariable, $contractPaymentDetails, $contractConditions);
                             }
-                        }
+
                     }
                 }
             }
-            //Aplicar el descuento si es que existe
-            if ($unidadDePagoDescuento) {
-                $this->applyUnidadDePagoDescuento($contract, $periodo);
-            }
+
         }
     }
 
@@ -402,11 +395,13 @@ class ApiquantitiesController extends Controller
     }
 
     private function applyUnidadDePagoDescuento($contract, $periodo) {
+        /*
         //Sacamos todas las condiciones contractuales de este contrato
         $contractConditions = ContractConditions::where('idContract', $contract->id)->get();
         //Condicion contractual de unidad de pago = descuento -> ID = 5
-        $descuento = $contractConditions->where('idPaymentUnit', 5)->first();
-        $descuento = $descuento->contractsConditions_Precio;
+        $descuento = $contractConditions->where('idPaymentUnit', 5);
+        $descuento = $descuento->sum('contractsConditions_Precio');
+        dd($descuento);
         //$descuento = $descuento->
         //Ya que estamos buscando las cantidades que fueron creadas, no debemos verificar la fecha de las condiciones
         foreach ($contractConditions as $contractCondition) {
@@ -420,5 +415,6 @@ class ApiquantitiesController extends Controller
                 $quantity->save();
             }
         }
+        */
     }
 }

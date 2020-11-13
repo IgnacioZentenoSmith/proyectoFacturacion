@@ -292,6 +292,11 @@ class ContractsController extends Controller
             'contractsConditions_fechaInicio'=> 'required|date_format:Y-m-d',
             'contractsConditions_fechaTermino'=> 'nullable|date_format:Y-m-d',
         ]);
+
+        # Unidad de pago descuento
+        if ($request->idPaymentUnit == 5) {
+            $request->contractsConditions_Precio = -1 * abs($request->contractsConditions_Precio);
+        }
         //Crea nueva condicion contractual
         $newContractConditions = new ContractConditions([
             'idModule' => $request->idModule,
@@ -343,6 +348,11 @@ class ContractsController extends Controller
         $contractConditionsFechaTermino->contractsConditions_fechaTermino = $request->contractsConditions_fechaTermino;
         if ($contractConditionsFechaTermino->isDirty('contractsConditions_fechaTermino')) {
             $contractConditionsFechaTermino->save();
+        }
+
+        # Unidad de pago descuento
+        if ($request->idPaymentUnit == 5) {
+            $request->contractsConditions_Precio = -1 * abs($request->contractsConditions_Precio);
         }
 
         //Verificar los otros campos
