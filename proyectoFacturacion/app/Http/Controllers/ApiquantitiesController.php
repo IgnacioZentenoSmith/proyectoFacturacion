@@ -128,7 +128,7 @@ class ApiquantitiesController extends Controller
                     $quantityMonto = 0;
                     $escalonAnterior = 0;
                     //ID de la condicion "variable"
-                    $variableConditionID = $sortedVariableConditions->where('contractsConditions_Modalidad', 'Variable')[0]->id;
+                    $variableCondition = $sortedVariableConditions->firstWhere('contractsConditions_Modalidad', 'Variable');
 
                     foreach ($sortedVariableConditions as $sortedVariableCondition) {
                         //Variable
@@ -171,7 +171,7 @@ class ApiquantitiesController extends Controller
                             $quantityMonto = round($quantityMonto * (100 - $sortedVariableCondition->contractsConditions_Precio) / 100, 2);
                         }
                     }
-                    $checkQuantity = Quantities::where('idContractCondition', $variableConditionID)
+                    $checkQuantity = Quantities::where('idContractCondition', $variableCondition->id)
                     ->where('quantitiesCantidad', $cantidadDetalles)
                     ->where('quantitiesPeriodo', $periodo)
                     ->where('quantitiesMonto', $quantityMonto)
@@ -179,7 +179,7 @@ class ApiquantitiesController extends Controller
 
                     if ($checkQuantity == null) {
                         $newQuantities = new Quantities([
-                            'idContractCondition' => $variableConditionID,
+                            'idContractCondition' => $variableCondition->id,
                             'quantitiesCantidad' => $cantidadDetalles,
                             'quantitiesPeriodo' => $periodo,
                             'quantitiesMonto' => $quantityMonto,
