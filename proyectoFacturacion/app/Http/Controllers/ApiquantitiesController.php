@@ -310,7 +310,8 @@ class ApiquantitiesController extends Controller
 
     public function calculate_UnidadesPorProyectoQuantities($unidadesPorProyectoConditions, $detalles, $periodo) {
         $sortedVariableConditions = $unidadesPorProyectoConditions->sortBy('contractsConditions_Precio');
-        $variableCondition = $sortedVariableConditions->where('contractsConditions_Modalidad', 'Variable');
+        //Condicion de modalidad variable
+        $variableCondition = $sortedVariableConditions->firstWhere('contractsConditions_Modalidad', 'Variable');
         //Montos iterables
         $quantityMonto = 0;
         $escalonAnterior = 0;
@@ -356,8 +357,8 @@ class ApiquantitiesController extends Controller
                 $cantidadDetallesTotal += $cantidadDetalles;
             }
         }
-
-        $checkQuantity = Quantities::where('idContractCondition', $variableCondition[0]->id)
+        //Busca a partir de la condicion "variable", que es la cabecera
+        $checkQuantity = Quantities::where('idContractCondition', $variableCondition->id)
         ->where('quantitiesCantidad', $cantidadDetallesTotal)
         ->where('quantitiesPeriodo', $periodo)
         ->where('quantitiesMonto', $montoTotal)
@@ -365,7 +366,7 @@ class ApiquantitiesController extends Controller
 
         if ($checkQuantity == null) {
             $newQuantities = new Quantities([
-                'idContractCondition' => $variableCondition[0]->id,
+                'idContractCondition' => $variableCondition->id,
                 'quantitiesCantidad' => $cantidadDetallesTotal,
                 'quantitiesPeriodo' => $periodo,
                 'quantitiesMonto' => $montoTotal,
