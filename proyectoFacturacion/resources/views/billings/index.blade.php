@@ -62,7 +62,7 @@
               <td class="text-right">{{$documentosTributario['tributarydocuments_totalAmountTax']}} UF</td>
               <td>
 
-                <div class="dropdown">
+                <div class="dropdown" style="position:unset;">
                     <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu_acciones{{$documentosTributario['id']}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Acciones
                     </button>

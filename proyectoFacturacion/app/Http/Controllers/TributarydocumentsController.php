@@ -90,8 +90,8 @@ class TributarydocumentsController extends Controller
             }
           }
           //Saca todas las condiciones contractuales con montos
-          $condicionesContractuales = $condicionesContractuales->whereNotNull('quantitiesMonto');
-          $uniqueContracts = $condicionesContractuales->unique('idContract');
+          $condicionesContractuales2 = $condicionesContractuales->whereNotNull('quantitiesMonto');
+          $uniqueContracts = $condicionesContractuales2->unique('idContract');
 
           $uniqueContracts = $uniqueContracts->pluck('idContract');
 
@@ -100,7 +100,7 @@ class TributarydocumentsController extends Controller
             $totalSuma = 0;
             $contract = Contracts::find($uniqueContract);
 
-            foreach ($condicionesContractuales as $condicionContractual) {
+            foreach ($condicionesContractuales2 as $condicionContractual) {
               //Si es el mismo contrato que se esta revisando
               if ($condicionContractual->idContract == $uniqueContract) {
                 $totalSuma += $condicionContractual->quantitiesMonto;

@@ -429,11 +429,11 @@ class ProcessApis implements ShouldQueue
         ->where('idClient', $idClient)
         ->where('idContract', $idContract)
         ->where('contractPaymentDetails_period', $periodo)
-        ->where('ccontractPaymentDetails_quantity', $quantity)
+      /*  ->where('ccontractPaymentDetails_quantity', $quantity)*/
         ->where('contractPaymentDetails_description', $description)
-        ->where('contractPaymentDetails_recepcionMunicipal', $recepcionMunicipal)
-        ->where('contractPaymentDetails_units', $units)
-        ->where('contractPaymentDetails_glosaProyecto', $glosaProyecto)
+      /*  ->where('contractPaymentDetails_recepcionMunicipal', $recepcionMunicipal)*/
+      /*  ->where('contractPaymentDetails_units', $units)*/
+      /*  ->where('contractPaymentDetails_glosaProyecto', $glosaProyecto)*/
         ->first();
         if ($checkContractPaymentDetail == null) {
             $newContractPaymentDetails = new ContractPaymentDetails([
