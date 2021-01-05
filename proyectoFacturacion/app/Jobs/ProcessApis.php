@@ -107,148 +107,6 @@ class ProcessApis implements ShouldQueue
         return $holdingID;
     }
 
-    private function getPaymentUnitID($uniqueConditions, $unidades) {
-        /*
-        GCI -> total_productos
-        PVI -> numero_unidades
-        */
-
-        //id 7 Proyecto mayor a 65 unidades
-        if ($uniqueConditions->contains('idPaymentUnit', 7)) {
-            if ($unidades > 65) {
-                $PaymentUnitId = 7;
-            } else {
-                $PaymentUnitId = 8;
-            }
-        }
-        //id 8 Proyecto hasta 65 unidades
-        else if ($uniqueConditions->contains('idPaymentUnit', 8))  {
-            if ($unidades <= 65) {
-                $PaymentUnitId = 8;
-            } else {
-                $PaymentUnitId = 7;
-            }
-        }
-        //id 10 Proyecto hasta 50 unidades
-        else if ($uniqueConditions->contains('idPaymentUnit', 10)) {
-            if ($unidades <= 50) {
-                $PaymentUnitId = 10;
-            } else {
-                $PaymentUnitId = 11;
-            }
-        }
-        //id 11 Proyecto sobre 50 unidades
-        else if ($uniqueConditions->contains('idPaymentUnit', 11))  {
-            if ($unidades > 50) {
-                $PaymentUnitId = 11;
-            } else {
-                $PaymentUnitId = 10;
-            }
-        }
-        //id 12 Proyecto HASTA 60 unidades
-        else if ($uniqueConditions->contains('idPaymentUnit', 12))  {
-            if ($unidades <= 60) {
-                $PaymentUnitId = 12;
-            } else {
-                $PaymentUnitId = 13;
-            }
-        }
-        //id 13 Proyecto SOBRE 60 unidades
-        else if ($uniqueConditions->contains('idPaymentUnit', 13))  {
-            if ($unidades > 60) {
-                $PaymentUnitId = 13;
-            } else {
-                $PaymentUnitId = 12;
-            }
-        }
-        //id 18 Proyecto desde 50 unidades y más
-        else if ($uniqueConditions->contains('idPaymentUnit', 18))  {
-            if ($unidades >= 50) {
-                $PaymentUnitId = 18;
-            } else {
-                $PaymentUnitId = 19;
-            }
-        }
-        //id 19 Proyecto con menos de 50 unidades
-        else if ($uniqueConditions->contains('idPaymentUnit', 19))  {
-            if ($unidades < 50) {
-                $PaymentUnitId = 19;
-            } else {
-                $PaymentUnitId = 18;
-            }
-        }
-        //id 20 Proyecto con menos de 40 unidades
-        else if ($uniqueConditions->contains('idPaymentUnit', 20))  {
-            if ($unidades < 40) {
-                $PaymentUnitId = 20;
-            } else {
-                $PaymentUnitId = 21;
-            }
-        }
-        //id 21 Proyecto desde 40 unidades y más
-        else if ($uniqueConditions->contains('idPaymentUnit', 21))  {
-            if ($unidades >= 40) {
-                $PaymentUnitId = 21;
-            } else {
-                $PaymentUnitId = 20;
-            }
-        }
-        //id 22 Proyecto hasta 20 unidades
-        else if ($uniqueConditions->contains('idPaymentUnit', 22))  {
-            if ($unidades <= 20) {
-                $PaymentUnitId = 22;
-            } else if ($unidades > 20 && $unidades <= 35) {
-                $PaymentUnitId = 23;
-            } else {
-                $PaymentUnitId = 24;
-            }
-        }
-        //id 23 Proyecto con 21 a 35 unidades
-        else if ($uniqueConditions->contains('idPaymentUnit', 23))  {
-            if ($unidades <= 20) {
-                $PaymentUnitId = 22;
-            } else if ($unidades > 20 && $unidades <= 35) {
-                $PaymentUnitId = 23;
-            } else {
-                $PaymentUnitId = 24;
-            }
-        }
-        //id 24 Proyecto con mas de 35 unidades
-        else if ($uniqueConditions->contains('idPaymentUnit', 24))  {
-            if ($unidades <= 20) {
-                $PaymentUnitId = 22;
-            } else if ($unidades > 20 && $unidades <= 35) {
-                $PaymentUnitId = 23;
-            } else {
-                $PaymentUnitId = 24;
-            }
-        }
-        //id 25 Proyecto hasta 30 unidades
-        else if ($uniqueConditions->contains('idPaymentUnit', 25))  {
-            if ($unidades <= 30) {
-                $PaymentUnitId = 25;
-            } else {
-                $PaymentUnitId = 26;
-            }
-        }
-        //id 26 Proyecto entre 31 y 60 unidades
-        else if ($uniqueConditions->contains('idPaymentUnit', 26))  {
-            if ($unidades <= 30) {
-                $PaymentUnitId = 25;
-            } else {
-                $PaymentUnitId = 26;
-            }
-        }
-        else if ($uniqueConditions->contains('payment_units', 'Unidades por proyecto'))  {
-            $PaymentUnitId = 41;
-        }
-        //cualquier otro id
-        else {
-            $PaymentUnitId = 2;
-        }
-        return $PaymentUnitId;
-    }
-
     //GCI = 1, PVI = 2, DTP = 3, ET = 4, LICITA = 12
     private function getAPIresponse($modulo) {
         if ($modulo == 'GCI') {
@@ -291,7 +149,6 @@ class ProcessApis implements ShouldQueue
                     $clientID = $this->getAPIClientID($res['holding_id_facturacion'], $res['empresas'][$i]['identificador']);
                     //Iteracion por cada proyecto de la empresa
                     foreach ($res['empresas'][$i]['proyectos'] as $proyecto) {
-                        $paymentUnitID = $this->getPaymentUnitID($uniqueConditions, $proyecto['total_productos']);
                         if ($proyecto['glosa_proyecto'] == null) {
                             $proyecto['glosa_proyecto'] = 'SIN GLOSA';
                         }
@@ -306,7 +163,7 @@ class ProcessApis implements ShouldQueue
                         }
                         $description = $proyecto['glosa_proyecto'] . ' / ' .  $proyecto['glosa_etapa'] . ' / ' .  $proyecto['glosa_subagrupacion'];
 
-                        $this->createContractPaymentDetails($paymentUnitID, $clientID, $contract->id, $periodo, 1, $description,
+                        $this->createContractPaymentDetails($clientID, $contract->id, $periodo, 1, $description,
                             $proyecto['fecha_recepcion_municipal'], $proyecto['total_productos'], $proyecto['glosa_proyecto']);
                     }
                 }
@@ -326,7 +183,6 @@ class ProcessApis implements ShouldQueue
                     $clientID = $this->getAPIClientID($res['holding_id_facturacion'], $res['empresas'][$i]['identificador']);
                     //Iteracion por cada proyecto de la empresa
                     foreach ($res['empresas'][$i]['proyectos'] as $proyecto) {
-                        $paymentUnitID = $this->getPaymentUnitID($uniqueConditions, $proyecto['numero_unidades']);
                         if ($proyecto['proyecto_nombre'] == null) {
                             $proyecto['proyecto_nombre'] = 'SIN NOMBRE';
                         }
@@ -338,7 +194,7 @@ class ProcessApis implements ShouldQueue
                         }
                         $description = $proyecto['proyecto_nombre'] . ' / ' . $proyecto['etapa_id'];
 
-                        $this->createContractPaymentDetails($paymentUnitID, $clientID, $contract->id, $periodo, 1, $description,
+                        $this->createContractPaymentDetails($clientID, $contract->id, $periodo, 1, $description,
                             $proyecto['fecha_recepcion_municipal'], $proyecto['numero_unidades'], null);
                     }
                 }
@@ -367,9 +223,9 @@ class ProcessApis implements ShouldQueue
                     }
                     $descripcionArchivos = 'Archivos ' . $res['empresas'][$i]['razon_social'];
                     $descripcionProyectos = 'Proyectos ' . $res['empresas'][$i]['razon_social'];
-                    $this->createContractPaymentDetails(3, $clientID, $contract->id, $periodo, $cantArchivos, $descripcionArchivos,
+                    $this->createContractPaymentDetails($clientID, $contract->id, $periodo, $cantArchivos, $descripcionArchivos,
                         null, null, null);
-                    $this->createContractPaymentDetails(2, $clientID, $contract->id, $periodo, $cantProyectos, $descripcionProyectos,
+                    $this->createContractPaymentDetails($clientID, $contract->id, $periodo, $cantProyectos, $descripcionProyectos,
                         null, null, null);
                 }
             }
@@ -392,7 +248,7 @@ class ProcessApis implements ShouldQueue
                         $cantArchivos = 0;
                     }
 
-                    $this->createContractPaymentDetails(4, $clientID, $contract->id, $periodo, $cantArchivos, 'Licitaciones',
+                    $this->createContractPaymentDetails($clientID, $contract->id, $periodo, $cantArchivos, 'Licitaciones',
                         null, null, null);
                 }
             }
@@ -421,12 +277,11 @@ class ProcessApis implements ShouldQueue
         return $sortedVariableConditions;
     }
 
-    private function createContractPaymentDetails($idPaymentUnit, $idClient, $idContract, $periodo,
+    private function createContractPaymentDetails($idClient, $idContract, $periodo,
     $quantity, $description, $recepcionMunicipal, $units, $glosaProyecto) {
 
         //Si no existe, crear
-        $checkContractPaymentDetail = ContractPaymentDetails::where('idPaymentUnit', $idPaymentUnit)
-        ->where('idClient', $idClient)
+        $checkContractPaymentDetail = ContractPaymentDetails::where('idClient', $idClient)
         ->where('idContract', $idContract)
         ->where('contractPaymentDetails_period', $periodo)
       /*  ->where('ccontractPaymentDetails_quantity', $quantity)*/
@@ -437,7 +292,7 @@ class ProcessApis implements ShouldQueue
         ->first();
         if ($checkContractPaymentDetail == null) {
             $newContractPaymentDetails = new ContractPaymentDetails([
-                'idPaymentUnit' => $idPaymentUnit,
+                'idPaymentUnit' => null,
                 'idClient' => $idClient,
                 'idContract' => $idContract,
                 'contractPaymentDetails_period' => $periodo,
