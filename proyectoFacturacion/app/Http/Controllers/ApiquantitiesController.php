@@ -25,7 +25,7 @@ class ApiquantitiesController extends Controller
     public function apiQuantities($periodo) {
         $contracts = Contracts::all();
         foreach ($contracts as $contract) {
-            $unidadDePagoDescuento = false;
+
             //Saca todos los detalles del contrato de este periodo
             $contractPaymentDetails = ContractPaymentDetails::where('contractPaymentDetails_period', $periodo)
                 ->where('idContract', $contract->id)
@@ -33,6 +33,14 @@ class ApiquantitiesController extends Controller
 
             //Hay al menos 1 detalle -> buscar condiciones contractuales
             if ($contractPaymentDetails->count() > 0) {
+
+                /*
+                Si existen detalles, clasificar sus unidades de pago para este periodo
+                Ya se encuentran filtrados por fecha en el where anterior
+                */
+                $this->classifyContractPaymentDetailsUnits($contractPaymentDetails);
+
+
                 if ($contract->contractsRecepcionMunicipal) {
 
                     $contractPaymentDetails = $contractPaymentDetails->unique(function ($item) {
@@ -71,21 +79,19 @@ class ApiquantitiesController extends Controller
                         */
 
 
-                            //Modulo padre o el modulo es GCI / PVI
-                            if ($contractCondition_FijoVariable->idModule == 1 || $contractCondition_FijoVariable->idModule == 2 ||
-                            $contractCondition_FijoVariable->moduleParentId == 1 || $contractCondition_FijoVariable->moduleParentId == 2) {
-                            $this->calculate_GCIPVIquantities($periodo, $contractCondition_FijoVariable, $contractPaymentDetails, $contractConditions);
-                            }
-                            //Modulo padre o el modulo es DTP / LICITA
-                            else if ($contractCondition_FijoVariable->idModule == 3 || $contractCondition_FijoVariable->idModule == 12 ||
-                                    $contractCondition_FijoVariable->moduleParentId == 3 || $contractCondition_FijoVariable->moduleParentId == 12) {
-                                $this->calculate_DTPLICITAquantities($periodo, $contractCondition_FijoVariable, $contractPaymentDetails, $contractConditions);
-                            }
-
+                        //Modulo padre o el modulo es GCI / PVI
+                        if ($contractCondition_FijoVariable->idModule == 1 || $contractCondition_FijoVariable->idModule == 2 ||
+                        $contractCondition_FijoVariable->moduleParentId == 1 || $contractCondition_FijoVariable->moduleParentId == 2) {
+                        $this->calculate_GCIPVIquantities($periodo, $contractCondition_FijoVariable, $contractPaymentDetails, $contractConditions);
+                        }
+                        //Modulo padre o el modulo es DTP / LICITA
+                        else if ($contractCondition_FijoVariable->idModule == 3 || $contractCondition_FijoVariable->idModule == 12 ||
+                                $contractCondition_FijoVariable->moduleParentId == 3 || $contractCondition_FijoVariable->moduleParentId == 12) {
+                            $this->calculate_DTPLICITAquantities($periodo, $contractCondition_FijoVariable, $contractPaymentDetails, $contractConditions);
+                        }
                     }
                 }
             }
-
         }
     }
 
@@ -395,27 +401,219 @@ class ApiquantitiesController extends Controller
         return $sortedVariableConditions;
     }
 
-    private function applyUnidadDePagoDescuento($contract, $periodo) {
+
+
+
+
+
+
+    // Clasificar payment units de los resultados de la API
+    private function getGCIPVIPaymentUnitID($uniqueConditions, $unidades) {
         /*
-        //Sacamos todas las condiciones contractuales de este contrato
-        $contractConditions = ContractConditions::where('idContract', $contract->id)->get();
-        //Condicion contractual de unidad de pago = descuento -> ID = 5
-        $descuento = $contractConditions->where('idPaymentUnit', 5);
-        $descuento = $descuento->sum('contractsConditions_Precio');
-        dd($descuento);
-        //$descuento = $descuento->
-        //Ya que estamos buscando las cantidades que fueron creadas, no debemos verificar la fecha de las condiciones
-        foreach ($contractConditions as $contractCondition) {
-            //Aqui obtenemos las cantidades que fueron generadas en este periodo por este contrato
-            $quantities = Quantities::where('idContractCondition', $contractCondition->id)
-            ->where('quantitiesPeriodo', $periodo)
-            ->get();
-            foreach ($quantities as $quantity) {
-                //Aqui aplicamos el descuento a esta cantidad y la guardamos
-                $quantity->quantitiesMonto = $quantity->quantitiesMonto * (100 - $descuento) / 100;
-                $quantity->save();
+        GCI -> total_productos
+        PVI -> numero_unidades
+        */
+
+        //id 7 Proyecto mayor a 65 unidades
+        if ($uniqueConditions->contains('idPaymentUnit', 7)) {
+            if ($unidades > 65) {
+                $PaymentUnitId = 7;
+            } else {
+                $PaymentUnitId = 8;
             }
         }
-        */
+        //id 8 Proyecto hasta 65 unidades
+        else if ($uniqueConditions->contains('idPaymentUnit', 8))  {
+            if ($unidades <= 65) {
+                $PaymentUnitId = 8;
+            } else {
+                $PaymentUnitId = 7;
+            }
+        }
+        //id 10 Proyecto hasta 50 unidades
+        else if ($uniqueConditions->contains('idPaymentUnit', 10)) {
+            if ($unidades <= 50) {
+                $PaymentUnitId = 10;
+            } else {
+                $PaymentUnitId = 11;
+            }
+        }
+        //id 11 Proyecto sobre 50 unidades
+        else if ($uniqueConditions->contains('idPaymentUnit', 11))  {
+            if ($unidades > 50) {
+                $PaymentUnitId = 11;
+            } else {
+                $PaymentUnitId = 10;
+            }
+        }
+        //id 12 Proyecto HASTA 60 unidades
+        else if ($uniqueConditions->contains('idPaymentUnit', 12))  {
+            if ($unidades <= 60) {
+                $PaymentUnitId = 12;
+            } else {
+                $PaymentUnitId = 13;
+            }
+        }
+        //id 13 Proyecto SOBRE 60 unidades
+        else if ($uniqueConditions->contains('idPaymentUnit', 13))  {
+            if ($unidades > 60) {
+                $PaymentUnitId = 13;
+            } else {
+                $PaymentUnitId = 12;
+            }
+        }
+        //id 18 Proyecto desde 50 unidades y más
+        else if ($uniqueConditions->contains('idPaymentUnit', 18))  {
+            if ($unidades >= 50) {
+                $PaymentUnitId = 18;
+            } else {
+                $PaymentUnitId = 19;
+            }
+        }
+        //id 19 Proyecto con menos de 50 unidades
+        else if ($uniqueConditions->contains('idPaymentUnit', 19))  {
+            if ($unidades < 50) {
+                $PaymentUnitId = 19;
+            } else {
+                $PaymentUnitId = 18;
+            }
+        }
+        //id 20 Proyecto con menos de 40 unidades
+        else if ($uniqueConditions->contains('idPaymentUnit', 20))  {
+            if ($unidades < 40) {
+                $PaymentUnitId = 20;
+            } else {
+                $PaymentUnitId = 21;
+            }
+        }
+        //id 21 Proyecto desde 40 unidades y más
+        else if ($uniqueConditions->contains('idPaymentUnit', 21))  {
+            if ($unidades >= 40) {
+                $PaymentUnitId = 21;
+            } else {
+                $PaymentUnitId = 20;
+            }
+        }
+        //id 22 Proyecto hasta 20 unidades
+        else if ($uniqueConditions->contains('idPaymentUnit', 22))  {
+            if ($unidades <= 20) {
+                $PaymentUnitId = 22;
+            } else if ($unidades > 20 && $unidades <= 35) {
+                $PaymentUnitId = 23;
+            } else {
+                $PaymentUnitId = 24;
+            }
+        }
+        //id 23 Proyecto con 21 a 35 unidades
+        else if ($uniqueConditions->contains('idPaymentUnit', 23))  {
+            if ($unidades <= 20) {
+                $PaymentUnitId = 22;
+            } else if ($unidades > 20 && $unidades <= 35) {
+                $PaymentUnitId = 23;
+            } else {
+                $PaymentUnitId = 24;
+            }
+        }
+        //id 24 Proyecto con mas de 35 unidades
+        else if ($uniqueConditions->contains('idPaymentUnit', 24))  {
+            if ($unidades <= 20) {
+                $PaymentUnitId = 22;
+            } else if ($unidades > 20 && $unidades <= 35) {
+                $PaymentUnitId = 23;
+            } else {
+                $PaymentUnitId = 24;
+            }
+        }
+        //id 25 Proyecto hasta 30 unidades
+        else if ($uniqueConditions->contains('idPaymentUnit', 25))  {
+            if ($unidades <= 30) {
+                $PaymentUnitId = 25;
+            } else {
+                $PaymentUnitId = 26;
+            }
+        }
+        //id 26 Proyecto entre 31 y 60 unidades
+        else if ($uniqueConditions->contains('idPaymentUnit', 26))  {
+            if ($unidades <= 30) {
+                $PaymentUnitId = 25;
+            } else {
+                $PaymentUnitId = 26;
+            }
+        }
+        else if ($uniqueConditions->contains('payment_units', 'Unidades por proyecto'))  {
+            $PaymentUnitId = 41;
+        }
+        //cualquier otro id
+        else {
+            $PaymentUnitId = 2;
+        }
+        return $PaymentUnitId;
+    }
+
+    // Funcion encargada de sacar las condiciones del contrato
+    private function getUniqueContractConditions($idContract) {
+        if ($idContract != null) {
+            //Trae las unidades de pago unicas por cada contrato
+            $uniqueContractConditions = ContractConditions::where('idContract', $idContract)
+            ->join('payment_units', 'payment_units.id', '=', 'contract_conditions.idPaymentUnit')
+            ->select('contract_conditions.idContract', 'contract_conditions.idPaymentUnit', 'payment_units.payment_units')
+            ->distinct()
+            ->get();
+            //Si hay mas de 1
+            if ($uniqueContractConditions->count() > 0) {
+                return $uniqueContractConditions;
+            }
+        }
+        return null;
+    }
+
+    // Funcion encargada de clasificar las unidades de pago de todos los contract payment details de este periodo
+    private function classifyContractPaymentDetailsUnits($contractPaymentDetails) {
+        foreach ($contractPaymentDetails as $contractPaymentDetail) {
+            // Si ya esta clasificado, ignorar
+            if ($contractPaymentDetail->idPaymentUnit == null) {
+                // Variables necesarias
+                $idContract = $contractPaymentDetail->idContract;
+                $idModule = Contracts::find($idContract)->idModule;
+                /*
+                1 = GCI
+                2 = PVI
+                3 = DTP
+                4 = ET ** No usado
+                12 = LICITA
+                */
+                $uniqueConditions = $this->getUniqueContractConditions($idContract);
+                //Si existen condiciones en este contrato
+                if ($uniqueConditions != null) {
+                    // Obtencion de su Unidad de pago
+
+                    // GCI o PVI
+                    if ($idModule == 1 || $idModule == 2) {
+                        $unidades = $contractPaymentDetail->contractPaymentDetails_units;
+                        $paymentUnitID = $this->getGCIPVIPaymentUnitID($uniqueConditions, $unidades);
+                    }
+                    // DTP --> se crean 2 registros --> archivos y proyectos
+                    // La unica diferencia entre ellos se encuentra en la descripcion
+                    else if ($idModule == 3) {
+                        $description = $contractPaymentDetail->contractPaymentDetails_description;
+                        if (Str::contains($description, 'Proyectos')) {
+                            $paymentUnitID = 2;
+                        }
+                        else if (Str::contains($description, 'Archivos')) {
+                            $paymentUnitID = 3;
+                        }
+                    }
+                    // LICITA
+                    else if ($idModule == 12) {
+                        $paymentUnitID = 4;
+                    }
+
+
+                    // Clasificar y guardar
+                    $contractPaymentDetail->idPaymentUnit = $paymentUnitID;
+                    $contractPaymentDetail->save();
+                }
+            }
+        }
     }
 }
