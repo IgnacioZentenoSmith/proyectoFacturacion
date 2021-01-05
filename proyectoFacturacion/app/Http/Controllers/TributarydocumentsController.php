@@ -200,6 +200,7 @@ class TributarydocumentsController extends Controller
       $contract = Contracts::find($documentoTributario->idContract);
       $periodo = $documentoTributario->tributarydocuments_period;
       $this->destroyDocumentQuantities($contract, $periodo);
+      $this->setNullContractPaymentDetailsUnits($contract, $periodo);
       app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $documentoTributario->getTable(), $contract->contractsNombre, $documentoTributario, null);
       SendNotifications::dispatch('Facturas, ' . $contract->contractsNombre, 'Eliminación de factura')->onQueue('emails');
       $documentoTributario->delete();
@@ -221,20 +222,19 @@ class TributarydocumentsController extends Controller
             }
         }
     }
-    /*
-    public function generateNotaCredito($id, $periodo) {
-      $authPermisos = $this->getPermisos();
-      $documentoTributario = Tributarydocuments::find($id);
-      $newTributaryDocument = new Tributarydocuments([
-        'idContract' => $documentoTributario->idContract,
-        'tributarydocuments_period' => $documentoTributario->tributarydocuments_period,
-        'tributarydocuments_documentType' => 'Nota de crédito',
-        'tributarydocuments_totalAmount' => $documentoTributario->tributarydocuments_totalAmount
-      ]);
-      $newTributaryDocument->save();
-      return redirect()->action('TributarydocumentsController@index', ['periodo' => $periodo])->with('success', 'Nota de credito generada exitosamente');
+
+
+    private function setNullContractPaymentDetailsUnits($contract, $periodo) {
+        //Saca todos los detalles del contrato de este periodo
+        $contractPaymentDetails = ContractPaymentDetails::where('contractPaymentDetails_period', $periodo)
+        ->where('idContract', $contract->id)
+        ->get();
+        foreach ($contractPaymentDetails as $contractPaymentDetail) {
+            // Poner la unidad en nulo y guardar
+            $contractPaymentDetail->idPaymentUnit = null;
+            $contractPaymentDetail->save();
+        }
     }
-    */
 
 
     public function paymentDetailsIndex($idTributarydocument) {
