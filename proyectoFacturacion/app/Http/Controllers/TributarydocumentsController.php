@@ -249,12 +249,18 @@ class TributarydocumentsController extends Controller
         ->select('tributarydetails.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units', 'modules.moduleName')
         ->get();
 
+        #Obtener las unidades de pago que se estan cobrando
+        $tributaryDetails_idPaymentUnits = $tributaryDetails->pluck('idPaymentUnit')->unique();
+
         $contractPaymentDetails = ContractPaymentDetails::where('idContract', $contract->id)
         ->where('contractPaymentDetails_period', $tributaryDocument->tributarydocuments_period)
+        #Filtrar por las unidades de pago que se estan cobrando
+        ->whereIn('contract_payment_details.idPaymentUnit', $tributaryDetails_idPaymentUnits)
         ->join('payment_units', 'payment_units.id', '=', 'contract_payment_details.idPaymentUnit')
         ->join('clients', 'clients.id', '=', 'contract_payment_details.idClient')
         ->select('contract_payment_details.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units')
         ->get();
+
         return view('billings.paymentDetails', compact('authPermisos', 'tributaryDocument', 'contract', 'tributaryDetails', 'contractPaymentDetails'));
     }
 
