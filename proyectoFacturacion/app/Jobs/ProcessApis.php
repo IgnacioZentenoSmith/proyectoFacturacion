@@ -186,13 +186,13 @@ class ProcessApis implements ShouldQueue
                         if ($proyecto['proyecto_nombre'] == null) {
                             $proyecto['proyecto_nombre'] = 'SIN NOMBRE';
                         }
-                        if ($proyecto['etapa_id'] == null) {
-                            $proyecto['etapa_id'] = 'SIN ETAPA';
+                        if ($proyecto['etapa_nombre'] == null) {
+                            $proyecto['etapa_nombre'] = 'SIN ETAPA';
                         }
                         if ($proyecto['fecha_recepcion_municipal'] == '0000-00-00') {
                             $proyecto['fecha_recepcion_municipal'] = null;
                         }
-                        $description = $proyecto['proyecto_nombre'] . ' / ' . $proyecto['etapa_id'];
+                        $description = $proyecto['proyecto_nombre'] . ' / ' . $proyecto['etapa_nombre'];
 
                         $this->createContractPaymentDetails($clientID, $contract->id, $periodo, 1, $description,
                             $proyecto['fecha_recepcion_municipal'], $proyecto['numero_unidades'], $proyecto['proyecto_nombre']);
