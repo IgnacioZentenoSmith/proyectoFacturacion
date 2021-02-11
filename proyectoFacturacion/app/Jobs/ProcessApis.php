@@ -195,7 +195,7 @@ class ProcessApis implements ShouldQueue
                         $description = $proyecto['proyecto_nombre'] . ' / ' . $proyecto['etapa_id'];
 
                         $this->createContractPaymentDetails($clientID, $contract->id, $periodo, 1, $description,
-                            $proyecto['fecha_recepcion_municipal'], $proyecto['numero_unidades'], null);
+                            $proyecto['fecha_recepcion_municipal'], $proyecto['numero_unidades'], $proyecto['proyecto_nombre']);
                     }
                 }
             }
