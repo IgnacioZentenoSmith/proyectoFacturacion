@@ -3,6 +3,43 @@
 
 <div class="row justify-content-center">
   <div class="col-auto">
+  <div class="col-12">
+  <form method="GET" id="inputPeriodoForm" action="{{ route('billings.managerExport', $periodo) }}">
+          @csrf
+          {{ method_field('GET') }}
+          <div class="form-group row">
+              <div class="col-md-3">
+                  <input id="inputPeriodo" type="month" class="form-control" name="inputPeriodo" required value="{{$periodo}}">
+              </div>
+          </div>
+
+          <div class="form-group row">
+              <div class="col-md-3">
+                  <button type="submit" class="btn btn-primary">
+                      Seleccionar período
+                  </button>
+              </div>
+          </div>
+      </form>
+      <form method="GET" id="inputPeriodoForm" action="{{ route('billings.managerExport', $periodo) }}" style="display:none !important;">
+          @csrf
+          {{ method_field('GET') }}
+          <div class="form-group row">
+              <div class="col-md-3">
+                  <input id="inputPeriodo" type="month" class="form-control" name="inputPeriodo" required value="{{$periodo}}">
+              </div>
+          </div>
+
+          <div class="form-group row">
+              <div class="col-md-3">
+                  <button type="submit" class="btn btn-primary">
+                      Seleccionar período
+                  </button>
+              </div>
+          </div>
+      </form>
+
+    </div>
 
     <div class="table-responsive">
       <table id="btTable" class="table table-hover w-auto text-nowrap btTable" data-show-export="true"
@@ -94,7 +131,7 @@
 
         </thead>
         <tbody>
-          @foreach ($managerData as $manager)
+          @foreach ($dataFinal as $manager)
             <tr>
               <td>1</td>
               <td>1</td>
@@ -131,6 +168,11 @@
                   ^^
                   <br>
                   Periodo del 26-{{$periodoManager1}} al 25-{{$periodoManager2}}^
+                  <br>
+                 @foreach ($manager['detalles'] as $deta)
+                  {{$deta['contractPaymentDetails_description']}} ^<br>
+                 @endforeach
+
                 </td>
               <td></td>
               <td></td>
@@ -185,4 +227,5 @@
 </div>
 
 <script src="{{ asset('js/components/initBTtables.js')}}"></script>
+<script src="{{ asset('js/components/getCurrentDate.js')}}"></script>
 @endsection

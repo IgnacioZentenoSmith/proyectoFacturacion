@@ -5,10 +5,10 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item">
-        <a class="nav-link @if (!request()->is('billings/manager/export')) active @endif" href="{{route('billings.index', 0)}}">Lista de documentos tributarios</a>
+        <a class="nav-link @if (request()->path() =='billings/0') active @endif" href="{{route('billings.index', 0)}}">Lista de documentos tributarios</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link @if (request()->is('billings/manager/export')) active @endif" href="{{route('billings.managerExport')}}">Exportar a Manager</a>
+        <a class="nav-link @if (request()->path() =='billings/manager/export/0') active @endif" href="{{route('billings.managerExport',0)}}">Exportar a Manager</a>
       </li>
     </ul>
   </div>

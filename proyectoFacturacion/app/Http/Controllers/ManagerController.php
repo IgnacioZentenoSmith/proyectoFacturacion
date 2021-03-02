@@ -22,7 +22,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
-
+use Illuminate\Support\Facades\DB;
 class ManagerController extends Controller
 {
     /**
@@ -39,11 +39,14 @@ class ManagerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function managerExport()
+    public function managerExport($periodo)
     {
-        //Periodo
-        $periodo = Carbon::now()->format('Y-m');
-
+        
+        if ($periodo == 0) {
+            //Periodo
+            $periodo = Carbon::now()->format('Y-m');
+        }
+        
         $periodoManager1 = Carbon::now()->format('m-Y');
         $periodoManager2 = Carbon::now()->addMonths(1)->format('m-Y');
 
@@ -52,8 +55,9 @@ class ManagerController extends Controller
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
 
         //Sacar todos los detalles
-        $managerData = Tributarydocuments::where('tributarydocuments_period', $periodo)
+       /* $managerData = Tributarydocuments::where('tributarydocuments_period', $periodo)
         ->where('tributarydocuments_documentType', 'Factura')
+        //->whereNotIn('payment_units.id',['2'])
         ->join('tributarydetails', 'tributarydocuments.id', '=', 'tributarydetails.idTributarydocument')
         ->join('payment_units', 'payment_units.id', '=', 'tributarydetails.idPaymentUnit')
         ->join('modules', 'modules.id', '=', 'tributarydetails.idModule')
@@ -70,11 +74,122 @@ class ManagerController extends Controller
         'holdings.clientRazonSocial as holdingRazonSocial',
         'users.name', 'users.role',
         'payment_units.payment_units',
-        //'contract_payment_details.contractPaymentDetails_description',
+        'tributarydocuments.idContract as idContratoReal',
         'modules.moduleName')
-        ->get();
+        //->groupBy('modules.id','holdings.id','clients.id','tributarydocuments.idContract','tributarydocuments.id','tributarydocuments.tributarydocuments_period','tributarydocuments.tributarydocuments_documentType','tributarydocuments.idClient as idHolding')
+        ->get();*/
 
-        return view('billings.managerExport', compact('authPermisos', 'managerData', 'periodoManager1', 'periodoManager2'));
+        $results = DB::select( DB::raw("SELECT
+        tributarydocuments.id,
+        tributarydocuments.tributarydocuments_period,
+        tributarydocuments.tributarydocuments_documentType,
+        tributarydocuments.idClient AS idHolding,
+        tributarydetails.idClient,
+        tributarydetails.idPaymentUnit,
+        tributarydetails.idModule,
+        tributarydetails.tributarydetails_paymentUnitQuantity,
+        tributarydetails.tributarydetails_paymentPercentage,
+        tributarydetails.tributarydetails_paymentValue,
+        tributarydetails.created_at,
+        tributarydetails.tributarydetails_discount,
+        tributarydetails.tributarydetails_paymentTotalValue,
+        tributarydetails.tributarydetails_paymentTotalTaxValue,
+        clients.clientRazonSocial,
+        clients.clientRUT,
+        clients.clientContactEmail,
+        clients.clientPhone,
+        clients.clientDirection,
+        clients.clientBusinessActivity,
+        holdings.clientRazonSocial AS holdingRazonSocial,
+        users.NAME,
+        users.role,
+        payment_units.payment_units,
+        tributarydocuments.idContract AS idContratoReal,
+        modules.moduleName 
+    FROM
+        tributarydocuments
+        JOIN tributarydetails ON tributarydocuments.id = tributarydetails.idTributarydocument
+        JOIN payment_units ON payment_units.id = tributarydetails.idPaymentUnit
+        JOIN modules ON modules.id = tributarydetails.idModule
+        JOIN clients ON clients.id = tributarydetails.idClient
+        JOIN clients AS holdings ON holdings.id = clients.clientParentId
+        JOIN users ON users.id = holdings.idUser 
+        JOIN contracts ON contracts.idModule = modules.id
+    WHERE
+        tributarydocuments_documentType = 'Factura' 
+        AND tributarydocuments_period = '2020-12'
+        GROUP BY tributarydocuments.id,
+        tributarydocuments.tributarydocuments_period,
+        tributarydocuments.tributarydocuments_documentType,
+        tributarydocuments.idClient,
+        tributarydetails.idClient,
+        tributarydetails.idPaymentUnit,
+        tributarydetails.idModule,
+        tributarydetails.tributarydetails_paymentUnitQuantity,
+        tributarydetails.tributarydetails_paymentPercentage,
+        tributarydetails.tributarydetails_paymentValue,
+        tributarydetails.created_at,
+        tributarydetails.tributarydetails_discount,
+        tributarydetails.tributarydetails_paymentTotalValue,
+        tributarydetails.tributarydetails_paymentTotalTaxValue,
+        clients.clientRazonSocial,
+        clients.clientRUT,
+        clients.clientContactEmail,
+        clients.clientPhone,
+        clients.clientDirection,
+        clients.clientBusinessActivity,
+        holdings.clientRazonSocial,
+        users.NAME,
+        users.role,
+        payment_units.payment_units,
+        tributarydocuments.idContract,
+        modules.moduleName 
+        ") );
+
+
+        $dataF = [];
+        $dataFinal = [];
+        foreach ($results as $manager) {
+
+           
+            $detail = ContractPaymentDetails::where('idClient', $manager->idClient)
+                        ->where('contractPaymentDetails_description','not like','proyectos %')
+                        ->where('contractPaymentDetails_period', $periodo)
+                        ->where('contract_payment_details.idContract', $manager->idContratoReal)
+                        ->select("contractPaymentDetails_description")
+                        ->get();
+
+
+            $dataFinal[] = [
+                'tributarydocuments.id' => $manager->id,
+                'tributarydocuments_documentType' => $manager->tributarydocuments_documentType,
+                'idHolding' =>  $manager->idHolding,
+                'idClient' =>   $manager->idClient,
+                'idPaymentUnit' => $manager->idPaymentUnit,
+                'idModule' => $manager->idModule,
+                'tributarydetails_paymentUnitQuantity' => $manager->tributarydetails_paymentUnitQuantity,
+                'tributarydetails_paymentPercentage' => $manager->tributarydetails_paymentPercentage,
+                'tributarydetails_paymentValue' => $manager->tributarydetails_paymentValue,
+                'created_at' => $manager->created_at,
+                'tributarydetails_discount' => $manager->tributarydetails_discount,
+                'tributarydetails_paymentTotalValue' => $manager->tributarydetails_paymentTotalValue,
+                'tributarydetails_paymentTotalTaxValue' => $manager->tributarydetails_paymentTotalTaxValue,
+                'clientRazonSocial' => $manager->clientRazonSocial,
+                'clientRUT' => $manager->clientRUT,
+                'clientContactEmail' => $manager->clientContactEmail,
+                'clientPhone' => $manager->clientPhone,
+                'clientDirection' => $manager->clientDirection,
+                'clientBusinessActivity' => $manager->clientBusinessActivity,
+                'holdingRazonSocial' => $manager->holdingRazonSocial,
+                'payment_units' => $manager->payment_units,
+                'moduleName' => $manager->moduleName,
+                'detalles' => $detail,
+            ];
+
+        }
+
+
+        return view('billings.managerExport', compact('authPermisos', 'dataFinal','periodo', 'periodoManager1', 'periodoManager2'));
     }
 
     /**

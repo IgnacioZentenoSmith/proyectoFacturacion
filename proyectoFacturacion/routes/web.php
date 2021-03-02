@@ -99,4 +99,4 @@ Route::get('/billings/{idTributarydocument}/paymentDetails', 'Tributarydocuments
 Route::get('/billings/{idTributarydocument}/redistribute', 'TributarydocumentsController@redistribute')->name('billings.redistribute')->middleware('auth');
 Route::put('/billings/{idTributarydocument}/generateRedistribucion', 'TributarydocumentsController@generateRedistribucion')->name('billings.generateRedistribucion')->middleware('auth');
 
-Route::get('/billings/manager/export', 'ManagerController@managerExport')->name('billings.managerExport')->middleware('auth');
+Route::get('/billings/manager/export/{periodo}', 'ManagerController@managerExport')->name('billings.managerExport')->middleware('auth');
