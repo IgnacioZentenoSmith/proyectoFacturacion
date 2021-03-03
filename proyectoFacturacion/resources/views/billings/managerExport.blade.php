@@ -170,7 +170,11 @@
                   Periodo del 26-{{$periodoManager1}} al 25-{{$periodoManager2}}^
                   <br>
                  @foreach ($manager['detalles'] as $deta)
+<<<<<<< Updated upstream
                   {{$deta['contractPaymentDetails_description']}} ^<br>
+=======
+                  {{$deta['contractPaymentDetails_description']}}^<br>
+>>>>>>> Stashed changes
                  @endforeach
 
                 </td>
