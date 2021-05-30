@@ -68,6 +68,7 @@
 
             <th scope="col" data-field="TIPODOC" data-sortable="true">TIPODOC</th>
             <th scope="col" data-field="ESELECTR" data-sortable="true">ESELECTR</th>
+    	    <th scope="col" data-field="HOLDING" data-sortable="true">HOLDING</th>
             <th scope="col" data-field="RUT_CLIE" data-sortable="true">RUT CLIE</th>
             <th scope="col" data-field="RUT FACT" data-sortable="true">RUT FACT</th>
             <th scope="col" data-field="FECHA_CREAC" data-sortable="true">FECHA</th>
@@ -135,6 +136,7 @@
             <tr>
               <td>1</td>
               <td>1</td>
+	      <td>{{$manager['holdingRazonSocial']}}</td>
               <td>{{$manager['clientRUT']}}</td>
               <td>{{$manager['clientRUT']}}</td>
               <td>{{date ("d-m-Y", strtotime($manager['created_at']))}}</td>

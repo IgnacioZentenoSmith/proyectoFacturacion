@@ -96,6 +96,7 @@ class ManagerController extends Controller
         WHERE
             tributarydocuments_documentType = 'Factura' 
             AND tributarydocuments_period = '$periodo'
+		AND tributarydetails.tributarydetails_paymentTotalValue > 0
             GROUP BY tributarydocuments.id,
             tributarydocuments.tributarydocuments_period,
             tributarydocuments.tributarydocuments_documentType,
