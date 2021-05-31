@@ -41,12 +41,12 @@ class ManagerController extends Controller
      */
     public function managerExport($periodo)
     {
-        
+
         if ($periodo == 0) {
             //Periodo
             $periodo = Carbon::now()->format('Y-m');
         }
-        
+
         $periodoManager1 = Carbon::parse($periodo)->format('m-Y');
         $peridoDos = new Carbon($periodo);
         $periodoManager2 = Carbon::parse($peridoDos->addMonths(1))->format('m-Y');
@@ -72,6 +72,7 @@ class ManagerController extends Controller
             tributarydetails.tributarydetails_discount,
             tributarydetails.tributarydetails_paymentTotalValue,
             tributarydetails.tributarydetails_paymentTotalTaxValue,
+            contracts.contractsNumeroCliente,
             clients.clientRazonSocial,
             clients.clientRUT,
             clients.clientContactEmail,
@@ -83,7 +84,7 @@ class ManagerController extends Controller
             users.role,
             payment_units.payment_units,
             tributarydocuments.idContract AS idContratoReal,
-            modules.moduleName 
+            modules.moduleName
         FROM
             tributarydocuments
             JOIN tributarydetails ON tributarydocuments.id = tributarydetails.idTributarydocument
@@ -91,10 +92,10 @@ class ManagerController extends Controller
             JOIN modules ON modules.id = tributarydetails.idModule
             JOIN clients ON clients.id = tributarydetails.idClient
             JOIN clients AS holdings ON holdings.id = clients.clientParentId
-            JOIN users ON users.id = holdings.idUser 
+            JOIN users ON users.id = holdings.idUser
             JOIN contracts ON contracts.idModule = modules.id
         WHERE
-            tributarydocuments_documentType = 'Factura' 
+            tributarydocuments_documentType = 'Factura'
             AND tributarydocuments_period = '$periodo'
 		AND tributarydetails.tributarydetails_paymentTotalValue > 0
             GROUP BY tributarydocuments.id,
@@ -111,6 +112,7 @@ class ManagerController extends Controller
             tributarydetails.tributarydetails_discount,
             tributarydetails.tributarydetails_paymentTotalValue,
             tributarydetails.tributarydetails_paymentTotalTaxValue,
+            contracts.contractsNumeroCliente,
             clients.clientRazonSocial,
             clients.clientRUT,
             clients.clientContactEmail,
@@ -122,7 +124,7 @@ class ManagerController extends Controller
             users.role,
             payment_units.payment_units,
             tributarydocuments.idContract,
-            modules.moduleName 
+            modules.moduleName
         ") );
 
 
@@ -130,7 +132,7 @@ class ManagerController extends Controller
         $dataFinal = [];
         foreach ($results as $manager) {
 
-           
+
             $detail = ContractPaymentDetails::where('idClient', $manager->idClient)
                         ->where('contractPaymentDetails_description','not like','proyectos %')
                         ->where('contractPaymentDetails_period', $periodo)
@@ -153,6 +155,7 @@ class ManagerController extends Controller
                 'tributarydetails_discount' => $manager->tributarydetails_discount,
                 'tributarydetails_paymentTotalValue' => $manager->tributarydetails_paymentTotalValue,
                 'tributarydetails_paymentTotalTaxValue' => $manager->tributarydetails_paymentTotalTaxValue,
+                'contractsNumeroCliente' => $manager->contractsNumeroCliente,
                 'clientRazonSocial' => $manager->clientRazonSocial,
                 'clientRUT' => $manager->clientRUT,
                 'clientContactEmail' => $manager->clientContactEmail,

@@ -136,7 +136,7 @@
             <tr>
               <td>1</td>
               <td>1</td>
-	      <td>{{$manager['holdingRazonSocial']}}</td>
+	          <td>{{$manager['holdingRazonSocial']}}</td>
               <td>{{$manager['clientRUT']}}</td>
               <td>{{$manager['clientRUT']}}</td>
               <td>{{date ("d-m-Y", strtotime($manager['created_at']))}}</td>
@@ -144,6 +144,7 @@
               <td>{{date ("d-m-Y", strtotime("+1 month", strtotime($manager['created_at'])))}}</td>
               <td>UF</td>
               <td>0</td>
+
               <td>1</td>
               <td>
                   @if ($manager['idModule'] == 1) 31101GCI
@@ -210,7 +211,7 @@
               <td></td>
               <td></td>
               <td></td>
-              <td></td>
+              <td>{{$manager['contractsNumeroCliente']}}</td>
 
               <td></td>
               <td></td>
