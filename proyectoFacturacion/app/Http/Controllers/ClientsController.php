@@ -215,10 +215,11 @@ class ClientsController extends Controller
             'clientDirection'=> 'string|max:100|nullable',
             'clientBusinessActivity'=> 'string|max:100|nullable',
         ]);
+        $formattedRUT = $this->formatRut($request->clientRUT);
 
         $newClient = new Client([
             'clientRazonSocial' => $request->clientRazonSocial,
-            'clientRUT' => $request->clientRUT,
+            'clientRUT' => $formattedRUT,
             'clientParentId' => $idCliente,
             'clientContactEmail' => $request->clientContactEmail,
             'clientPhone' => $request->clientPhone,
@@ -252,8 +253,10 @@ class ClientsController extends Controller
         $hijo = Client::find($idHijo);
         $preHijo = $hijo;
 
+        $formattedRUT = $this->formatRut($request->clientRUT);
+
         $hijo->clientRazonSocial = $request->clientRazonSocial;
-        $hijo->clientRUT = $request->clientRUT;
+        $hijo->clientRUT = $formattedRUT;
         $hijo->clientContactEmail = $request->clientContactEmail;
         $hijo->clientPhone = $request->clientPhone;
         $hijo->clientDirection = $request->clientDirection;
@@ -292,5 +295,11 @@ class ClientsController extends Controller
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
         return $authPermisos;
+    }
+
+    public function formatRut($rut) {
+        $regexRut = preg_replace('/[^0-9K]/', '', $rut);
+        $formattedRUT = substr($regexRut, 0, strlen($regexRut) - 1) . "-" . substr($regexRut, -1);
+        return $formattedRUT;
     }
 }
