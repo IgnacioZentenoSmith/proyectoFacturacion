@@ -103,6 +103,7 @@ class ContractsController extends Controller
             'idClient'=> 'required|numeric',
             'idModule'=> 'required|numeric',
             'contractsNumero'=> 'required|string|max:100|unique:contracts,contractsNumero',
+            'contractsNumeroCliente'=> 'required|string|max:100',
             'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
             'contractsRecepcionMunicipal' => 'required|boolean',
@@ -123,6 +124,7 @@ class ContractsController extends Controller
             'idClient' => $request->idClient,
             'contractsNombre' => $nombre,
             'contractsNumero' => $request->contractsNumero,
+            'contractsNumeroCliente' => $request->contractsNumeroCliente,
             'contractsMoneda' => $request->contractsMoneda,
             'contractsFecha' => $request->contractsFecha,
             'contractsEstado' => false,
@@ -178,6 +180,7 @@ class ContractsController extends Controller
             'idClient'=> 'required|numeric',
             'idModule'=> 'required|numeric',
             'contractsNumero'=> 'required|string|max:100|unique:contracts,contractsNumero,' .$id ,
+            'contractsNumeroCliente'=> 'required|string|max:100',
             'contractsMoneda' => 'required|string|max:100',
             'contractsFecha'=> 'required|date',
             'contractsRecepcionMunicipal' => 'required|boolean',
@@ -193,6 +196,7 @@ class ContractsController extends Controller
         $contract = Contracts::find($id);
         $contract->idClient = $request->idClient;
         $contract->contractsNumero = $request->contractsNumero;
+        $contract->contractsNumeroCliente = $request->contractsNumeroCliente;
         $contract->contractsMoneda = $request->contractsMoneda;
         $contract->contractsFecha = $request->contractsFecha;
         $contract->idModule = $request->idModule;
