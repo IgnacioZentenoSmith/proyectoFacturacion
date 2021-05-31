@@ -13,6 +13,7 @@ class Contracts extends Model
         'idClient',
         'contractsNombre',
         'contractsNumero',
+        'contractsNumeroCliente',
         'contractsFecha',
         'contractsEstado',
         'contractsMoneda',
