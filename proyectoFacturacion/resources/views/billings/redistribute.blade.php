@@ -22,6 +22,7 @@
                     <tr>
                         <th scope="col" data-field="ID" data-sortable="true">ID</th>
                         <th scope="col" data-field="idClient" data-sortable="true">Razón social</th>
+                        <th scope="col" data-field="idModule" data-sortable="true">Módulo</th>
                         <th scope="col" data-field="idPaymentUnit" data-sortable="true">Unidad de pago</th>
                         <th scope="col" data-field="tributarydetails_paymentUnitQuantity" data-sortable="true">Cantidad</th>
                         <th scope="col" data-field="tributarydetails_paymentPercentage" data-sortable="true">Porcentaje
@@ -48,11 +49,14 @@
                         </td>
 
                         <td>
-                            {{$tributaryDetail['payment_units']}} {{$tributaryDetail['moduleName']}}
-                                <input type="hidden" name="idPaymentUnit[]" required
-                                value="{{$tributaryDetail['idPaymentUnit']}}">
+                            {{$tributaryDetail['moduleName']}}
                                 <input type="hidden" name="idModule[]" required
                                 value="{{$tributaryDetail['idModule']}}">
+                        </td>
+                        <td>
+                            {{$tributaryDetail['payment_units']}}
+                                <input type="hidden" name="idPaymentUnit[]" required
+                                value="{{$tributaryDetail['idPaymentUnit']}}">
                         </td>
 
                         <td>

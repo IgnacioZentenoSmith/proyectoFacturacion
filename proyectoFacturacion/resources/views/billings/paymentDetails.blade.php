@@ -18,6 +18,7 @@
                 <thead>
                     <tr>
                         <th scope="col" data-field="idClient" data-sortable="true">Razón social</th>
+                        <th scope="col" data-field="idModule" data-sortable="true">Módulo</th>
                         <th scope="col" data-field="idPaymentUnit" data-sortable="true">Unidad de pago</th>
                         <th scope="col" data-field="tributarydetails_paymentUnitQuantity" data-sortable="true">Cantidad</th>
                         <th scope="col" data-field="tributarydetails_paymentPercentage" data-sortable="true">Porcentaje
@@ -32,7 +33,8 @@
                     @foreach($tributaryDetails as $tributaryDetail)
                     <tr>
                         <td>{{$tributaryDetail['clientRazonSocial']}}</td>
-                        <td>{{$tributaryDetail['payment_units']}} {{$tributaryDetail['moduleName']}}</td>
+                        <td>{{$tributaryDetail['moduleName']}}</td>
+                        <td>{{$tributaryDetail['payment_units']}}</td>
                         <td>{{$tributaryDetail['tributarydetails_paymentUnitQuantity']}}</td>
                         <td>{{$tributaryDetail['tributarydetails_paymentPercentage']}}</td>
                         <td>{{$tributaryDetail['tributarydetails_paymentValue']}}</td>
