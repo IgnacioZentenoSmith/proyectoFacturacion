@@ -75,11 +75,18 @@
     </div> --}}
 
     <div class="form-group row">
-        <label for="contractsNumero" class="col-md-4 col-form-label text-md-right">Numero del contrato</label>
+        <label for="contractsNumero" class="col-md-4 col-form-label text-md-right">Número del contrato PlanOK</label>
         <div class="col-md-6">
             <input id="contractsNumero" type="text" class="form-control" name="contractsNumero" required>
         </div>
     </div>
+    <div class="form-group row">
+        <label for="contractsNumeroCliente" class="col-md-4 col-form-label text-md-right">Número del contrato Cliente</label>
+        <div class="col-md-6">
+            <input id="contractsNumeroCliente" type="text" class="form-control" name="contractsNumeroCliente" required>
+        </div>
+    </div>
+
 
     <div class="form-group row">
         <label for="contractsMoneda" class="col-md-4 col-form-label text-md-right">Tipo de moneda</label>

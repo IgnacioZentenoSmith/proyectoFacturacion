@@ -17,7 +17,9 @@
                         <th scope="col" data-field="contractsRecepcionMunicipal" data-sortable="true">Recepción
                             municipal</th>
 
-                        <th scope="col" data-field="contractsNumero" data-sortable="true">Número</th>
+                        <th scope="col" data-field="contractsNumero" data-sortable="true">Número PlanOK</th>
+                        <th scope="col" data-field="contractsNumeroCliente" data-sortable="true">Número Cliente</th>
+
                         <th scope="col" data-field="contractsMoneda" data-sortable="true">Moneda</th>
                         <th scope="col" data-field="contract_clientEjecutivoName" data-sortable="true">Ejecutivo</th>
                         <th scope="col" data-field="contractsFecha" data-sortable="true">Fecha</th>
@@ -40,6 +42,8 @@
                                 municipal</span></td>
 
                         <td>{{$contract['contractsNumero']}}</td>
+                        <td>{{$contract['contractsNumeroCliente']}}</td>
+
                         <td>{{$contract['contractsMoneda']}}</td>
                         <td>{{$contract['contract_clientEjecutivoName']}}</td>
                         <td>{{$contract['contractsFecha']}}</td>
