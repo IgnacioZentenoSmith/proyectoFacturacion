@@ -13,28 +13,20 @@
     </div>
 
 
-  <div class="form-group row">
+    <div class="form-group row align-items-center">
         <label for="hasParent" class="col-md-4 col-form-label text-md-right">Tiene padre?</label>
         <div class="col-md-6 form-check">
-            <div class="pretty p-switch">
-                <input type="radio" name="hasParent" @if ($module['moduleParentId'] == null) checked @endif value="no"
-                    onchange="document.getElementById('parentClient').style.visibility = 'hidden';" />
-                <div class="state p-success">
-                    <label>No</label>
-                </div>
-            </div>
 
             <div class="pretty p-switch p-fill">
-                <input type="radio" name="hasParent" @if ($module['moduleParentId'] != null) checked @endif value="si"
-                    onchange="document.getElementById('parentClient').style.visibility = 'visible';" />
+                <input type="checkbox" name="hasParent" id="hasParent" value="@if ($module['moduleParentId'] != null) si @elseif ($module['moduleParentId'] == null) no @endif" class="form-control"/>
                 <div class="state p-success">
-                    <label>Si</label>
+                  <label id="hasParentLabel">No</label>
                 </div>
-            </div>
+              </div>
         </div>
     </div>
 
-    <div class="form-group row" id="parentClient" 
+    <div class="form-group row" id="parentModule"
     @if ($module['moduleParentId'] != null) style="visibility:visible"
     @elseif ($module['moduleParentId'] == null) style="visibility:hidden"
     @endif>
@@ -47,7 +39,7 @@
                   <!-- Modulo no puede ser su propio hijo -->
                   @if ($modulePadre['id'] != $module['id'])
                   <!-- Si es un hijo, seleccionar su padre -->
-                    <option value="{{$modulePadre['id']}}" 
+                    <option value="{{$modulePadre['id']}}"
                     @if ($modulePadre['id'] == $module['moduleParentId']) selected @endif>
                       {{$modulePadre['moduleName']}}
                     </option>
@@ -68,4 +60,6 @@
         </div>
     </div>
 </form>
+
+<script src="{{ asset('js/components/toggleModuleParents.js')}}"></script>
 @endsection

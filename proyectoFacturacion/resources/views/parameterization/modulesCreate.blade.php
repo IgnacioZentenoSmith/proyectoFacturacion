@@ -11,24 +11,16 @@
         </div>
     </div>
 
-    <div class="form-group row">
+    <div class="form-group row align-items-center">
         <label for="hasParent" class="col-md-4 col-form-label text-md-right">Tiene padre?</label>
         <div class="col-md-6 form-check">
-            <div class="pretty p-switch">
-                <input type="radio" name="hasParent" checked value="no"
-                    onchange="document.getElementById('parentModule').style.visibility = 'hidden';" />
-                <div class="state p-success">
-                    <label>No</label>
-                </div>
-            </div>
 
             <div class="pretty p-switch p-fill">
-                <input type="radio" name="hasParent" value="si"
-                    onchange="document.getElementById('parentModule').style.visibility = 'visible';" />
+                <input type="checkbox" name="hasParent" id="hasParent" value="no" class="form-control"/>
                 <div class="state p-success">
-                    <label>Si</label>
+                  <label id="hasParentLabel">No</label>
                 </div>
-            </div>
+              </div>
         </div>
     </div>
 
@@ -55,4 +47,6 @@
         </div>
     </div>
 </form>
+
+<script src="{{ asset('js/components/toggleModuleParents.js')}}"></script>
 @endsection
