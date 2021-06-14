@@ -260,6 +260,8 @@ class ContractsController extends Controller
         $contractConditions = ContractConditions::where('idContract', $contract->id)->get();
         //Traducir IDS a nombres en el indice
         foreach ($contractConditions as $contractCondition) {
+            //Formatea precio de puntos a comas
+            $contractCondition['contractsConditions_Precio'] = $this->formatNumber($contractCondition['contractsConditions_Precio']);
             //Saca y agrega a la coleccion el nombre del modulo
             $getModule = Modules::where('id', $contractCondition['idModule'])->first();
             $contractCondition = Arr::add($contractCondition, 'contractCondition_moduleName', $getModule->moduleName);
@@ -505,4 +507,9 @@ class ContractsController extends Controller
         $targetArray = Arr::add($targetArray, 'contractCondition_contractName', $getContract->contractsNombre);
         return $targetArray;
     }
+
+    public function formatNumber($number) {
+        $formattedNumber = preg_replace('/\./', ',', $number);
+        return $formattedNumber;
+      }
 }

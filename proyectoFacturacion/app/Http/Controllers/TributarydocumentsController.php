@@ -51,13 +51,16 @@ class TributarydocumentsController extends Controller
         }
         $documentosTributarios = Tributarydocuments::where('tributarydocuments_period', $periodo)->get();
         foreach ($documentosTributarios as $documentoTributario) {
-
           //Saca y agrega a la coleccion el nombre del contrato
           $getContract = Contracts::where('id', $documentoTributario['idContract'])->first();
           $documentoTributario = Arr::add($documentoTributario, 'documentoTributario_contractName', $getContract->contractsNombre);
           $documentoTributario = Arr::add($documentoTributario, 'documentoTributario_IVA', 19);
           $documentoTributario = Arr::add($documentoTributario, 'documentoTributario_isManual', $getContract->contractsManualContract);
           $montoTotalIva = $documentoTributario['tributarydocuments_totalAmount'] * 1.19;
+          //Formatea tributarydocuments_totalAmount y tributarydocuments_totalAmountTax
+          $documentoTributario['tributarydocuments_totalAmount'] = $this->formatNumber($documentoTributario['tributarydocuments_totalAmount']);
+          $documentoTributario['tributarydocuments_totalAmountTax'] = $this->formatNumber($documentoTributario['tributarydocuments_totalAmountTax']);
+
           $documentoTributario = Arr::add($documentoTributario, 'documentoTributario_MontoTotalIVA', $montoTotalIva);
         }
         return view('billings.index', compact('authPermisos', 'periodo', 'documentosTributarios'));
@@ -260,6 +263,16 @@ class TributarydocumentsController extends Controller
         ->join('clients', 'clients.id', '=', 'contract_payment_details.idClient')
         ->select('contract_payment_details.*', 'clients.clientRazonSocial', 'clients.clientRUT', 'payment_units.payment_units')
         ->get();
+
+        //Formatea valores (de punto a coma) de tributaryDetails
+        foreach ($tributaryDetails as $tributaryDetail) {
+            $tributaryDetail['tributarydetails_paymentPercentage'] = $this->formatNumber($tributaryDetail['tributarydetails_paymentPercentage']);
+            $tributaryDetail['tributarydetails_paymentValue'] = $this->formatNumber($tributaryDetail['tributarydetails_paymentValue']);
+            $tributaryDetail['tributarydetails_discount'] = $this->formatNumber($tributaryDetail['tributarydetails_discount']);
+            $tributaryDetail['tributarydetails_paymentTotalValue'] = $this->formatNumber($tributaryDetail['tributarydetails_paymentTotalValue']);
+            $tributaryDetail['tributarydetails_paymentTotalTaxValue'] = $this->formatNumber($tributaryDetail['tributarydetails_paymentTotalTaxValue']);
+        }
+
 
         return view('billings.paymentDetails', compact('authPermisos', 'tributaryDocument', 'contract', 'tributaryDetails', 'contractPaymentDetails'));
     }
@@ -490,5 +503,10 @@ class TributarydocumentsController extends Controller
       $authPermisos = Permission::where('idUser', $userId)->get();
       $authPermisos = $authPermisos->pluck('idActions')->toArray();
       return $authPermisos;
+  }
+
+  public function formatNumber($number) {
+    $formattedNumber = preg_replace('/\./', ',', $number);
+    return $formattedNumber;
   }
 }
