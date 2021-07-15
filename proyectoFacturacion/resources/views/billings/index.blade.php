@@ -82,6 +82,13 @@
 
                 @if(in_array(7, $authPermisos))
                 <div class="dropdown-divider"></div>
+                    <a @if ($documentosTributario['tributarydocuments_documentType'] != 'Factura' || $documentosTributario['tributarydocuments_totalAmount'] == 0) class="dropdown-item disabled"
+                    @else class="dropdown-item" href="{{ route('billings.generateFacturas', $documentosTributario['id']) }}" @endif
+                    role="button">Generar Facturas</a>
+                @endif
+
+                @if(in_array(7, $authPermisos))
+                <div class="dropdown-divider"></div>
                   <form style="display: inline-block;" action="{{ route('billings.documentDestroy', $documentosTributario['id']) }}"
                     method="post">
                     @csrf
