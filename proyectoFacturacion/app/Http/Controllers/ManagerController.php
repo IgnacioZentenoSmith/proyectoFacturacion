@@ -57,7 +57,7 @@ class ManagerController extends Controller
         $authPermisos = Permission::where('idUser', $userId)->get();
         $authPermisos = $authPermisos->pluck('idActions')->toArray();
 
-
+        /*
         $results = DB::select( DB::raw("SELECT
             tributarydocuments.id,
             tributarydocuments.tributarydocuments_period,
@@ -166,6 +166,119 @@ class ManagerController extends Controller
                 'detalles' => $detail,
             ];
         }
+        */
+
+        $dataFinal = DB::select( DB::raw("SELECT
+            invoices.id,
+            invoices.idTributaryDocument,
+            invoices.idClient,
+            invoices.idModule,
+            invoices.idPaymentUnit,
+            invoices.idContractPaymentDetails,
+
+            invoices.invoices_monto,
+            invoices.invoices_porcentaje,
+            invoices.invoices_descuento,
+            invoices.invoices_neto,
+            invoices.invoices_total,
+            invoices.invoices_grupo,
+
+            invoices.invoices_numeroOC,
+            invoices.invoices_fechaOC,
+            invoices.invoices_vigenciaOC,
+
+            invoices.invoices_numeroHES,
+            invoices.invoices_fechaHES,
+            invoices.invoices_vigenciaHES,
+
+            invoices.created_at,
+            invoices.updated_at,
+
+            tributarydocuments.tributarydocuments_period,
+            tributarydocuments.tributarydocuments_documentType,
+            tributarydocuments.idClient AS idHolding,
+
+            contracts.contractsNombre,
+            contracts.contractsNumero,
+            contracts.contractsNumeroCliente,
+            contracts.idModule,
+
+            contract_payment_details.contractPaymentDetails_description,
+
+            clients.clientRazonSocial,
+            clients.clientRUT,
+            clients.clientContactEmail,
+            clients.clientPhone,
+            clients.clientDirection,
+            clients.clientBusinessActivity,
+            holdings.clientRazonSocial AS holdingRazonSocial,
+            holdings.clientRUT AS holdingRUT,
+            payment_units.payment_units,
+            tributarydocuments.idContract AS idContratoReal,
+            modules.moduleName,
+            contractModule.moduleName AS contractModuleName
+        FROM
+            invoices
+            JOIN tributarydocuments ON tributarydocuments.id = invoices.idTributaryDocument
+            JOIN contract_payment_details ON contract_payment_details.id = invoices.idContractPaymentDetails
+            JOIN payment_units ON payment_units.id = invoices.idPaymentUnit
+            JOIN modules ON modules.id = invoices.idModule
+            JOIN clients ON clients.id = invoices.idClient
+            JOIN clients AS holdings ON holdings.id = clients.clientParentId
+            JOIN contracts ON contracts.id = tributarydocuments.idContract
+            JOIN modules AS contractModule ON contractModule.id = contracts.idModule
+        WHERE
+            tributarydocuments_documentType = 'Factura'
+            AND tributarydocuments_period = '$periodo'
+
+        GROUP BY
+            invoices.id,
+            invoices.idTributaryDocument,
+            invoices.idClient,
+            invoices.idModule,
+            invoices.idPaymentUnit,
+            invoices.idContractPaymentDetails,
+            invoices.invoices_monto,
+            invoices.invoices_porcentaje,
+            invoices.invoices_descuento,
+            invoices.invoices_neto,
+            invoices.invoices_total,
+            invoices.invoices_grupo,
+            invoices.invoices_numeroOC,
+            invoices.invoices_fechaOC,
+            invoices.invoices_vigenciaOC,
+            invoices.invoices_numeroHES,
+            invoices.invoices_fechaHES,
+            invoices.invoices_vigenciaHES,
+            invoices.created_at,
+            invoices.updated_at,
+
+            tributarydocuments.tributarydocuments_period,
+            tributarydocuments.tributarydocuments_documentType,
+            tributarydocuments.idClient,
+            tributarydocuments.idContract,
+
+            contracts.contractsNombre,
+            contracts.contractsNumero,
+            contracts.contractsNumeroCliente,
+            contracts.idModule,
+
+            contract_payment_details.contractPaymentDetails_description,
+
+            clients.clientRazonSocial,
+            clients.clientRUT,
+            clients.clientContactEmail,
+            clients.clientPhone,
+            clients.clientDirection,
+            clients.clientBusinessActivity,
+
+            holdings.clientRazonSocial,
+            holdings.clientRUT,
+
+            payment_units.payment_units,
+            modules.moduleName,
+            contractModule.moduleName
+        ") );
 
 
         return view('billings.managerExport', compact('authPermisos', 'dataFinal','periodo', 'periodoManager1', 'periodoManager2'));
