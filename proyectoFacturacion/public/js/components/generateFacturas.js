@@ -1,5 +1,5 @@
-const netoFacturar = document.getElementById('netoFacturar').value;
-const totalFacturar = document.getElementById('totalFacturar').value;
+const netoFacturar = parseFloat(document.getElementById('netoFacturar').value);
+const totalFacturar = parseFloat(document.getElementById('totalFacturar').value);
 var counter = 0;
 
 document.getElementById('agregarFactura').addEventListener("click", addRow, false);
@@ -213,9 +213,10 @@ function validateFactura(inputElement) {
         neto = monto * (100 - descuento) / 100;
         total = neto * 1.19;
         // set values
-        document.getElementById('porcentaje_' + elementAge + '_' + elementId).value = porcentaje;
-        document.getElementById('neto_' + elementAge + '_' + elementId).value = neto;
-        document.getElementById('total_' + elementAge + '_' + elementId).value = total;
+        document.getElementById('porcentaje_' + elementAge + '_' + elementId).value = porcentaje.toFixed(2);
+        document.getElementById('neto_' + elementAge + '_' + elementId).value = neto.toFixed(2);
+        document.getElementById('total_' + elementAge + '_' + elementId).value = total.toFixed(2);
+        updateMontoFacturado();
     }
     //porcentaje
     else if (elementType == 'porcentaje') {
@@ -226,9 +227,10 @@ function validateFactura(inputElement) {
         neto = monto * (100 - descuento) / 100;
         total = neto * 1.19;
         // set values
-        document.getElementById('monto_' + elementAge + '_' + elementId).value = monto;
-        document.getElementById('neto_' + elementAge + '_' + elementId).value = neto;
-        document.getElementById('total_' + elementAge + '_' + elementId).value = total;
+        document.getElementById('monto_' + elementAge + '_' + elementId).value = monto.toFixed(0);
+        document.getElementById('neto_' + elementAge + '_' + elementId).value = neto.toFixed(2);
+        document.getElementById('total_' + elementAge + '_' + elementId).value = total.toFixed(2);
+        updateMontoFacturado();
     }
     //descuento
     else if (elementType == 'descuento') {
@@ -238,8 +240,8 @@ function validateFactura(inputElement) {
         neto = monto * (100 - descuento) / 100;
         total = neto * 1.19;
         // set values
-        document.getElementById('neto_' + elementAge + '_' + elementId).value = neto;
-        document.getElementById('total_' + elementAge + '_' + elementId).value = total;
+        document.getElementById('neto_' + elementAge + '_' + elementId).value = neto.toFixed(2);
+        document.getElementById('total_' + elementAge + '_' + elementId).value = total.toFixed(2);
     }
 }
 
@@ -253,3 +255,23 @@ function validateValue(minValue, maxValue, inputElement) {
     }
     return inputElement.value;
 }
+
+
+function updateMontoFacturado() {
+    // Monto: columna 4
+    let table = document.getElementById('tablaFacturas');
+    let numRows = document.getElementById('largoTabla').value = table.tBodies[0].rows.length;
+    let montoFacturadoActual = 0;
+    for (let i = 0; i < numRows; i++) {
+        // tBodies = cuerpo tabla
+        // rows = fila
+        // children[] = columna
+        // children[] = hijos de la columna, input en este caso
+
+        idColumnaMonto = table.tBodies[0].rows[i].children[4].children[0].id;
+        valueColumnaMonto = parseFloat(table.tBodies[0].rows[i].children[4].children[0].value);
+        montoFacturadoActual += valueColumnaMonto;
+    }
+    document.getElementById('montoFacturado').value = montoFacturadoActual.toFixed(2);
+}
+updateMontoFacturado();

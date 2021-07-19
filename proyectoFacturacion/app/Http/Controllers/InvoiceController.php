@@ -112,7 +112,6 @@ class InvoiceController extends Controller
         $tributaryDocument = Tributarydocuments::find($idTributarydocument);
         $largoTabla = $request->largoTabla;
         $invoices = Invoices::where('idTributaryDocument', $idTributarydocument)->get();
-
         if ($largoTabla == 0) {
             foreach ($invoices as $invoice) {
                 $invoice->delete();
@@ -120,8 +119,9 @@ class InvoiceController extends Controller
             return redirect()->action('InvoiceController@generateFacturas', ['idTributarydocument' => $idTributarydocument])->with('success', 'Facturas generadas exitosamente.');
         } else {
 
-
+            $montoTotal = $tributaryDocument['tributarydocuments_totalAmount'];
             $request->validate([
+                'montoFacturado' => 'required|numeric|in:' . $montoTotal,
                 'razonesSociales' => 'required|array|min:' . $largoTabla,
                 'razonesSociales.*' => 'required|numeric|min:0',
                 'modules'=> 'required|array|min:' . $largoTabla,

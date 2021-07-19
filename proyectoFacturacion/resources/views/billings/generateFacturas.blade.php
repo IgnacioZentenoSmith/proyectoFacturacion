@@ -9,7 +9,6 @@
                 <strong>{{$contract['contractsNumero']}}</strong>
             </div>
             <div class="alert alert-info" role="alert">
-                <input type="hidden" id="netoFacturar" value="{{$tributaryDocument['tributarydocuments_totalAmount']}}">
                 Monto neto a facturar: <strong>{{$tributaryDocument['tributarydocuments_totalAmount']}} UF</strong>
                 <br>
                 <input type="hidden" id="totalFacturar" value="{{$tributaryDocument['tributarydocuments_totalAmountTax']}}">
@@ -21,6 +20,9 @@
         <form method="POST" action="{{route('billings.generateFacturacion', $tributaryDocument['id'])}}">
             @csrf
             {{ method_field('PUT') }}
+        <input type="hidden" id="netoFacturar" name="netoFacturar" value="{{$tributaryDocument['tributarydocuments_totalAmount']}}">
+        <input type="hidden" id="totalFacturar" name="totalFacturar" value="{{$tributaryDocument['tributarydocuments_totalAmountTax']}}">
+        <input type="hidden" id="montoFacturado" name="montoFacturado" value="0">
 
         <div class="table-responsive">
             <table id="tablaFacturas" class="table table-hover w-auto text-nowrap table-striped table-bordered my-3">

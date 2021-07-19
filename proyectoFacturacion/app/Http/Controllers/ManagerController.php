@@ -16,6 +16,7 @@ use App\User;
 use App\Quantities;
 use App\Tributarydocuments;
 use App\Tributarydetails;
+use App\Invoices;
 use Auth;
 
 use Illuminate\Support\Collection;
@@ -127,8 +128,6 @@ class ManagerController extends Controller
             modules.moduleName
         ") );
 
-
-        $dataF = [];
         $dataFinal = [];
         foreach ($results as $manager) {
 
@@ -139,7 +138,6 @@ class ManagerController extends Controller
                         ->where('contract_payment_details.idContract', $manager->idContratoReal)
                         ->select("contractPaymentDetails_description")
                         ->get();
-
 
             $dataFinal[] = [
                 'tributarydocuments.id' => $manager->id,
@@ -167,7 +165,6 @@ class ManagerController extends Controller
                 'moduleName' => $manager->moduleName,
                 'detalles' => $detail,
             ];
-
         }
 
 

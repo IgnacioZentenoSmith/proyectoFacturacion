@@ -5,22 +5,41 @@
   <div class="col-auto">
   <div class="col-12">
   <form method="GET" id="inputPeriodoForm" action="{{ route('billings.managerExport', $periodo) }}">
-          @csrf
-          {{ method_field('GET') }}
-          <div class="form-group row">
-              <div class="col-md-3">
-                  <input id="inputPeriodo" type="month" class="form-control" name="inputPeriodo" required value="{{$periodo}}">
-              </div>
-          </div>
+        @csrf
+        {{ method_field('GET') }}
+        <div class="form-group row">
+            <div class="col-md-3">
+                <input id="inputPeriodo" type="month" class="form-control" name="inputPeriodo" required value="{{$periodo}}">
+            </div>
+        </div>
 
-          <div class="form-group row">
-              <div class="col-md-3">
-                  <button type="submit" class="btn btn-primary">
-                      Seleccionar período
-                  </button>
-              </div>
-          </div>
-      </form>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary">
+                    Seleccionar período
+                </button>
+            </div>
+        </div>
+    </form>
+    <br>
+    <div class="my-3">
+        <div class="alert alert-info" role="alert">
+            Ingrese el número <strong>inicial</strong> en que comienza el <strong>Número de Factura:</strong>
+        <div class="form-group row">
+            <div class="col-md-3">
+                <input id="inputNumFact" type="number" class="form-control" name="inputNumFact">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-3">
+                <button type="button" class="btn btn-secondary">
+                    Asignar números de facturas
+                </button>
+            </div>
+        </div>
+    </div>
+
       <form method="GET" id="inputPeriodoForm" action="{{ route('billings.managerExport', $periodo) }}" style="display:none !important;">
           @csrf
           {{ method_field('GET') }}
@@ -116,8 +135,10 @@
             <th scope="col" data-field="OBRA" data-sortable="true">OBRA</th>
             <th scope="col" data-field="NUMERO_OC" data-sortable="true">NUMERO_OC</th>
             <th scope="col" data-field="FECHA_OC" data-sortable="true">FECHA_OC</th>
+            <th scope="col" data-field="VIGENCIA_OC" data-sortable="true">VIGENCIA_OC</th>
             <th scope="col" data-field="NUMERO_HES" data-sortable="true">NUMERO_HES</th>
             <th scope="col" data-field="FECHA_HES" data-sortable="true">FECHA_HES</th>
+            <th scope="col" data-field="VIGENCIA_HES" data-sortable="true">VIGENCIA_HES</th>
             <th scope="col" data-field="NUMERO_GD" data-sortable="true">NUMERO_GD</th>
             <th scope="col" data-field="FECHA_GD" data-sortable="true">FECHA_GD</th>
             <th scope="col" data-field="NUMERO_CONTR" data-sortable="true">NUMERO_CONTR</th>
@@ -140,6 +161,8 @@
               <td>{{$manager['clientRUT']}}</td>
               <td>{{$manager['clientRUT']}}</td>
               <td>{{date ("d-m-Y", strtotime($manager['created_at']))}}</td>
+
+              {{-- NUMFACT --}}
               <td></td>
               <td>{{date ("d-m-Y", strtotime("+1 month", strtotime($manager['created_at'])))}}</td>
               <td>UF</td>
@@ -212,6 +235,8 @@
               <td></td>
               <td></td>
               <td>{{$manager['contractsNumeroCliente']}}</td>
+              <td></td>
+              <td></td>
 
               <td></td>
               <td></td>
