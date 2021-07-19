@@ -33,30 +33,12 @@
 
         <div class="form-group row">
             <div class="col-md-3">
-                <button type="button" class="btn btn-secondary">
+                <button type="button" class="btn btn-secondary" onclick="assignNumeroFacturas()">
                     Asignar números de facturas
                 </button>
             </div>
         </div>
     </div>
-
-      <form method="GET" id="inputPeriodoForm" action="{{ route('billings.managerExport', $periodo) }}" style="display:none !important;">
-          @csrf
-          {{ method_field('GET') }}
-          <div class="form-group row">
-              <div class="col-md-3">
-                  <input id="inputPeriodo" type="month" class="form-control" name="inputPeriodo" required value="{{$periodo}}">
-              </div>
-          </div>
-
-          <div class="form-group row">
-              <div class="col-md-3">
-                  <button type="submit" class="btn btn-primary">
-                      Seleccionar período
-                  </button>
-              </div>
-          </div>
-      </form>
 
     </div>
 
@@ -92,6 +74,7 @@
             <th scope="col" data-field="RUT FACT" data-sortable="true">RUT FACT</th>
             <th scope="col" data-field="FECHA_CREAC" data-sortable="true">FECHA</th>
             <th scope="col" data-field="NUMFACT" data-sortable="true">NUMFACT</th>
+            <th scope="col" data-field="GRUPO" data-sortable="true">GRUPO</th>
             <th scope="col" data-field="FECHA_MES_EXTRA" data-sortable="true">FECHA</th>
             <th scope="col" data-field="MONEDA" data-sortable="true">MONEDA</th>
             <th scope="col" data-field="DESCTO" data-sortable="true">DESCTO</th>
@@ -169,6 +152,8 @@
               <td>{{date ("d-m-Y", strtotime($manager->created_at))}}</td>
               {{-- NUMFACT --}}
               <td></td>
+              {{-- GRUPO --}}
+              <td>{{$manager->invoices_grupo}}</td>
               {{-- FECHA_MES_EXTRA --}}
               <td>{{date ("d-m-Y", strtotime("+1 month", strtotime($manager->created_at)))}}</td>
               {{-- MONEDA --}}
@@ -310,4 +295,45 @@
 
 <script src="{{ asset('js/components/initBTtables.js')}}"></script>
 <script src="{{ asset('js/components/getCurrentDate.js')}}"></script>
+
+<script>
+function assignNumeroFacturas() {
+    let numeroInicial = parseInt(document.getElementById('inputNumFact').value);
+    if (Number.isNaN(numeroInicial) || numeroInicial < 0) {
+        document.getElementById('inputNumFact').value = "";
+    } else {
+
+        const table = document.getElementById('btTable');
+        const numRows = table.tBodies[0].rows.length;
+        for (let i = 0; i < numRows; i++) {
+            // HOLDING = 2, NUMFACT = 6, GRUPO = 7
+            // holding: table.tBodies[0].rows[i].children[2].innerHTML;
+            // numfact: table.tBodies[0].rows[i].children[6].innerHTML;
+            // grupo: table.tBodies[0].rows[i].children[7].innerHTML;
+            // Primera iteración
+            if (i == 0) {
+                table.tBodies[0].rows[i].children[6].innerHTML = numeroInicial;
+            } else {
+                // Si son el mismo holding
+                if (table.tBodies[0].rows[i-1].children[2].innerHTML == table.tBodies[0].rows[i].children[2].innerHTML) {
+                    // Si la iteración anterior tiene el mismo grupo
+                    if (table.tBodies[0].rows[i-1].children[7].innerHTML == table.tBodies[0].rows[i].children[7].innerHTML) {
+                        table.tBodies[0].rows[i].children[6].innerHTML = numeroInicial;
+                    } else {
+                        numeroInicial += 1;
+                        table.tBodies[0].rows[i].children[6].innerHTML = numeroInicial;
+                    }
+                }
+                // Si es otro holding
+                else {
+                    numeroInicial += 1;
+                    table.tBodies[0].rows[i].children[6].innerHTML = numeroInicial;
+                }
+            }
+
+        }
+    }
+}
+
+</script>
 @endsection
