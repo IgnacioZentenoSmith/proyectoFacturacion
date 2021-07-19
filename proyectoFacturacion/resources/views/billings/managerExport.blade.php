@@ -155,94 +155,148 @@
         <tbody>
           @foreach ($dataFinal as $manager)
             <tr>
+              {{-- TIPODOC --}}
               <td>1</td>
+              {{-- ESELECTR --}}
               <td>1</td>
-	          <td>{{$manager['holdingRazonSocial']}}</td>
-              <td>{{$manager['clientRUT']}}</td>
-              <td>{{$manager['clientRUT']}}</td>
-              <td>{{date ("d-m-Y", strtotime($manager['created_at']))}}</td>
-
+              {{-- HOLDING --}}
+	          <td>{{$manager->holdingRazonSocial}}</td>
+              {{-- RUT_CLIE --}}
+              <td>{{$manager->clientRUT}}</td>
+              {{-- RUT_FACT --}}
+              <td>{{$manager->clientRUT}}</td>
+              {{-- FECHA_CREAC --}}
+              <td>{{date ("d-m-Y", strtotime($manager->created_at))}}</td>
               {{-- NUMFACT --}}
               <td></td>
-              <td>{{date ("d-m-Y", strtotime("+1 month", strtotime($manager['created_at'])))}}</td>
+              {{-- FECHA_MES_EXTRA --}}
+              <td>{{date ("d-m-Y", strtotime("+1 month", strtotime($manager->created_at)))}}</td>
+              {{-- MONEDA --}}
               <td>UF</td>
+              {{-- DESCTO --}}
               <td>0</td>
-
+              {{-- TIPO_DESCUENTO --}}
               <td>1</td>
+
+              {{-- CODIGO_PRODUCTO --}}
               <td>
-                  @if ($manager['idModule'] == 1) 31101GCI
-                  @elseif ($manager['idModule'] == 2) 31201PVI
-                  @elseif ($manager['idModule'] == 3) 31301DTP
-                  @elseif ($manager['idModule'] == 4) 31601ET
-                  @elseif ($manager['idModule'] == 12) 31401LIC
+                  @if ($manager->idModule == 1) 31101GCI
+                  @elseif ($manager->idModule  == 2) 31201PVI
+                  @elseif ($manager->idModule  == 3) 31301DTP
+                  @elseif ($manager->idModule  == 4) 31601ET
+                  @elseif ($manager->idModule  == 12) 31401LIC
                   @endif
               </td>
-              <td>{{$manager['tributarydetails_paymentTotalValue']}}</td>
+              {{-- CANTIDAD --}}
+              <td>{{$manager->invoices_neto}}</td>
+              {{-- PRECIO --}}
               <td>1</td>
+              {{-- DESCTO_ITEM --}}
               <td>0</td>
+              {{-- BODEGA --}}
               <td>b1</td>
+              {{-- CTA --}}
               <td>310101</td>
+              {{-- CC --}}
               <td>
-                @if ($manager['idModule'] == 1) 1005
-                @elseif ($manager['idModule'] == 2) 1002
-                @elseif ($manager['idModule'] == 3) 1021
-                @elseif ($manager['idModule'] == 4) 1006
-                @elseif ($manager['idModule'] == 12) 1030
+                @if ($manager->idModule == 1) 1005
+                @elseif ($manager->idModule == 2) 1002
+                @elseif ($manager->idModule == 3) 1021
+                @elseif ($manager->idModule == 4) 1006
+                @elseif ($manager->idModule == 12) 1030
                 @endif
               </td>
+              {{-- OBSERVACION --}}
               <td>
                   ^^
                   <br>
                   Periodo del 26-{{$periodoManager1}} al 25-{{$periodoManager2}}^
                   <br>
-                 @foreach ($manager['detalles'] as $deta)
-                  {{$deta['contractPaymentDetails_description']}}^<br>
-                 @endforeach
+                 {{$manager->contractPaymentDetails_description}}
+              </td>
+              {{-- OC --}}
+              <td></td>
+              {{-- PATENTE --}}
+              <td></td>
 
-                </td>
+              {{-- ID_SERVICIO --}}
               <td></td>
-              <td></td>
-
-              <td></td>
+              {{-- SUCURSAL --}}
               <td>1</td>
+              {{-- AFECTO --}}
               <td>1</td>
+              {{-- NRO_REF --}}
               <td></td>
+              {{-- TIPO_DOC --}}
               <td></td>
+              {{-- RAZON --}}
               <td></td>
+              {{-- GDV --}}
               <td></td>
+              {{-- REBAJA_STOCK --}}
               <td></td>
+              {{-- COMISION --}}
               <td>0</td>
+              {{-- CONCEPTO --}}
               <td></td>
 
+              {{-- VENDEDOR --}}
               <td></td>
+              {{-- COMISIONISTA --}}
               <td></td>
+              {{-- TRASLADO --}}
               <td></td>
+              {{-- COD_BODEGA --}}
               <td>0</td>
+              {{-- FORMA_DE_PAGO --}}
               <td></td>
+              {{-- GLOSA_DE_PAGO --}}
               <td>1</td>
+              {{-- GLOSACONT --}}
               <td>1</td>
+              {{-- LOTE_DEL_PROD --}}
               <td></td>
+              {{-- VENC_LOTE --}}
               <td></td>
+              {{-- NUMERO_SERIE --}}
               <td></td>
 
+              {{-- FACTURABLE --}}
               <td></td>
+              {{-- TRASLADO_ELECTRONICO --}}
               <td></td>
+              {{-- OBRA --}}
               <td></td>
+              {{-- NUMERO_OC --}}
+              <td>{{$manager->invoices_numeroOC}}</td>
+              {{-- FECHA_OC --}}
+              <td>{{$manager->invoices_fechaOC}}</td>
+              {{-- VIGENCIA_OC --}}
+              <td>{{$manager->invoices_vigenciaOC}}</td>
+              {{-- NUMERO_HES --}}
+              <td>{{$manager->invoices_numeroHES}}</td>
+              {{-- FECHA_HES --}}
+              <td>{{$manager->invoices_fechaHES}}</td>
+              {{-- VIGENCIA_HES --}}
+              <td>{{$manager->invoices_vigenciaHES}}</td>
+              {{-- NUMERO_GD --}}
+              <td>{{$manager->contractsNumeroCliente}}</td>
+              {{-- FECHA_GD --}}
               <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>{{$manager['contractsNumeroCliente']}}</td>
-              <td></td>
+              {{-- NUMERO_CONTR --}}
               <td></td>
 
+              {{-- FECHA_CONTR --}}
               <td></td>
+              {{-- NUMERO_PED --}}
               <td></td>
+              {{-- FECHA_PED --}}
               <td></td>
+              {{-- ENTREGA_DIREC --}}
               <td></td>
+              {{-- ENTREGA_COMUNA --}}
               <td></td>
+              {{-- ENTREGA_CIUDAD --}}
               <td></td>
 
             </tr>
