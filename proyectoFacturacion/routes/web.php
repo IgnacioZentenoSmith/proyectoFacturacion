@@ -100,6 +100,7 @@ Route::get('/billings/{idTributarydocument}/redistribute', 'TributarydocumentsCo
 Route::put('/billings/{idTributarydocument}/generateRedistribucion', 'TributarydocumentsController@generateRedistribucion')->name('billings.generateRedistribucion')->middleware('auth');
 
 Route::get('/billings/manager/export/{periodo}', 'ManagerController@managerExport')->name('billings.managerExport')->middleware('auth');
+Route::put('/billings/manager/export/{periodo}', 'ManagerController@assignNumFacts')->name('billings.managerExport')->middleware('auth');
 
 
 Route::get('/billings/{idTributarydocument}/generateFacturas', 'InvoiceController@generateFacturas')->name('billings.generateFacturas')->middleware('auth');
