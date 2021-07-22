@@ -193,6 +193,7 @@ class ManagerController extends Controller
 
             invoices.created_at,
             invoices.updated_at,
+            invoices.invoices_numfact,
 
             tributarydocuments.tributarydocuments_period,
             tributarydocuments.tributarydocuments_documentType,
@@ -252,6 +253,7 @@ class ManagerController extends Controller
             invoices.invoices_vigenciaHES,
             invoices.created_at,
             invoices.updated_at,
+            invoices.invoices_numfact,
 
             tributarydocuments.tributarydocuments_period,
             tributarydocuments.tributarydocuments_documentType,
@@ -282,6 +284,27 @@ class ManagerController extends Controller
 
 
         return view('billings.managerExport', compact('authPermisos', 'dataFinal','periodo', 'periodoManager1', 'periodoManager2'));
+    }
+
+    public function assignNumFacts(Request $request, $periodo) {
+        $request->validate([
+            'invoices_numfact' => 'required|array',
+            'invoices_numfact.*' => 'nullable|numeric|min:0',
+
+            'invoices_id' => 'required|array',
+            'invoices_id.*' => 'required|numeric|min:0',
+        ]);
+
+        $largoTabla = count($request->invoices_id);
+        for ($i = 0; $i < $largoTabla; $i++ ) {
+            $invoice = Invoices::find($request->invoices_id[$i]);
+            $invoice->invoices_numfact = $request->invoices_numfact[$i];
+            // Si ha habido algun cambio, guardar
+            if ($invoice->isDirty()) {
+                $invoice->save();
+            }
+        }
+        return redirect()->action('ManagerController@managerExport', ['periodo' => $periodo])->with('success', 'Números de factura guardados exitosamente.');
     }
 
     /**
