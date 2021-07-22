@@ -30,6 +30,8 @@ class Invoices extends Model
         'invoices_numeroHES',
         'invoices_fechaHES',
         'invoices_vigenciaHES',
+
+        'invoices_numfact',
     ];
 
 }
