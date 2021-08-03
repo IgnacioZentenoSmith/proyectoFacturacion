@@ -64,11 +64,11 @@
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenu_acciones{{$contract['id']}}">
 
 
-                                    @if(in_array(7, $authPermisos))
+                                    {{-- @if(in_array(7, $authPermisos))
                                     <a class="dropdown-item"
                                         href="{{ route('contracts.distributions', $contract['id']) }}"
                                         role="button">Distribución de cobro</a>
-                                    @endif
+                                    @endif --}}
 
                                     @if(in_array(7, $authPermisos))
                                     <div class="dropdown-divider"></div>

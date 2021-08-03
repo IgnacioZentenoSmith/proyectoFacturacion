@@ -73,12 +73,12 @@
                 role="button">Ver detalles</a>
                 @endif
 
-                @if(in_array(7, $authPermisos))
+                {{-- @if(in_array(7, $authPermisos))
                 <div class="dropdown-divider"></div>
                     <a @if ($documentosTributario['tributarydocuments_documentType'] != 'Factura' || $documentosTributario['tributarydocuments_totalAmount'] == 0) class="dropdown-item disabled"
                     @else class="dropdown-item" href="{{ route('billings.redistribute', $documentosTributario['id']) }}" @endif
                     role="button">Redistribución</a>
-                @endif
+                @endif --}}
 
                 @if(in_array(7, $authPermisos))
                 <div class="dropdown-divider"></div>
