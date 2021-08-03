@@ -20,11 +20,11 @@ use App\Quantities;
 use App\Tributarydocuments;
 use App\Tributarydetails;
 use Auth;
-
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use App\Invoices;
 
 class TributarydocumentsController extends Controller
 {
@@ -123,6 +123,7 @@ class TributarydocumentsController extends Controller
             $newTributaryDocument->save();
             app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newTributaryDocument->getTable(), $contract->contractsNombre, null, $newTributaryDocument);
             $this->createPaymentDetails($newTributaryDocument->id);
+            $this->createInvoices($newTributaryDocument);
           }
         }
 
@@ -509,4 +510,49 @@ class TributarydocumentsController extends Controller
     $formattedNumber = preg_replace('/\./', ',', $number);
     return $formattedNumber;
   }
+
+    public function createInvoices($tributaryDocument) {
+        // Obtener la fecha del mes pasado respecto del documento
+        $thisDocumentDate = Carbon::createFromFormat('Y-m', $tributaryDocument->tributarydocuments_period);
+        $lastMonth = $thisDocumentDate->subMonth()->format('Y-m');
+        // Obtener el documento del mes pasado
+        $lastMonthTributaryDocument = Tributarydocuments::where('idClient', $tributaryDocument->idClient)
+        ->where('idContract', $tributaryDocument->idContract)
+        ->where('tributarydocuments_period', $lastMonth)
+        ->first();
+        // Si este documento existe
+        if ($lastMonthTributaryDocument != null) {
+            // Si el monto del mes pasado es el mismo al de este mes
+            if ($lastMonthTributaryDocument->tributarydocuments_totalAmount == $tributaryDocument->tributarydocuments_totalAmount) {
+                // Obtener las facturas de este documento
+                $lastMonthInvoices = Invoices::where('idTributaryDocument', $lastMonthTributaryDocument->id)->get();
+                // Copiar las facturas del mes anterior
+                foreach ($lastMonthInvoices as $lastMonthInvoice) {
+                    $newInvoice = new Invoices([
+                        'idTributaryDocument' => $tributaryDocument->id,
+                        'idClient' => $lastMonthInvoice->idClient,
+                        'idModule' => $lastMonthInvoice->idModule,
+                        'idPaymentUnit' => $lastMonthInvoice->idPaymentUnit,
+                        'idContractPaymentDetails' => $lastMonthInvoice->idContractPaymentDetails,
+
+                        'invoices_monto' => $lastMonthInvoice->invoices_monto,
+                        'invoices_porcentaje' => $lastMonthInvoice->invoices_porcentaje,
+                        'invoices_descuento' => $lastMonthInvoice->invoices_descuento,
+                        'invoices_neto' => $lastMonthInvoice->invoices_neto,
+                        'invoices_total' => $lastMonthInvoice->invoices_total,
+                        'invoices_grupo' => $lastMonthInvoice->invoices_grupo,
+
+                        'invoices_numeroOC' => $lastMonthInvoice->invoices_numeroOC,
+                        'invoices_fechaOC' => $lastMonthInvoice->invoices_fechaOC,
+                        'invoices_vigenciaOC' => $lastMonthInvoice->invoices_vigenciaOC,
+
+                        'invoices_numeroHES' => $lastMonthInvoice->invoices_numeroHES,
+                        'invoices_fechaHES' => $lastMonthInvoice->invoices_fechaHES,
+                        'invoices_vigenciaHES' => $lastMonthInvoice->invoices_vigenciaHES,
+                    ]);
+                    $newInvoice->save();
+                }
+            }
+        }
+    }
 }
