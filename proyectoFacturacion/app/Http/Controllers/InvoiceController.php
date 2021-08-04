@@ -233,8 +233,7 @@ class InvoiceController extends Controller
                 }
             }
 
-            return redirect()->action('InvoiceController@generateFacturas', ['idTributarydocument' => $idTributarydocument])->with('success', 'Facturas generadas exitosamente.');
-
+            return redirect()->action('TributarydocumentsController@index', ['periodo' => $tributaryDocument->tributarydocuments_period])->with('success', 'Facturas generadas exitosamente.');
         }
     }
 

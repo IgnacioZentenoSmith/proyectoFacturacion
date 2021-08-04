@@ -275,3 +275,35 @@ function updateMontoFacturado() {
     document.getElementById('montoFacturado').value = montoFacturadoActual.toFixed(2);
 }
 updateMontoFacturado();
+
+
+function validateMyForm(form) {
+    let montoFacturado = document.getElementById('montoFacturado').value;
+    if (montoFacturado == netoFacturar && checkGroupNullValues()) {
+        form.submit();
+    } else if (montoFacturado > netoFacturar) {
+        alert('No se puede facturar más del monto total.');
+    } else if (montoFacturado < netoFacturar) {
+        alert('No se puede facturar menos del monto total.');
+    } else {
+        alert('El valor de Grupo no puede estar vacío.');
+    }
+
+}
+
+function checkGroupNullValues() {
+    // Grupo: columna 9
+    let table = document.getElementById('tablaFacturas');
+    let numRows = document.getElementById('largoTabla').value = table.tBodies[0].rows.length;
+    for (let i = 0; i < numRows; i++) {
+        valorGrupo = table.tBodies[0].rows[i].children[9].children[0].value;
+        // tBodies = cuerpo tabla
+        // rows = fila
+        // children[] = columna
+        // children[] = hijos de la columna, input en este caso
+        if (valorGrupo == "") {
+            return false;
+        }
+    }
+    return true;
+}

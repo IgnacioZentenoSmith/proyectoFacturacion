@@ -25,7 +25,7 @@
           @csrf
           <div class="form-group row">
               <div class="col-md-6">
-                    <button type="submit" class="btn btn-secondary btn-lg">Generar facturas</button>
+                    <button type="submit" class="btn btn-secondary btn-lg">Calcular montos</button>
               </div>
           </div>
       </form>
