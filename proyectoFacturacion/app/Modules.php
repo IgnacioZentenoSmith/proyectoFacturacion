@@ -12,6 +12,9 @@ class Modules extends Model
     protected $fillable = [
         'moduleName',
         'moduleParentId',
+        'moduleDetail',
+        'moduleCode',
+        'moduleCC',
     ];
 
     public function contractConditions(){
