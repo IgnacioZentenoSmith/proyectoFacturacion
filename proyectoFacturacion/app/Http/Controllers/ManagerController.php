@@ -217,6 +217,9 @@ class ManagerController extends Controller
             payment_units.payment_units,
             tributarydocuments.idContract AS idContratoReal,
             modules.moduleName,
+            modules.moduleDetail,
+            modules.moduleCode,
+            modules.moduleCC,
             contractModule.moduleName AS contractModuleName
         FROM
             invoices
@@ -279,6 +282,9 @@ class ManagerController extends Controller
 
             payment_units.payment_units,
             modules.moduleName,
+            modules.moduleDetail,
+            modules.moduleCode,
+            modules.moduleCC,
             contractModule.moduleName
         ") );
 
