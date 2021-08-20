@@ -80,6 +80,9 @@ class ParameterizationController extends Controller
 
         $request->validate([
             'moduleName'=>'required|string|max:100|unique:modules,moduleName' ,
+            'moduleDetail'=>'string|max:150',
+            'moduleCode'=>'string|max:50',
+            'moduleCC'=>'string|max:10',
             'moduleParentId' => 'required_if:hasParent,si',
         ]);
 
@@ -93,7 +96,10 @@ class ParameterizationController extends Controller
 
         $newModules = new Modules([
             'moduleName' => $request->moduleName,
-            'moduleParentId' => $request->moduleParentId,
+            'moduleDetail' => $request->moduleDetail,
+            'moduleCode' => $request->moduleCode,
+            'moduleCC' => $request->moduleCC,
+            'moduleParentId' => $moduleParentId,
         ]);
         app('App\Http\Controllers\BinnacleController')->reportBinnacle('CREATE', $newModules->getTable(), $newModules->moduleName, null, $newModules);
         $newModules->save();
@@ -140,19 +146,25 @@ class ParameterizationController extends Controller
     {
       $request->validate([
         'moduleName'=>'required|string|max:100|unique:modules,moduleName,' .$id ,
+        'moduleDetail'=>'string|max:150',
+        'moduleCode'=>'string|max:50',
+        'moduleCC'=>'string|max:10',
         'moduleParentId' => 'required_if:hasParent,si',
       ]);
-      if ($request->hasParent == 'no') {
-          $moduleParentId = null;
-      }
-      else if ($request->hasParent == 'si') {
+
+      $moduleParentId = null;
+
+      if ($request->hasParent == 'si') {
           $moduleParentId = $request->moduleParentId;
       }
 
         $modulo = Modules::find($id);
 
         $modulo->moduleName = $request->moduleName;
-        $modulo->moduleParentId = $request->moduleParentId;
+        $modulo->moduleDetail = $request->moduleDetail;
+        $modulo->moduleCode = $request->moduleCode;
+        $modulo->moduleCC = $request->moduleCC;
+        $modulo->moduleParentId = $moduleParentId;
 
         if ($modulo->isDirty()) {
             $postModulo = Modules::find($id);
