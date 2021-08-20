@@ -46,6 +46,14 @@
                             Guardar números de facturas
                         </button>
                     </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-info"
+                        data-toggle="popover"
+                        title="Instrucciónes de uso"
+                        data-content="Para poder exportar los valores de NUMFACT actualizados, se deben guardar los valores con el botón de 'Guardar números de facturas'.">
+                            Ayuda
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -160,9 +168,9 @@
                 <td>{{date ("d-m-Y", strtotime($manager->created_at))}}</td>
                 {{-- NUMFACT --}}
                 <td>
-                    <input type="hidden" name="invoices_numfact[]" value="{{$manager->invoices_numfact}}" readonly>
+                    <input type="number" name="invoices_numfact[]" value="{{$manager->invoices_numfact}}">
                     <input type="hidden" name="invoices_id[]" value="{{$manager->id}}" readonly>
-                    <p>{{$manager->invoices_numfact}}</p>
+                    <p class="d-none">{{$manager->invoices_numfact}}</p>
                 </td>
                 {{-- GRUPO --}}
                 <td>{{$manager->invoices_grupo}}</td>
@@ -177,12 +185,7 @@
 
                 {{-- CODIGO_PRODUCTO --}}
                 <td>
-                    @if ($manager->idModule == 1) 31101GCI
-                    @elseif ($manager->idModule  == 2) 31201PVI
-                    @elseif ($manager->idModule  == 3) 31301DTP
-                    @elseif ($manager->idModule  == 4) 31601ET
-                    @elseif ($manager->idModule  == 12) 31401LIC
-                    @endif
+                    {{$manager->moduleCode}}
                 </td>
                 {{-- CANTIDAD --}}
                 <td>{{$manager->invoices_neto}}</td>
@@ -310,6 +313,9 @@
 <script src="{{ asset('js/components/getCurrentDate.js')}}"></script>
 
 <script>
+$(function () {
+  $('[data-toggle="popover"]').popover();
+})
 function assignNumeroFacturas() {
     let numeroInicial = parseInt(document.getElementById('inputNumFact').value);
     if (Number.isNaN(numeroInicial) || numeroInicial < 0) {
