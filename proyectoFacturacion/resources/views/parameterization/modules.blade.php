@@ -11,7 +11,10 @@
                 <thead>
                     <tr>
                         <th scope="col" data-field="moduleName" data-sortable="true">Nombre</th>
-                        <th scope="col" data-field="moduleParentId" data-sortable="true">Modulo principal</th>
+                        <th scope="col" data-field="moduleParentId" data-sortable="true">Módulo principal</th>
+                        <th scope="col" data-field="moduleDetail" data-sortable="true">Detalle</th>
+                        <th scope="col" data-field="moduleCode" data-sortable="true">Código</th>
+                        <th scope="col" data-field="moduleCC" data-sortable="true">CC</th>
                         <th scope="col" data-field="Accion" data-sortable="true">Acción</th>
                     </tr>
                 </thead>
@@ -20,6 +23,10 @@
                     <tr>
                         <td>{{$module['moduleName']}}</td>
                         <td class="text-center">{{$module['moduleParentId']}}</td>
+
+                        <td class="text-center">{{$module['moduleDetail']}}</td>
+                        <td class="text-center">{{$module['moduleCode']}}</td>
+                        <td class="text-center">{{$module['moduleCC']}}</td>
 
                         <td>
 

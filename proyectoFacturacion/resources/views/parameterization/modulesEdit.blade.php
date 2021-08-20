@@ -6,9 +6,29 @@
     @csrf
     {{ method_field('PUT') }}
     <div class="form-group row">
-        <label for="moduleName" class="col-md-4 col-form-label text-md-right">Nombre del modulo</label>
+        <label for="moduleName" class="col-md-4 col-form-label text-md-right">Nombre del módulo</label>
         <div class="col-md-6">
             <input id="moduleName" type="text" class="form-control" name="moduleName" required autofocus value="{{$module['moduleName']}}">
+        </div>
+    </div>
+
+
+    <div class="form-group row">
+        <label for="moduleDetail" class="col-md-4 col-form-label text-md-right">Detalle del módulo</label>
+        <div class="col-md-6">
+            <input id="moduleDetail" type="text" class="form-control" name="moduleDetail" autofocus value="{{$module['moduleDetail']}}">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="moduleCode" class="col-md-4 col-form-label text-md-right">Código del módulo</label>
+        <div class="col-md-6">
+            <input id="moduleCode" type="text" class="form-control" name="moduleCode" autofocus value="{{$module['moduleCode']}}">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="moduleCC" class="col-md-4 col-form-label text-md-right">CC del módulo</label>
+        <div class="col-md-6">
+            <input id="moduleCC" type="text" class="form-control" name="moduleCC" autofocus value="{{$module['moduleCC']}}">
         </div>
     </div>
 
@@ -18,9 +38,11 @@
         <div class="col-md-6 form-check">
 
             <div class="pretty p-switch p-fill">
-                <input type="checkbox" name="hasParent" id="hasParent" value="@if ($module['moduleParentId'] != null) si @elseif ($module['moduleParentId'] == null) no @endif" class="form-control"/>
+                <input type="checkbox" name="hasParent" id="hasParent"
+                value="@if ($module['moduleParentId'] != null) si @elseif ($module['moduleParentId'] == null) no @endif" class="form-control"
+                @if ($module['moduleParentId'] != null) checked @endif/>
                 <div class="state p-success">
-                  <label id="hasParentLabel">No</label>
+                  <label id="hasParentLabel">@if ($module['moduleParentId'] != null) Si @elseif ($module['moduleParentId'] == null) No @endif</label>
                 </div>
               </div>
         </div>
@@ -30,7 +52,7 @@
     @if ($module['moduleParentId'] != null) style="visibility:visible"
     @elseif ($module['moduleParentId'] == null) style="visibility:hidden"
     @endif>
-        <label for="moduleParentId" class="col-md-4 col-form-label text-md-right">Modulo padre</label>
+        <label for="moduleParentId" class="col-md-4 col-form-label text-md-right">Módulo padre</label>
 
         <div class="col-md-6">
             <select class="form-control" id="moduleParentId" name="moduleParentId">

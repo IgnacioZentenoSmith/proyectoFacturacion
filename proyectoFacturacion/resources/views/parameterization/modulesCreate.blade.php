@@ -5,11 +5,32 @@
 <form method="POST" action="{{route('parameterization.modulesStore')}}">
     @csrf
     <div class="form-group row">
-        <label for="moduleName" class="col-md-4 col-form-label text-md-right">Nombre del modulo</label>
+        <label for="moduleName" class="col-md-4 col-form-label text-md-right">Nombre del módulo</label>
         <div class="col-md-6">
             <input id="moduleName" type="text" class="form-control" name="moduleName" required autofocus>
         </div>
     </div>
+
+
+    <div class="form-group row">
+        <label for="moduleDetail" class="col-md-4 col-form-label text-md-right">Detalle del módulo</label>
+        <div class="col-md-6">
+            <input id="moduleDetail" type="text" class="form-control" name="moduleDetail" autofocus>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="moduleCode" class="col-md-4 col-form-label text-md-right">Código del módulo</label>
+        <div class="col-md-6">
+            <input id="moduleCode" type="text" class="form-control" name="moduleCode" autofocus>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="moduleCC" class="col-md-4 col-form-label text-md-right">CC del módulo</label>
+        <div class="col-md-6">
+            <input id="moduleCC" type="text" class="form-control" name="moduleCC" autofocus>
+        </div>
+    </div>
+
 
     <div class="form-group row align-items-center">
         <label for="hasParent" class="col-md-4 col-form-label text-md-right">Tiene padre?</label>
@@ -25,7 +46,7 @@
     </div>
 
     <div class="form-group row" id="parentModule" style="visibility:hidden">
-        <label for="moduleParentId" class="col-md-4 col-form-label text-md-right">Modulo padre</label>
+        <label for="moduleParentId" class="col-md-4 col-form-label text-md-right">Módulo padre</label>
 
         <div class="col-md-6">
             <select class="form-control" id="moduleParentId" name="moduleParentId">
