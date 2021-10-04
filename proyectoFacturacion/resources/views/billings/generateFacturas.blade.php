@@ -17,7 +17,7 @@
             <input type="button" value="Agregar fila" class="btn btn-primary" id="agregarFactura">
         </div>
 
-        <form method="POST" action="{{route('billings.generateFacturacion', $tributaryDocument['id'])}}" onsubmit="event.preventDefault(); validateMyForm(this);">
+        <form method="POST" action="{{route('billings.generateFacturacion', $tributaryDocument['id'])}}" onsubmit="return validateMyForm(this);">
             @csrf
             {{ method_field('PUT') }}
         <input type="hidden" id="netoFacturar" name="netoFacturar" value="{{$tributaryDocument['tributarydocuments_totalAmount']}}">
@@ -121,7 +121,7 @@
                             </td>
                             {{-- grupo --}}
                             <td>
-                                <input type="number" name="grupo[]"
+                                <input id="grupo{{$invoice['id']}}" type="number" name="grupo[]"
                                 value="{{$invoice['invoices_grupo']}}">
                             </td>
 

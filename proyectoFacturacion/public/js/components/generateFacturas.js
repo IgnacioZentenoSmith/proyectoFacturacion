@@ -280,15 +280,22 @@ updateMontoFacturado();
 function validateMyForm(form) {
     let montoFacturado = document.getElementById('montoFacturado').value;
     if (montoFacturado == netoFacturar && checkGroupNullValues()) {
-        form.submit();
+        //form.submit();
     } else if (montoFacturado > netoFacturar) {
         alert('No se puede facturar más del monto total.');
+        return false;
     } else if (montoFacturado < netoFacturar) {
         alert('No se puede facturar menos del monto total.');
+        return false;
     } else {
         alert('El valor de Grupo no puede estar vacío.');
+        return false;
     }
-
+    if (!areGroupsValid()) {
+        alert('Los grupos no pueden tener razones sociales distintas.');
+        return false;
+    }
+    return true;
 }
 
 function checkGroupNullValues() {
@@ -303,6 +310,32 @@ function checkGroupNullValues() {
         // children[] = hijos de la columna, input en este caso
         if (valorGrupo == "") {
             return false;
+        }
+    }
+    return true;
+}
+
+
+
+function areGroupsValid() {
+    // Monto: columna 4
+    let table = document.getElementById('tablaFacturas');
+    let numRows = document.getElementById('largoTabla').value = table.tBodies[0].rows.length;
+
+    for (let i = 0; i < numRows; i++) {
+        valorGrupo_I = table.tBodies[0].rows[i].children[9].children[0].value;
+        idRazonSocial_I = table.tBodies[0].rows[i].children[0].children[0].value;
+        for (let j = 0; j < numRows; j++) {
+            valorGrupo_J = table.tBodies[0].rows[j].children[9].children[0].value;
+            idRazonSocial_J = table.tBodies[0].rows[j].children[0].children[0].value;
+            // Si son el mismo grupo, verificar que tienen la misma razon social
+            if (valorGrupo_I == valorGrupo_J) {
+                // Si tienen distinta razon social, mencionar
+                if (idRazonSocial_I != idRazonSocial_J) {
+                    console.log('El id: ', i, ', tiene distinta razon social q el id: ', j);
+                    return false;
+                }
+            }
         }
     }
     return true;
