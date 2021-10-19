@@ -349,12 +349,6 @@ class ContractsController extends Controller
         if ($request->contractsConditions_fechaTermino != null && Carbon::createFromFormat('Y-m-d', $request->contractsConditions_fechaInicio) > Carbon::createFromFormat('Y-m-d', $request->contractsConditions_fechaTermino)) {
             return redirect()->action('ContractsController@conditionsEdit', ['id' => $id])->with('warning', 'La fecha de término debe ser mayor a la de inicio.');
         }
-        //Si cambio la fecha de termino
-        $contractConditionsFechaTermino = ContractConditions::find($id);
-        $contractConditionsFechaTermino->contractsConditions_fechaTermino = $request->contractsConditions_fechaTermino;
-        if ($contractConditionsFechaTermino->isDirty('contractsConditions_fechaTermino')) {
-            $contractConditionsFechaTermino->save();
-        }
 
         # Unidad de pago descuento
         if ($request->idPaymentUnit == 5) {
@@ -370,28 +364,16 @@ class ContractsController extends Controller
         $contractConditions->contractsConditions_Modalidad = $request->contractsConditions_Modalidad;
         $contractConditions->contractsConditions_Cantidad = $request->contractsConditions_Cantidad;
         $contractConditions->contractsConditions_fechaInicio = $request->contractsConditions_fechaInicio;
+        $contractConditions->contractsConditions_fechaTermino = $request->contractsConditions_fechaTermino;
         //Saca el id para hacer el redirect
         $contractId = $contractConditions->idContract;
 
         if ($contractConditions->isDirty()) {
             $contract = Contracts::find($contractConditions->idContract);
-            //Si ha habido algun cambio distinto de la fecha de termino, crear una nueva condicion contractual
-            $newContractConditions = new ContractConditions([
-                'idModule' => $request->idModule,
-                'idPaymentUnit' => $request->idPaymentUnit,
-                'idClient' => $contractConditions->idClient,
-                'idContract' => $contractConditions->idContract,
-                'contractsConditions_Precio' => $request->contractsConditions_Precio,
-                'contractsConditions_Modalidad' => $request->contractsConditions_Modalidad,
-                'contractsConditions_Cantidad' => $request->contractsConditions_Cantidad,
-                'contractsConditions_fechaInicio' => $request->contractsConditions_fechaInicio,
-                'contractsConditions_fechaTermino' => $request->contractsConditions_fechaTermino,
-            ]);
-            $preConditions = ContractConditions::find($id);
-            app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $newContractConditions->getTable(), $contract->contractsNombre, $newContractConditions, $preConditions);
+            //app('App\Http\Controllers\BinnacleController')->reportBinnacle('UPDATE', $newContractConditions->getTable(), $contract->contractsNombre, $newContractConditions, $preConditions);
             SendNotifications::dispatch('Contratos, ' . $contract->contractsNombre, 'Actualización de condición contractual')->onQueue('emails');
-            $newContractConditions->save();
-             return redirect()->action('ContractsController@conditionsIndex', ['id' => $contractId])->with('success', 'Condicion contractual editada exitosamente.');
+            $contractConditions->save();
+            return redirect()->action('ContractsController@conditionsIndex', ['id' => $contractId])->with('success', 'Condición contractual editada exitosamente.');
         } else {
             return redirect()->action('ContractsController@conditionsIndex', ['id' => $contractId]);
         }
@@ -404,7 +386,7 @@ class ContractsController extends Controller
         app('App\Http\Controllers\BinnacleController')->reportBinnacle('DELETE', $contractCondition->getTable(), $contract->contractsNombre, $contractCondition, null);
         SendNotifications::dispatch('Contratos, ' . $contract->contractsNombre, 'Eliminación de condición contractual')->onQueue('emails');
         $contractCondition->delete();
-        return redirect()->action('ContractsController@conditionsIndex', ['id' => $contractId])->with('success', 'Condicion contractual eliminada exitosamente.');
+        return redirect()->action('ContractsController@conditionsIndex', ['id' => $contractId])->with('success', 'Condición contractual eliminada exitosamente.');
     }
 
     public function quantitiesIndex($idContrato, $periodo) {
