@@ -129,7 +129,7 @@ class InvoiceController extends Controller
                 'paymentUnits'=> 'required|array|min:' . $largoTabla,
                 'paymentUnits.*'=> 'required|numeric|min:0',
                 'contractPaymentDetails'=> 'required|array|min:' . $largoTabla,
-                'contractPaymentDetails.*'=> 'required|numeric|min:0',
+                'contractPaymentDetails.*'=> 'numeric|min:0|nullable',
 
                 'monto'=> 'required|array|min:' . $largoTabla,
                 'monto.*'=> 'required|numeric|between:0,' . $tributaryDocument->tributarydocuments_totalAmount,
