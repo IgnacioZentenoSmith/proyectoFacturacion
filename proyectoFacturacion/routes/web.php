@@ -105,3 +105,6 @@ Route::put('/billings/manager/export/{periodo}', 'ManagerController@assignNumFac
 
 Route::get('/billings/{idTributarydocument}/generateFacturas', 'InvoiceController@generateFacturas')->name('billings.generateFacturas')->middleware('auth');
 Route::put('/billings/{idTributarydocument}/generateFacturacion', 'InvoiceController@generateFacturacion')->name('billings.generateFacturacion')->middleware('auth');
+
+Route::get('/billings/{idTributarydocument}/createProjectCurrentContract', 'InvoiceController@createProjectCurrentContract')->name('billings.createProjectCurrentContract')->middleware('auth');
+Route::post('/billings/{idTributarydocument}/storeProjectCurrentContract', 'InvoiceController@storeProjectCurrentContract')->name('billings.storeProjectCurrentContract')->middleware('auth');
