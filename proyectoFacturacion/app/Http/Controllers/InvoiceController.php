@@ -116,7 +116,7 @@ class InvoiceController extends Controller
             foreach ($invoices as $invoice) {
                 $invoice->delete();
             }
-            return redirect()->action('InvoiceController@generateFacturas', ['idTributarydocument' => $idTributarydocument])->with('success', 'Facturas generadas exitosamente.');
+            return redirect()->action('InvoiceController@generateFacturas', ['idTributarydocument' => $idTributarydocument])->with('success', 'Facturas eliminadas exitosamente.');
         } else {
 
             $montoTotal = $tributaryDocument['tributarydocuments_totalAmount'];
@@ -237,6 +237,42 @@ class InvoiceController extends Controller
         }
     }
 
+    public function createProjectCurrentContract($idTributarydocument) {
+        $authPermisos = $this->getPermisos();
+        $tributaryDocument = Tributarydocuments::find($idTributarydocument);
+        $contract = Contracts::find($tributaryDocument->idContract);
+
+        return view('billings.createProjectCurrentContract', compact('authPermisos', 'tributaryDocument', 'contract'));
+    }
+
+    public function storeProjectCurrentContract(Request $request, $idTributarydocument) {
+        $request->validate([
+            'contractPaymentDetails_description' => 'required|string|max:255',
+            'contractPaymentDetails_glosaProyecto' => 'required|string|max:255',
+            'contractPaymentDetails_units' => 'required|numeric|min:0',
+            'contractPaymentDetails_recepcionMunicipal' => 'date|nullable',
+        ]);
+        $tributaryDocument = Tributarydocuments::find($idTributarydocument);
+        $contract = Contracts::find($tributaryDocument->idContract);
+        $client = Client::find($tributaryDocument->idClient);
+        $idPaymentUnit = 2;
+
+        $newContractPaymentDetail = new ContractPaymentDetails([
+            'idClient' => $client->id,
+            'idContract' => $contract->id,
+            'idPaymentUnit' => $idPaymentUnit,
+
+            'contractPaymentDetails_period' => $tributaryDocument->tributarydocuments_period,
+            'ccontractPaymentDetails_quantity' => 1,
+            'contractPaymentDetails_description' => $request->contractPaymentDetails_description,
+            'contractPaymentDetails_recepcionMunicipal' => $request->contractPaymentDetails_recepcionMunicipal,
+            'contractPaymentDetails_units' => $request->contractPaymentDetails_units,
+            'contractPaymentDetails_glosaProyecto' => $request->contractPaymentDetails_glosaProyecto,
+        ]);
+        $newContractPaymentDetail->save();
+
+        return redirect()->action('InvoiceController@generateFacturas', ['idTributarydocument' => $idTributarydocument])->with('success', 'Proyecto generado exitosamente.');
+    }
     /**
      * Show the form for creating a new resource.
      *
