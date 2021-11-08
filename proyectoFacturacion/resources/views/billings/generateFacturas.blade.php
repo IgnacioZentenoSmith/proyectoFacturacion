@@ -14,6 +14,8 @@
                 <input type="hidden" id="totalFacturar" value="{{$tributaryDocument['tributarydocuments_totalAmountTax']}}">
                 Monto total a facturar: <strong>{{$tributaryDocument['tributarydocuments_totalAmountTax']}} UF</strong>
             </div>
+
+            <a href="{{ route('billings.createProjectCurrentContract', $tributaryDocument['id']) }}"><input type="button" value="Agregar proyecto" class="btn btn-secondary" id="agregarProyecto"></a>
             <input type="button" value="Agregar fila" class="btn btn-primary" id="agregarFactura">
         </div>
 
@@ -86,6 +88,9 @@
                             {{-- contractPaymentDetails --}}
                             <td>
                                 <select id="contractPaymentDetails[{{$invoice['id']}}]" name="contractPaymentDetails[]">
+                                    <option value="">
+                                        Sin proyecto
+                                    </option>
                                     @foreach($contractPaymentDetails as $contractPaymentDetail)
                                     <option value="{{$contractPaymentDetail['id']}}" @if($invoice['idContractPaymentDetails'] == $contractPaymentDetail['id']) selected @endif>
                                         {{$contractPaymentDetail['contractPaymentDetails_description']}}
