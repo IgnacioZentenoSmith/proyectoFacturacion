@@ -47,6 +47,25 @@
                     <a class="navbar-brand">
                         Sistema de facturación
                     </a>
+
+                        <li class="nav-item dropdown">
+
+                            <a id="paisDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                            <i class="fas fa-flag"></i> País <span class="caret"></span>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="paisDropdown">
+                                <a class="dropdown-item">
+                                    <p class="mx-1"><img src="{{asset('img/footer/').'/'.'chile.svg'}}" alt=""> Chile</p>
+                                </a>
+                                <a class="dropdown-item">
+                                    <p class="mx-1"><img src="{{asset('img/footer/').'/'.'colombia.svg'}}" alt=""> Colombia</p>
+                                </a>
+                                <a class="dropdown-item">
+                                    <p class="mx-1"><img src="{{asset('img/footer/').'/'.'peru.svg'}}" alt=""> Perú</p>
+                                </a>
+                            </div>
+                        </li>
                 </ul>
                 <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
@@ -227,5 +246,6 @@
     </footer>
 </div>
 <script src="{{ asset('js/components/logout.js')}}"></script>
+<script src="{{ asset('js/components/paisDropdown.js')}}"></script>
 </body>
 </html>
