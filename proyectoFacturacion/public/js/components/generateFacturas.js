@@ -134,10 +134,15 @@ function addRow() {
   let contractPaymentDetails_select = document.createElement('select');
   contractPaymentDetails_select.setAttribute("name", 'contractPaymentDetails[]');
   // Opciones del select contractPaymentDetails
-  contractPaymentDetails.forEach(contractPaymentDetail => {
-    let opt = document.createElement('option');
-    opt.value = contractPaymentDetail.id;
-    opt.innerHTML = contractPaymentDetail.contractPaymentDetails_description;
+  contractPaymentDetails.forEach((contractPaymentDetail, index) => {
+    const opt = document.createElement('option');
+    if (index == 0) {
+      opt.value = "";
+      opt.innerHTML = "Sin proyecto";
+    } else {
+      opt.value = contractPaymentDetail.id;
+      opt.innerHTML = contractPaymentDetail.contractPaymentDetails_description;
+    }
     contractPaymentDetails_select.appendChild(opt);
   });
   contractPaymentDetails_column.appendChild(contractPaymentDetails_select);
